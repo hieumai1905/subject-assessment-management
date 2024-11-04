@@ -1,0 +1,77 @@
+stages:          # List of stages for jobs, and their order of execution
+  - fetch
+  - test
+  - build_be
+  - build_fe
+  - deploy
+
+build_image_be:
+  stage: build_be
+  image: docker:26.1.4
+  services:
+    - docker:26.1.4-dind
+  before_script:
+    - chmod a+x build_be_dev.sh build_be_prod.sh docker_hub_script.sh
+    - "./docker_hub_script.sh"
+  script:
+    - |
+      if [ "$CI_COMMIT_BRANCH" == "develop" ]; then
+        ./build_be_dev.sh
+      elif [ "$CI_COMMIT_BRANCH" == "production" ]; then
+        ./build_be_prod.sh
+      else
+        echo "Branch không được hỗ trợ cho build backend"
+        exit 1
+      fi
+  only:
+    - develop
+    - production
+
+build_imag_fe:
+  stage: build_fe
+  needs:
+    - build_image_be
+  image: docker:26.1.4
+  services:
+    - docker:26.1.4-dind
+  before_script:
+    - chmod a+x build_fe_dev.sh build_fe_prod.sh docker_hub_script.sh
+    - "./docker_hub_script.sh"
+  script:
+    - |
+      if [ "$CI_COMMIT_BRANCH" == "develop" ]; then
+        ./build_fe_dev.sh
+      elif [ "$CI_COMMIT_BRANCH" == "production" ]; then
+        ./build_fe_prod.sh
+      else
+        echo "Branch không được hỗ trợ cho backend"
+        exit 1
+      fi
+  only:
+    - develop
+    - production
+
+deploy-job:
+  stage: deploy
+  needs:
+    - build_imag_fe
+  environment: production
+  before_script:
+    - chmod a+x before_script.sh script_deploy_dev.sh script_deploy_prod.sh
+    - "./before_script.sh"
+#    - echo "$ID_RSA_PROD"
+    - echo "$ID_RSA_PROD" > id_rsa.pem
+    - chmod 400 id_rsa.pem
+  script:
+    - |
+      if [ "$CI_COMMIT_BRANCH" == "develop" ]; then
+        ./script_deploy_dev.sh
+      elif [ "$CI_COMMIT_BRANCH" == "production" ]; then
+        ./script_deploy_prod.sh
+      else
+        echo "Branch không được hỗ trợ cho backend"
+        exit 1
+      fi
+  only:
+    - develop
+    - production

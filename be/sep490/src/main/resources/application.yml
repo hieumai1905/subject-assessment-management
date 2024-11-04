@@ -1,0 +1,97 @@
+server:
+  port: ${SERVER_PORT:8080}
+  error:
+    include-message: always
+  servlet:
+    session:
+      cookie:
+        http-only: true
+        secure: true
+        max-age: 3600
+logging:
+  level:
+    ROOT: INFO
+    org.hibernate.SQL: INFO
+spring:
+  sql:
+    init:
+      platform: oracle
+      data-locations:
+        - classpath:script_sql/1_Role.sql
+        - classpath:script_sql/2_User.sql
+        - classpath:script_sql/3_Subject.sql
+        - classpath:script_sql/4_Assignment.sql
+        - classpath:script_sql/5_Evaluation_criteria.sql
+        - classpath:script_sql/6_Subject_teacher.sql
+        - classpath:script_sql/7_Classes.sql
+        - classpath:script_sql/8_Milestone.sql
+        - classpath:script_sql/9_Class_user.sql
+        - classpath:script_sql/10_Milestone_criteria.sql
+#      mode: always
+      mode: never
+  cors:
+    allowed-origins: "*"
+    allowed-methods: "GET, POST, PUT, DELETE, OPTIONS"
+    allowed-headers: "*"
+    allow-credentials: true
+    max-age: 3600
+  main:
+    allow-bean-definition-overriding: true
+  application:
+    name: sep490
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+    defer-datasource-initialization: true
+  security:
+    user:
+      name: user
+      password: password
+      roles: USER
+    jwt:
+      secret: mySecretKeymySecretKeymySecretKeymySecretKeymySecretKey
+      expirationMs: 36000000000
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: chunmail2305@gmail.com
+    password: eknkduhdllojbrfr
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+#Set up test using mail trap
+#  mail:
+#    host: sandbox.smtp.mailtrap.io
+#    port: 2525
+#    username: 193e618d37d403
+#    password: 8e296428cc8ad0
+#    properties:
+#      mail:
+#        smtp:
+#          auth: true
+#          starttls:
+#            enable: true
+
+  data:
+    jpa:
+      repositories:
+        enabled: true
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/postgres}
+    username: ${SPRING_DATASOURCE_USERNAME:postgres}
+    password: ${SPRING_DATASOURCE_PASSWORD:1905}
+    driver-class-name: org.postgresql.Driver
+
+myvalue:
+  active-account:
+    send-to-mail: ${SEND_TO_MAIL:http://localhost:8080/auth/verified-account?email=}
+    login-url: ${LOGIN_URL:http://localhost:3000/auth-login}
+

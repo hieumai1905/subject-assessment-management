@@ -1,0 +1,1 @@
+sshpass -p $SERVER_PASS ssh -i $ID_RSA -p 8282 -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "./script_deploy.sh"

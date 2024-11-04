@@ -1,0 +1,2 @@
+insert into public.subjects (active, created_by, created_date, updated_by, updated_date, description, subject_code, subject_name)
+values  (true, null, '2024-05-09 10:10:05.000000', null, '2024-05-09 10:10:05.000000', 'Application development project', 'SWP391', 'Application development project');

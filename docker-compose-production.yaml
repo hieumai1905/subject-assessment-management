@@ -1,0 +1,43 @@
+version: '2'
+
+services:
+  backend:
+    image: 'trung2305/sep490:be'
+    build:
+      context: ./be/sep490
+      dockerfile: Dockerfile
+    container_name: backend
+    ports:
+      - '9000:9000'
+    depends_on:
+      - db
+    environment:
+      - SPRING_DATASOURCE_URL=${POSTGRES_URL}
+      - SPRING_DATASOURCE_USERNAME=${POSTGRES_USER}
+      - SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD}
+      - SERVER_PORT=${SERVER_PORT}
+      - SEND_TO_MAIL=${SEND_TO_MAIL}
+      - LOGIN_URL=${LOGIN_URL}
+
+  frontend:
+    image: 'trung2305/sep490:fe'
+    build:
+      context: ./fe
+      dockerfile: Dockerfile
+    container_name: frontend
+    ports:
+      - '3000:80'
+    depends_on:
+      - backend
+
+  db:
+    image: 'postgres:latest'
+    container_name: postgres
+    restart: always
+    ports:
+      - '5432:5432'
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    volumes:
+      - /mnt/1.postgres

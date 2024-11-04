@@ -1,0 +1,10 @@
+insert into public.evaluation_criteria (active, created_by, created_date, updated_by, updated_date, criteria_name, eval_weight, guides, loc_evaluation, assignment_id)
+values  (true, null, '2024-07-21 23:02:36.377000', null, '2024-07-21 23:02:36.377000', 'Source Codes & Demo DB', 10, '- Source Codes & Demo DB: weight 10%', true, 1),
+        (true, null, '2024-07-21 23:02:36.379000', null, '2024-07-21 23:02:36.379000', 'RDS Document', 20, '- Requirement & Design Document (RDS Document): weight 20%', true, 1),
+        (true, null, '2024-07-21 23:02:36.379000', null, '2024-07-21 23:02:36.379000', 'Product', 70, '- Product (LOC based, based on the complexity & quality of the newly-created screens/functions): weight 70%', true, 1),
+        (true, null, '2024-07-21 23:03:43.061000', null, '2024-07-21 23:03:43.061000', 'Source Codes & Demo DB', 10, '- Source Codes & Demo DB: weight 10%', true, 2),
+        (true, null, '2024-07-21 23:03:43.061000', null, '2024-07-21 23:03:43.061000', 'RDS Document', 20, '- Requirement & Design Document (RDS Document): weight 20%', true, 2),
+        (true, null, '2024-07-21 23:03:43.063000', null, '2024-07-21 23:03:43.063000', 'Product', 70, '- Product (LOC based, based on the complexity & quality of the newly-created screens/functions): weight 70%', true, 2),
+        (true, null, '2024-07-21 23:04:41.618000', null, '2024-07-21 23:04:41.618000', 'Source Codes & Demo DB', 15, '- Source Codes & Demo DB: weight 15%', true, 3),
+        (true, null, '2024-07-21 23:04:41.618000', null, '2024-07-21 23:04:41.618000', 'RDS Document', 25, '- Requirement & Design Document (RDS Document): weight 25%', true, 3),
+        (true, null, '2024-07-21 23:04:41.619000', null, '2024-07-21 23:04:41.619000', 'Product', 60, '- Product (LOC based, based on the complexity & quality of all the completed screens/functions): weight 60%', true, 3);
