@@ -65,6 +65,7 @@ const SubjectList = () => {
     orderBy,
     setSubjects,
   });
+  const [isLoading, setIsLoading] = useState(false);
 
   const [users, setUsers] = useState([]);
   useEffect(() => {
@@ -105,6 +106,7 @@ const SubjectList = () => {
     managerIds: [],
     description: "",
     isActive: "Active",
+    isCouncil: false,
   });
   const [editFormData, setEditFormData] = useState({
     name: "",
@@ -112,6 +114,7 @@ const SubjectList = () => {
     managerIds: [],
     description: "",
     isActive: true,
+    isCouncil: false,
   });
 
   const resetForm = () => {
@@ -121,6 +124,7 @@ const SubjectList = () => {
       managerIds: [],
       description: "",
       isActive: "Active",
+      isCouncil: false,
     });
     setSelectedManager({
       fullname: "",
@@ -137,21 +141,22 @@ const SubjectList = () => {
     setModal({ edit: false });
     resetForm();
   };
-
   const onFormSubmit = async (sData) => {
-    const { name, code, managerIds, description, isActive } = sData;
+    const { name, code, managerIds, description, isActive, isCouncil } = sData;
     const submittedData = {
       subjectName: name,
       subjectCode: code,
       managers: managerIds?.map((manager) => ({ id: manager.value })),
       description: description,
       active: isActive === "Active",
+      isCouncil: isCouncil, // Thêm trường isCouncil
     };
-
+  
     try {
+      setIsLoading(true);
       const response = await authApi.post("/subjects/create", submittedData);
       if (response.data.statusCode === 200) {
-        toast.success("Create subject successfully!", {
+        toast.success("Tạo môn học thành công!", {
           position: toast.POSITION.TOP_CENTER,
         });
         setTotalElements(totalElements + 1);
@@ -164,16 +169,19 @@ const SubjectList = () => {
         });
       }
     } catch (error) {
-      console.error("Error creating subject:", error);
-      toast.error("Error creating subject!", {
+      console.error("Lỗi khi tạo môn học:", error);
+      toast.error("Lỗi khi tạo môn học!", {
         position: toast.POSITION.TOP_CENTER,
       });
+    } finally{
+      setIsLoading(false);
     }
   };
-
+  
   const onEditSubmit = async (sData) => {
-    const { name, code, managerIds, description, isActive } = sData;
+    const { name, code, managerIds, description, isActive, isCouncil } = sData;
     try {
+      setIsLoading(true);
       const response = await authApi.put("/subjects/update/" + editId, {
         id: editId,
         subjectName: name,
@@ -181,9 +189,10 @@ const SubjectList = () => {
         managers: managerIds?.map((manager) => ({ id: manager.value })),
         description: description,
         active: isActive === "Active",
+        isCouncil: isCouncil, // Thêm trường isCouncil
       });
       if (response.data.statusCode === 200) {
-        toast.success("Update subject successfully!", {
+        toast.success("Cập nhật môn học thành công!", {
           position: toast.POSITION.TOP_CENTER,
         });
         let submittedData = {
@@ -194,6 +203,7 @@ const SubjectList = () => {
           username: response.data?.data?.username,
           description: response.data?.data?.description,
           active: response.data?.data?.active,
+          isCouncil: response.data?.data?.isCouncil, // Cập nhật dữ liệu isCouncil
         };
         let index = subjects?.findIndex((item) => item.id === editId);
         subjects[index] = submittedData;
@@ -205,12 +215,16 @@ const SubjectList = () => {
         });
       }
     } catch (error) {
-      console.error("Error update subject:", error);
-      toast.error("Error update subject!", {
+      console.error("Lỗi khi cập nhật môn học:", error);
+      toast.error("Lỗi khi cập nhật môn học!", {
         position: toast.POSITION.TOP_CENTER,
       });
+    } finally{
+      setIsLoading(false);
     }
   };
+  
+  
 
   const onEditClick = (id) => {
     subjects?.forEach((item) => {
@@ -221,12 +235,14 @@ const SubjectList = () => {
           managerIds: transformToOptions(item.managers),
           description: item.description === null ? "" : item.description,
           isActive: item.active ? "Active" : "InActive",
+          isCouncil: item.isCouncil, // Thêm trường isCouncil
         });
         setModal({ edit: true });
         setEditedId(id);
       }
     });
   };
+  
 
   const handleSort = (sortField) => {
     setSortBy(sortField);
@@ -240,13 +256,13 @@ const SubjectList = () => {
 
   return (
     <>
-      <Head title="Subject List"></Head>
+      <Head title="Danh sách môn học"></Head>
       <Content>
         <BlockHead size="sm">
           <BlockBetween>
             <BlockHeadContent>
-              <BlockTitle page>Subjects</BlockTitle>
-              <BlockDes className="text-soft">You have total {totalElements} subjects</BlockDes>
+              <BlockTitle page>Môn học</BlockTitle>
+              <BlockDes className="text-soft">Có tổng cộng {totalElements} môn học</BlockDes>
             </BlockHeadContent>
             <BlockHeadContent>
               <div className="toggle-wrap nk-block-tools-toggle">
@@ -262,12 +278,12 @@ const SubjectList = () => {
                       <UncontrolledDropdown>
                         <DropdownToggle tag="a" className="dropdown-toggle btn btn-white btn-dim btn-outline-light">
                           <Icon name="filter-alt" className="d-none d-sm-inline"></Icon>
-                          <span>Filtered By</span>
+                          <span>Bộ lọc</span>
                           <Icon name="chevron-right" className="dd-indc"></Icon>
                         </DropdownToggle>
                         <DropdownMenu end className="filter-wg dropdown-menu-xl" style={{ overflow: "visible" }}>
                           <div className="dropdown-head">
-                            <span className="sub-title dropdown-title">Filter Setting</span>
+                            <span className="sub-title dropdown-title">Lọc môn học</span>
                             <div className="dropdown">
                               <a
                                 href="#more"
@@ -284,11 +300,11 @@ const SubjectList = () => {
                             <Row className="gx-6 gy-3">
                               <Col size="12">
                                 <div className="form-group">
-                                  <label className="form-label">Name Or Code</label>
+                                  <label className="form-label">Tên hoặc mã môn học</label>
                                   <input
                                     type="text"
                                     value={filterFormData.nameOrCode}
-                                    placeholder="Enter subject name or code"
+                                    placeholder="Nhập tên hoặc mã môn học"
                                     onChange={(e) =>
                                       setFilterFormData({ ...filterFormData, nameOrCode: e.target.value })
                                     }
@@ -298,7 +314,7 @@ const SubjectList = () => {
                               </Col>
                               <Col size="12">
                                 <div className="form-group">
-                                  <label className="form-label">Manager</label>
+                                  <label className="form-label">Người quản lý</label>
                                   <RSelect
                                     options={
                                       Array.isArray(users)
@@ -323,7 +339,7 @@ const SubjectList = () => {
                               </Col>
                               <Col size="12">
                                 <div className="form-group">
-                                  <label className="form-label">Status</label>
+                                  <label className="form-label">Trạng thái</label>
                                   <Row>
                                     <Col md={6}>
                                       <div className="custom-control custom-radio">
@@ -339,7 +355,7 @@ const SubjectList = () => {
                                           }
                                         />
                                         <label className="custom-control-label" htmlFor="customRadio1">
-                                          Active
+                                          Hoạt động
                                         </label>
                                       </div>
                                     </Col>
@@ -357,7 +373,7 @@ const SubjectList = () => {
                                           }
                                         />
                                         <label className="custom-control-label" htmlFor="customRadio2">
-                                          InActive
+                                          Không hoạt động
                                         </label>
                                       </div>
                                     </Col>
@@ -384,7 +400,7 @@ const SubjectList = () => {
                               }}
                               className="clickable"
                             >
-                              Reset Filter
+                              Đặt lại bộ lọc
                             </a>
                             <button
                               onClick={() => {
@@ -393,7 +409,7 @@ const SubjectList = () => {
                               settingType="button"
                               className="btn btn-secondary"
                             >
-                              Filter
+                              Lọc
                             </button>
                           </div>
                         </DropdownMenu>
@@ -412,7 +428,7 @@ const SubjectList = () => {
                       >
                         <Button color="primary">
                           <Icon name="plus"></Icon>
-                          <span>Add Subject</span>
+                          <span>Thêm mới</span>
                         </Button>
                       </li>
                     )}
@@ -432,7 +448,7 @@ const SubjectList = () => {
                     className="sub-text"
                     style={{ fontWeight: "bold", cursor: "pointer" }}
                   >
-                    ID {sortBy === "id" ? (orderBy === "asc" ? "↑" : "↓") : ""}
+                    # {sortBy === "id" ? (orderBy === "asc" ? "↑" : "↓") : ""}
                   </span>
                 </DataTableRow>
                 <DataTableRow>
@@ -441,7 +457,7 @@ const SubjectList = () => {
                     className="sub-text"
                     style={{ fontWeight: "bold", cursor: "pointer" }}
                   >
-                    Name {sortBy === "subjectName" ? (orderBy === "asc" ? "↑" : "↓") : ""}
+                    Tên môn học {sortBy === "subjectName" ? (orderBy === "asc" ? "↑" : "↓") : ""}
                   </span>
                 </DataTableRow>
                 <DataTableRow>
@@ -450,20 +466,20 @@ const SubjectList = () => {
                     className="sub-text"
                     style={{ fontWeight: "bold", cursor: "pointer" }}
                   >
-                    Code {sortBy === "subjectCode" ? (orderBy === "asc" ? "↑" : "↓") : ""}
+                    Mã môn học {sortBy === "subjectCode" ? (orderBy === "asc" ? "↑" : "↓") : ""}
                   </span>
                 </DataTableRow>
                 <DataTableRow>
-                  <span style={{ fontWeight: "bold" }}>Managers</span>
+                  <span style={{ fontWeight: "bold" }}>Người quản lý</span>
                 </DataTableRow>
                 <DataTableRow>
                   <span className="sub-text" style={{ fontWeight: "bold" }}>
-                    Status
+                    Trạng thái
                   </span>
                 </DataTableRow>
                 <DataTableRow className="nk-tb-col-tools text-end">
                   <span className="sub-text" style={{ fontWeight: "bold" }}>
-                    Action
+                    Hành động
                   </span>
                 </DataTableRow>
               </DataTableHead>
@@ -494,14 +510,14 @@ const SubjectList = () => {
                               </span>
                             ))
                           ) : (
-                            <span>None</span>
+                            <span>-</span>
                           )}
-                          {item.managers.length > 2 && <span>+{item.managers.length - 2} more</span>}
+                          {item.managers.length > 2 && <span>+{item.managers.length - 2} thêm</span>}
                         </span>
                       </DataTableRow>
 
                       <DataTableRow>
-                        <Badge color={item.active ? "success" : "danger"}>{item.active ? "Active" : "Inactive"}</Badge>
+                        <Badge color={item.active ? "success" : "danger"}>{item.active ? "Hoạt động" : "Không Hoạt động"}</Badge>
                       </DataTableRow>
                       <DataTableRow className="nk-tb-col-tools text-end">
                         <ul className="nk-tb-actions gx-1">
@@ -522,14 +538,14 @@ const SubjectList = () => {
                                         }}
                                       >
                                         <Icon name="edit"></Icon>
-                                        <span>Edit</span>
+                                        <span>Sửa</span>
                                       </DropdownItem>
                                     </li>
                                   )}
                                   <li>
                                     <Link to={`/subject-manage/subject-detail/${item.id}`}>
                                       <Icon name="eye-fill" />
-                                      <span>View</span>
+                                      <span>Chi tiết</span>
                                     </Link>
                                   </li>
                                 </ul>
@@ -542,7 +558,7 @@ const SubjectList = () => {
                   );
                 })
               ) : (
-                <div className="text-center">No subjects found</div>
+                <div className="text-center">Không tìm thấy môn học nào</div>
               )}
             </DataTableBody>
             <div className="card-inner">
@@ -566,6 +582,7 @@ const SubjectList = () => {
           users={users}
           closeModal={closeModal}
           onSubmit={onFormSubmit}
+          isLoading={isLoading}
         />
         <FormModal
           modal={modal.edit}
@@ -575,6 +592,7 @@ const SubjectList = () => {
           users={users}
           closeModal={closeEditModal}
           onSubmit={onEditSubmit}
+          isLoading={isLoading}
         />
         <ToastContainer />
       </Content>

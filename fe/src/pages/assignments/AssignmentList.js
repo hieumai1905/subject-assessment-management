@@ -81,14 +81,14 @@ export const AssignmentList = ({ subject }) => {
   const [formErrors, setFormErrors] = useState({});
   const [formData, setFormData] = useState({
     title: "",
-    expectedLoc: "",
+    expectedLoc: 1,
     evalWeight: "",
     note: "",
     active: "Active",
   });
   const [editFormData, setEditFormData] = useState({
     title: "",
-    expectedLoc: "",
+    expectedLoc: 1,
     evalWeight: "",
     note: "",
     active: "",
@@ -98,7 +98,7 @@ export const AssignmentList = ({ subject }) => {
   const resetForm = () => {
     setFormData({
       title: "",
-      expectedLoc: "",
+      expectedLoc: 1,
       evalWeight: "",
       note: "",
       active: "Active",
@@ -119,35 +119,50 @@ export const AssignmentList = ({ subject }) => {
   // submit function to add a new item
   const onFormSubmit = async (sData) => {
     setIsFetching({ ...isFetching, updateList: true });
-    let normal = 0, final = 0, grandFinal = 0;
+    let normal = 0,
+      final = 0,
+      grandFinal = 0, totalWeight = 0;
+   
     const updatedAssignmentsForm = assignments.map((assignment) => {
-      if(assignment.typeEvaluator === evaluationTypes[0].value)
-        normal++;
-      else if(assignment.typeEvaluator === evaluationTypes[1].value)
-        final++;
-      else if(assignment.typeEvaluator === evaluationTypes[2].value)
-        grandFinal++;
+      totalWeight += assignment?.active ? assignment.evalWeight : 0;
+      if (assignment.evaluationType === evaluationTypes[0].value) normal++;
+      else if (assignment.evaluationType === evaluationTypes[1].value) final++;
+      else if (assignment.evaluationType === evaluationTypes[2].value) grandFinal++;
       if (typeof assignment.id === "string") {
-        return { ...assignment, id: null };
+        return { ...assignment, id: null};
       }
-      return assignment;
+      return { ...assignment};
     });
-    if(grandFinal === 0 || final === 0 || normal === 0){
-      toast.error(`Assignment type must have one Grand Final, one Final and at least one Normal`, {
+    if(totalWeight !== 100){
+      toast.error(`Tổng tỷ trọng các bài kiểm tra đang hoạt động phải bằng 100%`, {
         position: toast.POSITION.TOP_CENTER,
       });
       setIsFetching({ ...isFetching, updateList: false });
       return;
     }
-    console.log(updatedAssignmentsForm);
+    if (final === 0 || normal === 0) {
+      toast.error(`Bài kiểm tra cần có 1 loại đánh giá cuối kỳ, ít nhất 1 loại đánh giá thông thường`, {
+        position: toast.POSITION.TOP_CENTER,
+      });
+      setIsFetching({ ...isFetching, updateList: false });
+      return;
+    }
+    if (subject?.isCouncil && grandFinal === 0) {
+      toast.error(`Bài kiểm tra cần có 1 loại đánh giá hội đồng`, {
+        position: toast.POSITION.TOP_CENTER,
+      });
+      setIsFetching({ ...isFetching, updateList: false });
+      return;
+    }
+    console.log("cd", updatedAssignmentsForm);
     try {
       const response = await authApi.put("/assignment/update-list", {
         subjectId: subject?.id,
         assignmentList: updatedAssignmentsForm,
       });
-      console.log("update assignments:", response.data.data);
+      console.log("Cập nhật bài kiểm tra:", response.data.data);
       if (response.data.statusCode === 200) {
-        toast.success("Update assignments successfully!", {
+        toast.success("Cập nhật bài kiểm tra thành công!", {
           position: toast.POSITION.TOP_CENTER,
         });
         setReload(!reload);
@@ -158,8 +173,8 @@ export const AssignmentList = ({ subject }) => {
       }
       setIsFetching({ ...isFetching, updateList: false });
     } catch (error) {
-      console.error("Error updating assignments:", error);
-      toast.error("Error updating assignments!", {
+      console.error("Lỗi khi cập nhật bài kiểm tra:", error);
+      toast.error("Lỗi khi cập nhật bài kiểm tra!", {
         position: toast.POSITION.TOP_CENTER,
       });
       setIsFetching({ ...isFetching, updateList: false });
@@ -256,20 +271,22 @@ export const AssignmentList = ({ subject }) => {
 
   return (
     <>
-      {(loading || loadings) && (
-        <div className="d-flex justify-content-center">
-          <Spinner style={{ width: "3rem", height: "3rem" }} />
-        </div>
-      )}
-      <Head title="Assignment List"></Head>
+      <Head title="Danh sách bài kiểm tra"></Head>
       <Content>
         <Block>
-          <AssignmentsDatagrid
-            assignments={assignments}
-            setAssignments={setAssignments}
-            onSubmit={onFormSubmit}
-            isFetching={isFetching}
-          />
+          {loading || loadings ? (
+            <div className="d-flex justify-content-center">
+              <Spinner style={{ width: "3rem", height: "3rem" }} />
+            </div>
+          ) : (
+            <AssignmentsDatagrid
+              subject={subject}
+              assignments={assignments}
+              setAssignments={setAssignments}
+              onSubmit={onFormSubmit}
+              isFetching={isFetching}
+            />
+          )}
         </Block>
       </Content>
     </>

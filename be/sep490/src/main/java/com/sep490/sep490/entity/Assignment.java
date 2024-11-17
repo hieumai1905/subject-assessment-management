@@ -28,8 +28,8 @@ public class Assignment extends BaseEntity {
     private String note;
     @Column(name = "display_order")
     private Integer displayOrder;
-    @Column(name = "is_create_team")
-    private Boolean isCreateTeam;
+    @Column(name = "evaluation_type")
+    private String evaluationType;
 
     @ManyToOne
     @EqualsAndHashCode.Exclude

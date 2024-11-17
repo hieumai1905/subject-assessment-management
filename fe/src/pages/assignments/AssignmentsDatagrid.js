@@ -23,7 +23,7 @@ import { canModify } from "../../utils/CheckPermissions";
 import { formatDate } from "../../utils/Utils";
 import FormModal from "./FormModal";
 import { evaluationTypes } from "../../data/ConstantData";
-import AssignmentIcon from '@mui/icons-material/Assignment';
+import AssignmentIcon from "@mui/icons-material/Assignment";
 import ViewDetailModal from "./ViewDetailModal";
 
 const roles = ["Market", "Finance", "Development"];
@@ -51,13 +51,13 @@ function EditToolbar(props) {
   return (
     <GridToolbarContainer>
       <Button color="primary" startIcon={<AddIcon />} onClick={handleClick}>
-        Add Assignment
+        Thêm mới
       </Button>
     </GridToolbarContainer>
   );
 }
 
-export default function AssignmentsDatagrid({ assignments, setAssignments, onSubmit, isFetching }) {
+export default function AssignmentsDatagrid({ assignments, setAssignments, subject, onSubmit, isFetching }) {
   const [rowModesModel, setRowModesModel] = React.useState({});
   const { role } = useAuthStore((state) => state);
   const [id, setId] = React.useState();
@@ -65,7 +65,7 @@ export default function AssignmentsDatagrid({ assignments, setAssignments, onSub
     title: "",
     evalWeight: 1,
     expectedLoc: 1,
-    typeEvaluator: null,
+    evaluationType: null,
     displayOrder: 1,
     active: "Active",
     note: "",
@@ -82,7 +82,6 @@ export default function AssignmentsDatagrid({ assignments, setAssignments, onSub
   };
 
   const handleEditClick = (id) => () => {
-    // setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.Edit } });
     setId(id);
     let updateAsm = assignments.find((item) => item.id === id);
     setUpdateData({
@@ -90,7 +89,7 @@ export default function AssignmentsDatagrid({ assignments, setAssignments, onSub
       title: updateAsm.title,
       evalWeight: updateAsm.evalWeight,
       expectedLoc: updateAsm.expectedLoc,
-      typeEvaluator: evaluationTypes.find(item => item.value === updateAsm.typeEvaluator),
+      evaluationType: evaluationTypes.find((item) => item.value === updateAsm.evaluationType),
       displayOrder: updateAsm.displayOrder,
       active: updateAsm.active ? "Active" : "InActive",
       note: updateAsm.note,
@@ -104,14 +103,13 @@ export default function AssignmentsDatagrid({ assignments, setAssignments, onSub
   };
 
   const handleDeleteClick = (id) => () => {
-    // eslint-disable-next-line no-restricted-globals
-    if (confirm("Are you sure you want to delete this criteria?") === true)
+    if (confirm("Bạn có chắc chắn muốn xóa bài kiểm tra này?") === true)
       setAssignments(assignments.filter((row) => row.id !== id));
   };
 
   const handleDetailClick = (id) => {
     if (typeof id === "string") {
-      toast.info("This assignemnt is not added to system!", { position: "top-center" });
+      toast.info("Bài kiểm tra này chưa được thêm vào hệ thống!", { position: "top-center" });
       return false;
     }
     setId(id);
@@ -121,7 +119,7 @@ export default function AssignmentsDatagrid({ assignments, setAssignments, onSub
       title: updateAsm.title,
       evalWeight: updateAsm.evalWeight,
       expectedLoc: updateAsm.expectedLoc,
-      typeEvaluator: evaluationTypes.find(item => item.value === updateAsm.typeEvaluator),
+      evaluationType: evaluationTypes.find((item) => item.value === updateAsm.evaluationType),
       displayOrder: updateAsm.displayOrder,
       active: updateAsm.active ? "Active" : "InActive",
       note: updateAsm.note,
@@ -153,52 +151,52 @@ export default function AssignmentsDatagrid({ assignments, setAssignments, onSub
   };
 
   const columns = [
-    { field: "title", headerName: "Title", width: 170, editable: false },
+    { field: "title", headerName: "Tiêu đề", width: 200, editable: false },
     {
       field: "evalWeight",
-      headerName: "Weight (%)",
+      headerName: "Trọng số (%)",
       type: "number",
-      width: 80,
+      width: 100,
       align: "right",
       headerAlign: "left",
       editable: false,
     },
+    // {
+    //   field: "expectedLoc",
+    //   headerName: "Dự kiến LOC",
+    //   type: "number",
+    //   width: 160,
+    //   editable: false,
+    // },
     {
-      field: "expectedLoc",
-      headerName: "Expected LOC",
-      type: "number",
-      width: 160,
-      editable: false,
-    },
-    {
-      field: "typeEvaluator",
-      headerName: "Type",
+      field: "evaluationType",
+      headerName: "Loại đánh giá",
       width: 180,
       editable: false,
+      valueGetter: (params) => {
+        const evaluation = evaluationTypes.find(
+          (type) => type.value === params
+        );
+        return evaluation ? evaluation?.label : "Không xác định";
+      },
     },
     // {
     //   field: "displayOrder",
-    //   headerName: "Priority",
-    //   type: "number",
-    //   width: 80,
+    //   headerName: "Thứ tự xuất hiện",
+    //   width: 140,
     //   editable: false,
+    //   type: "number",
     // },
     {
       field: "active",
-      headerName: "Active",
-      width: 80,
+      headerName: "Trạng thái",
+      width: 100,
       editable: false,
       type: "boolean",
     },
-    // {
-    //   field: "note",
-    //   headerName: "Note",
-    //   width: 320,
-    //   editable: false,
-    // },
     {
       field: "updatedDate",
-      headerName: "Last Update",
+      headerName: "Cập nhật lần cuối",
       width: 140,
       valueFormatter: (params) => {
         return formatDate(params);
@@ -207,7 +205,7 @@ export default function AssignmentsDatagrid({ assignments, setAssignments, onSub
     {
       field: "actions",
       type: "actions",
-      headerName: "Actions",
+      headerName: "Hành động",
       width: 120,
       cellClassName: "actions",
       getActions: ({ id }) => {
@@ -217,7 +215,7 @@ export default function AssignmentsDatagrid({ assignments, setAssignments, onSub
           // return [
           //   <GridActionsCellItem
           //     icon={<SaveIcon />}
-          //     label="Save"
+          //     label="Lưu"
           //     sx={{
           //       color: "primary.main",
           //     }}
@@ -225,7 +223,7 @@ export default function AssignmentsDatagrid({ assignments, setAssignments, onSub
           //   />,
           //   <GridActionsCellItem
           //     icon={<CancelIcon />}
-          //     label="Cancel"
+          //     label="Hủy"
           //     className="textPrimary"
           //     onClick={handleCancelClick(id)}
           //     color="inherit"
@@ -236,22 +234,17 @@ export default function AssignmentsDatagrid({ assignments, setAssignments, onSub
           ? [
               <GridActionsCellItem
                 icon={<EditIcon />}
-                label="Edit"
+                label="Chỉnh sửa"
                 className="textPrimary"
                 onClick={handleEditClick(id)}
                 color="inherit"
               />,
-              <GridActionsCellItem
-                icon={<DeleteIcon />}
-                label="Delete"
-                onClick={handleDeleteClick(id)}
-                color="inherit"
-              />,
+              <GridActionsCellItem icon={<DeleteIcon />} label="Xóa" onClick={handleDeleteClick(id)} color="inherit" />,
             ]
           : [
               <GridActionsCellItem
-                icon={<AssignmentIcon title="Details" />}
-                label="Details"
+                icon={<AssignmentIcon title="Chi tiết" />}
+                label="Chi tiết"
                 onClick={() => handleDetailClick(id)}
                 color="inherit"
               />,
@@ -268,14 +261,14 @@ export default function AssignmentsDatagrid({ assignments, setAssignments, onSub
           <BlockBetween>
             <BlockHeadContent>
               <BlockDes className="text-warning fw-bold">
-                {/* All changes will only be saved to the system when you click the Save Changes button. */}
+                {/* Tất cả thay đổi sẽ chỉ được lưu vào hệ thống khi bạn nhấn nút Lưu thay đổi. */}
               </BlockDes>
             </BlockHeadContent>
             <BlockHeadContent>
               {isFetching.updateList ? (
                 <Spinner color="primary" />
               ) : (
-                <Button onClick={() => onSubmit()}>Save Changes</Button>
+                <Button onClick={() => onSubmit()}>Lưu thay đổi</Button>
               )}
             </BlockHeadContent>
           </BlockBetween>
@@ -302,18 +295,12 @@ export default function AssignmentsDatagrid({ assignments, setAssignments, onSub
           onRowEditStop={handleRowEditStop}
           processRowUpdate={processRowUpdate}
           pageSizeOptions={[]}
-          // slots={{
-          //   toolbar: EditToolbar,
-          // }}
           slots={canModify(role, "assignment", "crud") ? { toolbar: EditToolbar } : {}}
           slotProps={
             canModify(role, "assignment", "crud")
               ? { toolbar: { setAssignments, setRowModesModel, modal, setModal, setId } }
               : {}
           }
-          // slotProps={{
-          //   toolbar: { setAssignments, setRowModesModel },
-          // }}
         />
       </Box>
       <FormModal
@@ -323,6 +310,7 @@ export default function AssignmentsDatagrid({ assignments, setAssignments, onSub
         modalType="add"
         assignments={assignments}
         setAssignments={setAssignments}
+        subject={subject}
       />
       {modal?.edit && (
         <FormModal
@@ -333,15 +321,10 @@ export default function AssignmentsDatagrid({ assignments, setAssignments, onSub
           assignments={assignments}
           setAssignments={setAssignments}
           updateData={updateData}
+          subject={subject}
         />
       )}
-      {modal?.detail && (
-        <ViewDetailModal
-          modal={modal.detail}
-          setModal={setModal}
-          updateData={updateData}
-        />
-      )}
+      {modal?.detail && <ViewDetailModal modal={modal.detail} setModal={setModal} updateData={updateData} />}
     </PreviewCard>
   );
 }

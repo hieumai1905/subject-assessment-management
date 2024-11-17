@@ -7,6 +7,7 @@ import com.sep490.sep490.common.exception.RecordNotFoundException;
 import com.sep490.sep490.common.exception.UnauthorizedException;
 import com.sep490.sep490.common.utils.Constants;
 import com.sep490.sep490.common.utils.ConvertUtils;
+import com.sep490.sep490.common.utils.FileUtils;
 import com.sep490.sep490.common.utils.GenerateString;
 import com.sep490.sep490.config.security_config.jwt.JwtUserDetailsService;
 import com.sep490.sep490.config.security_config.jwt.JwtUtil;
@@ -44,8 +45,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.UnsupportedEncodingException;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
@@ -60,6 +63,7 @@ public class UserService implements BaseService<User, Integer> {
     private final UserMapper userMapper;
     private final JavaMailSender mailSender;
     private final FirebaseStorageService firebaseStorageService;
+    private final ImgurService imgurService;
     @Value("${myvalue.active-account.send-to-mail}")
     private String sendToMail;
     @Value("${myvalue.active-account.login-url}")
@@ -168,10 +172,10 @@ public class UserService implements BaseService<User, Integer> {
         }
         // Find user by username
 //        var username = StringUtils.substringBefore(request.getEmail(), "@");
-        var foundUserByUsername = userRepository.findByUsername(request.getEmail());
-        if (foundUserByUsername != null) {
-            throw new NameAlreadyExistsException("Username");
-        }
+//        var foundUserByUsername = userRepository.findByUsername(request.getEmail());
+//        if (foundUserByUsername != null) {
+//            throw new NameAlreadyExistsException("Username");
+//        }
         // Find user by email
         var foundUserByEmail = userRepository.findFirstByEmail(request.getEmail());
         if (foundUserByEmail != null) {
@@ -185,9 +189,49 @@ public class UserService implements BaseService<User, Integer> {
         var userRole = settingRepository.findById(request.getRoleId()).orElseThrow();
         var saveUser = userMapper.convertCrateUserRequestToUser(request, userRole);
         saveUser.setPassword(passwordEncoder.encode(rawPassword));
+        saveUser.setCode(userRole.getId().equals(Constants.Role.STUDENT) ? generateCode() : "");
         userRepository.save(saveUser);
-        sendEmailPass(saveUser.getEmail(), rawPassword);
+//        sendEmailPass(saveUser.getEmail(), rawPassword);
         return ConvertUtils.convert(saveUser, UserDTO.class);
+    }
+
+    public String generateCode() {
+        LocalDate currentDate = LocalDate.now();
+
+        // Lấy tháng và năm hiện tại
+        int month = currentDate.getMonthValue();
+        int year = currentDate.getYear();
+
+        // Chuyển đổi tháng thành mã hai ký tự
+        String monthCode;
+        switch (month) {
+            case 1:  monthCode = "JA"; break;
+            case 2:  monthCode = "FE"; break;
+            case 3:  monthCode = "MR"; break;
+            case 4:  monthCode = "AP"; break;
+            case 5:  monthCode = "MY"; break;
+            case 6:  monthCode = "JN"; break;
+            case 7:  monthCode = "JL"; break;
+            case 8:  monthCode = "AU"; break;
+            case 9:  monthCode = "SE"; break;
+            case 10: monthCode = "OC"; break;
+            case 11: monthCode = "NO"; break;
+            case 12: monthCode = "DE"; break;
+            default: throw new IllegalStateException("Invalid month value: " + month);
+        }
+
+        // Lấy hai chữ số cuối của năm hiện tại
+        String yearCode = String.valueOf(year).substring(2);
+
+        // Tìm mã sinh viên cuối cùng với cùng tháng và năm trong DB
+        Optional<String> latestCode = userRepository.findLatestCodeByMonthAndYear(monthCode, yearCode);
+
+        // Nếu có mã, lấy 4 chữ số cuối, tăng lên 1, và định dạng thành 4 chữ số
+        int newSerialNumber = latestCode.map(code -> Integer.parseInt(code.substring(4)) + 1).orElse(1);
+        String serialNumber = String.format("%04d", newSerialNumber);
+
+        // Tạo mã sinh viên
+        return monthCode + yearCode + serialNumber;
     }
 
     public CheckPassForgotResponse checkInputCodeForgotPass(CheckPassForgotRequest request) {
@@ -239,30 +283,25 @@ public class UserService implements BaseService<User, Integer> {
     }
 
     @Transactional
-    public Object updateUser(Integer id, Object objectRequest) {
+    public Object updateUser(Integer id, Object objectRequest, MultipartFile file) {
         // Check current user
         log.info("Update user with id: " + id);
-        var currentUser = getCurrentUser();
-        if (!(Objects.equals(currentUser.getId(), id))) {
-            throw new UnauthorizedException("Permission denied!");
-        }
+//        var currentUser = getCurrentUser();
+//        if (!(Objects.equals(currentUser.getId(), id))) {
+//            throw new UnauthorizedException("Permission denied!");
+//        }
         var request = (UserDTO) objectRequest;
         request.validateInput();
         // Handle logic
         var foundUser = userRepository.findById(id).orElseThrow(
-                () -> new RecordNotFoundException("User"));
+                () -> new RecordNotFoundException("Người dùng"));
         var foundUserExitedByEmail = userRepository.findExitedEmailForUpdateUser(
                 id, request.getEmail()
         );
         if (foundUserExitedByEmail != null){
-            throw new NameAlreadyExistsException("User Email");
+            throw new NameAlreadyExistsException("Email");
         }
-//        var foundUserExitedByUsername = userRepository.findExitedUsernameForUpdateUser(
-//                id, request.getUsername()
-//        );
-//        if (foundUserExitedByUsername != null){
-//            throw new NameAlreadyExistsException("Username");
-//        }
+        request.setAvatar_url(file != null ? imgurService.uploadImageToImgur(file) : foundUser.getAvatar_url());
         var updateUser = userMapper.convertUpdateUserDtoToUser(request, foundUser);
         userRepository.save(updateUser);
         return ConvertUtils.convert(updateUser, UserDTO.class);

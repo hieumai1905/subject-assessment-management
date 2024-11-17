@@ -8,6 +8,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class NameAlreadyExistsException extends RuntimeException {
 
     public NameAlreadyExistsException(String field) {
-        super(field + " is already existed!");
+        super(field + " đã tồn tại!");
     }
 }

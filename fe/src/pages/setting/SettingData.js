@@ -2,12 +2,12 @@
 export const settingData = [];
 
 export const settingTypeList = [
-  { value: "Role", label: "Role", theme: "purple" },
+  { value: "Role", label: "Vai trò", theme: "purple" },
   { value: "Email", label: "Email", theme: "primary" },
-  { value: "Semester", label: "Semester", theme: "purple" },
+  { value: "Semester", label: "Học kỳ", theme: "purple" },
   // { value: "ClassRole", label: "ClassRole", theme: "purple" },
 ];
 export const statusList = [
-  { value: "Active", label: "Active", theme: "purple" },
-  { value: "InActive", label: "InActive", theme: "primary" },
+  { value: "Active", label: "Hoạt động", theme: "purple" },
+  { value: "InActive", label: "Không hoạt động", theme: "primary" },
 ];

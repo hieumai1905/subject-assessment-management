@@ -29,8 +29,6 @@ public class UserMapper {
         oldUser.setUsername(oldUser.getUsername());
         oldUser.setId(oldUser.getId());
         oldUser.setNote(oldUser.getNote());
-        oldUser.setPassword(oldUser.getPassword());
-        oldUser.setRole(oldUser.getRole());
         return oldUser;
     }
 
@@ -72,6 +70,8 @@ public class UserMapper {
         response.setUsername(request.getEmail());
         response.setStatus(Constants.UserStatus.VERIFIED);
         response.setRole(role);
+        response.setGender(request.getGender());
+        response.setNote(request.getNote());
         return response;
     }
 }

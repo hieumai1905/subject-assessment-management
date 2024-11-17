@@ -48,9 +48,9 @@ class AssignmentServiceTest {
         request.setSubjectId(1);
         request.setAssignmentList(List.of(
                 AssignmentRequest.builder().id(1).title("Asm 1")
-                        .typeEvaluator(Constants.TypeAssignments.NORMAL).evalWeight(50).expectedLoc(50).build(),
+                        .evaluationType(Constants.TypeAssignments.NORMAL).evalWeight(50).expectedLoc(50).build(),
                 AssignmentRequest.builder().id(2).title("Asm 2")
-                        .typeEvaluator(Constants.TypeAssignments.NORMAL).evalWeight(50).expectedLoc(50).build()
+                        .evaluationType(Constants.TypeAssignments.NORMAL).evalWeight(50).expectedLoc(50).build()
         ));
     }
 
@@ -125,12 +125,12 @@ class AssignmentServiceTest {
                 .id(1)
                 .note("").title("asm1").expectedLoc(350).active(true)
                 .evalWeight(70)
-                .typeEvaluator(Constants.TypeAssignments.NORMAL)
+                .evaluationType(Constants.TypeAssignments.NORMAL)
                 .build();
         AssignmentRequest assignmentRequest2 = AssignmentRequest
                 .builder()
                 .id(2)
-                .typeEvaluator(Constants.TypeAssignments.NORMAL)
+                .evaluationType(Constants.TypeAssignments.NORMAL)
                 .note("").title("asm2").expectedLoc(350).active(true)
                 .evalWeight(30)
                 .build();

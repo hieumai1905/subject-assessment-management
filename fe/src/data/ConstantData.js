@@ -49,11 +49,11 @@ export const settingTypeData = [
 export const statusList = [
   {
     value: true,
-    label: "Active",
+    label: "Hoạt Động",
   },
   {
     value: false,
-    label: "InActive",
+    label: "Không hoạt động",
   },
 ];
 
@@ -129,7 +129,7 @@ export const bulkActionOptions = [
 ];
 
 export const evaluationTypes = [
-  { value: "Normal", label: "Normal"},
-  { value: "Final", label: "Final"},
-  { value: "Grand Final", label: "Grand Final"},
+  { value: "Normal", label: "Thông thường"},
+  { value: "Final", label: "Cuối kỳ"},
+  { value: "Grand Final", label: "Hội đồng"},
 ]

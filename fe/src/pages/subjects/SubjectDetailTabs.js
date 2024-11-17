@@ -42,7 +42,7 @@ export default function SubjectDetailTabs() {
           });
         }
       } catch {
-        toast.error("Error while getting subject", {
+        toast.error("Lỗi khi lấy thông tin môn học", {
           position: toast.POSITION.TOP_CENTER,
         });
       } finally {
@@ -64,17 +64,17 @@ export default function SubjectDetailTabs() {
 
   return (
     <>
-      <Head title="Subject Detail"></Head>
+      <Head title="Chi Tiết Môn Học"></Head>
       <Content>
         <BlockHead size="sm">
           <BlockBetween>
             <BlockHeadContent>
-              <BlockTitle page> Subject Details</BlockTitle>
+              <BlockTitle page> Chi Tiết Môn Học</BlockTitle>
             </BlockHeadContent>
             <BlockHeadContent>
               <Button color="primary" outline className="d-none d-sm-inline-flex" onClick={() => navigate(-1)}>
                 <Icon name="arrow-left"></Icon>
-                <span>Back</span>
+                <span>Quay lại</span>
               </Button>
             </BlockHeadContent>
           </BlockBetween>
@@ -91,7 +91,7 @@ export default function SubjectDetailTabs() {
                   toggle("1");
                 }}
               >
-                General
+                Thông tin chung
               </NavLink>
             </NavItem>
             <NavItem>
@@ -104,7 +104,7 @@ export default function SubjectDetailTabs() {
                   toggle("2");
                 }}
               >
-                Assignment
+                Bài kiểm tra
               </NavLink>
             </NavItem>
             <NavItem>
@@ -117,7 +117,7 @@ export default function SubjectDetailTabs() {
                   toggle("3");
                 }}
               >
-                Evaluation Criteria
+                Tiêu Chí Đánh Giá
               </NavLink>
             </NavItem>
             <NavItem>
@@ -130,7 +130,7 @@ export default function SubjectDetailTabs() {
                   toggle("4");
                 }}
               >
-                Setting
+                Cài Đặt
               </NavLink>
             </NavItem>
             <NavItem>
@@ -143,7 +143,7 @@ export default function SubjectDetailTabs() {
                   toggle("5");
                 }}
               >
-                Teachers
+                Giảng Viên
               </NavLink>
             </NavItem>
           </Nav>

@@ -19,6 +19,7 @@ import { Link, useNavigate } from "react-router-dom";
 import authApi from "../../utils/ApiAuth";
 import useAuthStore from "../../store/Userstore";
 import GoogleLoginButton from "./GoogleSSO";
+import utcLogo from "../../images/logo-utc.png";
 
 const Login = () => {
   const [loading, setLoading] = useState(false);
@@ -74,12 +75,12 @@ const Login = () => {
           <Link to="/" className="logo-link">
             <img
               className="logo-light logo-img"
-              src="https://gcs.tripi.vn/public-tripi/tripi-feed/img/474111jlW/logo-truong-dai-hoc-fpt-university_043152077.png"
+              src={utcLogo}
               alt="logo"
             />
             <img
               className="logo-dark logo-img"
-              src="https://gcs.tripi.vn/public-tripi/tripi-feed/img/474111jlW/logo-truong-dai-hoc-fpt-university_043152077.png"
+              src={utcLogo}
               alt="logo"
             />
           </Link>
@@ -89,9 +90,9 @@ const Login = () => {
           <BlockHead>
             <BlockContent>
               <BlockTitle tag="h4">Sign-In</BlockTitle>
-              <BlockDes>
+              {/* <BlockDes>
                 <p>Access FPT Grading System using your email and password</p>
-              </BlockDes>
+              </BlockDes> */}
             </BlockContent>
           </BlockHead>
           {errorVal && (
@@ -157,19 +158,19 @@ const Login = () => {
               </Button>
             </div>
           </Form>
-          <div className="form-note-s2 text-center pt-4">
+          {/* <div className="form-note-s2 text-center pt-4">
             <Link to={`${process.env.PUBLIC_URL}/auth-register`}>Register</Link>
           </div>
           <div className="text-center pt-4 pb-3">
             <h6 className="overline-title overline-title-sap">
               <span>OR</span>
             </h6>
-          </div>
-          <ul className="nav justify-center gx-4">
+          </div> */}
+          {/* <ul className="nav justify-center gx-4">
             <li className="nav-item">
               <GoogleLoginButton />
             </li>
-          </ul>
+          </ul> */}
         </PreviewCard>
       </Block>
       <AuthFooter />

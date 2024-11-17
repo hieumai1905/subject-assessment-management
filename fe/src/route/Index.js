@@ -152,6 +152,8 @@ import EvaluatedTeamsTabs from "../pages/evaluated-teams/EvaluatedTeamsTabs";
 import GFEvaluationTabs from "../pages/grand-final-evaluation/GFEvaluationTabs";
 import FinalEvaluationResult from "../pages/grand-final-evaluation/FinalEvaluationResult";
 import Dashboard from "../pages/DashBoard";
+import { StudentList } from "../pages/students/StudentList";
+import TeacherList from "../pages/teachers/TeacherList";
 const Router = () => {
   const location = useLocation();
   useLayoutEffect(() => {
@@ -176,6 +178,8 @@ const Router = () => {
         <Route path="/subject-manage" element={<SubjectListTable />}></Route>
 
         <Route path="/setting-list" element={<SettingList />}></Route>
+        <Route path="/manage-student" element={<StudentList />}></Route>
+        <Route path="/manage-teacher" element={<TeacherList />}></Route>
         <Route path="/subject-list" element={<SubjectList />}></Route>
         <Route path="/subject-list/subject-detail/:id" element={<SubjectDetailTabs />}></Route>
         <Route path="/subject-manage/subject-detail/:id" element={<SubjectDetailTabs />}></Route>

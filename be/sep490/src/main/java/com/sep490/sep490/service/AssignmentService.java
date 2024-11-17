@@ -90,13 +90,15 @@ public class AssignmentService implements BaseService<Assignment, Integer> {
 
             int totalEvalWeight = 0;
             for (Assignment assignmentToAdd : assignmentsToAdd) {
-                totalEvalWeight += assignmentToAdd.getEvalWeight();
+                if(assignmentToAdd.getActive())
+                    totalEvalWeight += assignmentToAdd.getEvalWeight();
             }
             for (Assignment assignmentToUpdate : assignmentsToUpdate) {
-                totalEvalWeight += assignmentToUpdate.getEvalWeight();
+                if(assignmentToUpdate.getActive())
+                    totalEvalWeight += assignmentToUpdate.getEvalWeight();
             }
             if (totalEvalWeight != 100) {
-                throw new ConflictException("Total evaluation weight for a subject must be 100");
+                throw new ConflictException("Tổng tỷ trọng các bài kiểm tra đang hoạt động phải bằng 100%");
             }
 
             // Thực hiện các thao tác thêm, cập nhật và xóa trong cơ sở dữ liệu
@@ -110,7 +112,7 @@ public class AssignmentService implements BaseService<Assignment, Integer> {
                 assignmentRepository.saveAll(assignmentsToDeactivate);
             }
         }
-        return "Update success!!";
+        return "Cập nhật thành công!!";
     }
 
     public void getAssignmentList(Map<Integer, AssignmentRequest> requestAssignmentMap, Map<Integer, Assignment> currentAssignmentMap,
@@ -135,7 +137,7 @@ public class AssignmentService implements BaseService<Assignment, Integer> {
         Set<String> assignmentNames = new HashSet<>();
         for (AssignmentRequest assignmentReq : requests) {
             if (!assignmentNames.add(assignmentReq.getTitle().toLowerCase())) {
-                throw new ConflictException("Assignment names must be unique (case-insensitive)");
+                throw new ConflictException("Tên bài kiểm tra phải là duy nhất");
             }
         }
     }

@@ -10,8 +10,8 @@ const ViewDetailModal = ({ modal, setModal, updateData }) => {
   const initialAsm = {
     criteriaName: '',
     evalWeight: 1,
-    locEvaluation: 'Active',
-    active: 'Active',
+    locEvaluation: 'Hoạt động',
+    active: 'Hoạt động',
     guides: '',
   };
   const [formData, setFormData] = useState(updateData);
@@ -34,14 +34,14 @@ const ViewDetailModal = ({ modal, setModal, updateData }) => {
           <Icon name="cross-sm"></Icon>
         </a>
         <div className="p-2">
-          <h4 className="title">Detail Criteria</h4>
+          <h4 className="title">Chi tiết tiêu chí</h4>
           <div className="mt-4">
             <Form className="row gy-4">
               <Col size={12}>
-                <h5>Title: {formData?.criteriaName}</h5>
-                <span className="fw-bold">Weight:</span> {formData?.evalWeight}%
+                <h5>Tiêu đề: {formData?.criteriaName}</h5>
+                <span className="fw-bold">Trọng số:</span> {formData?.evalWeight}%
                 <p>
-                  <span className="fw-bold">Guides:</span> {formData?.guides}
+                  <span className="fw-bold">Hướng dẫn:</span> {formData?.guides}
                 </p>
               </Col>
             </Form>

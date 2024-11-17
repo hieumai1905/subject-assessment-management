@@ -20,6 +20,8 @@ public class User extends BaseEntity {
     private Integer id;
     @Column(name = "username")
     private String username;
+    @Column(name = "code")
+    private String code;
     @Column(name = "fullname")
     private String fullname;
     @Column(name = "gender")

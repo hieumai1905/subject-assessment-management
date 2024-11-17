@@ -6,12 +6,12 @@ import { useForm } from "react-hook-form";
 import { evaluationTypes } from "../../data/ConstantData";
 import { isNullOrEmpty, isNumber } from "../../utils/Utils";
 
-const FormModal = ({ id, modal, setModal, assignments, setAssignments, modalType, updateData }) => {
+const FormModal = ({ id, modal, setModal, assignments, setAssignments, modalType, updateData, subject }) => {
   const initialAsm = {
     title: "",
     evalWeight: 1,
     expectedLoc: 1,
-    typeEvaluator: null,
+    evaluationType: null,
     displayOrder: 1,
     active: "Active",
     note: "",
@@ -35,68 +35,31 @@ const FormModal = ({ id, modal, setModal, assignments, setAssignments, modalType
   } = useForm();
 
   const validateInput = (sData) => {
-    const { title, evalWeight, expectedLoc, typeEvaluator, displayOrder, active, note } = sData;
+    const { title, evalWeight, expectedLoc, evaluationType, displayOrder, active, note } = sData;
     let existByTitle = assignments.find(
       (assignment) => assignment.title.toLowerCase() === title.trim().toLowerCase() && assignment.id !== id
     );
     if (isNullOrEmpty(title.trim())) {
-      setError("title", { type: "manual", message: "Title can't be blank" });
+      setError("title", { type: "manual", message: "Tiêu đề không được để trống" });
+      return false;
+    } else if (title.length > 250) {
+      setError("title", { type: "manual", message: "Tiêu đề phải có độ dài <= 250 ký tự" });
       return false;
     } else if (existByTitle) {
-      setError("title", { type: "manual", message: "Title already exists" });
+      setError("title", { type: "manual", message: "Tiêu đề đã tồn tại" });
       return false;
     }
     if (evalWeight < 0) {
-      setError("evalWeight", { type: "manual", message: "Eval Weight must be greater than zero" });
+      setError("evalWeight", { type: "manual", message: "Trọng số đánh giá phải lớn hơn 0" });
       return false;
     }
-    if (expectedLoc < 0) {
-      setError("expectedLoc", { type: "manual", message: "Expected LOC must be greater than zero" });
-      return false;
-    }
+    // if (expectedLoc < 0) {
+    //   setError("expectedLoc", { type: "manual", message: "Dự kiến LOC phải lớn hơn 0" });
+    //   return false;
+    // }
     if (displayOrder < 0) {
-      setError("displayOrder", { type: "manual", message: "Priority must be greater than zero" });
+      setError("displayOrder", { type: "manual", message: "Thứ tự xuất hiện phải lớn hơn 0" });
       return false;
-    }
-    if (assignments && assignments.length > 0) {
-      let sortedAssignments = [...assignments].sort((a, b) => a.displayOrder - b.displayOrder);
-      let message = "";
-      sortedAssignments.forEach((a) => {
-        let p1 = isNumber(a.displayOrder, 'int'), p2 = isNumber(displayOrder, 'int');
-        if (
-          typeEvaluator?.value === evaluationTypes[2].value &&
-          p1 >= p2 &&
-          (a.typeEvaluator === evaluationTypes[1].value || a.typeEvaluator === evaluationTypes[0].value)
-        ) {
-          message = "Priority must be greater than priority of " + a.title + ` (${a.displayOrder})`;
-          return false;
-        } else if (
-          typeEvaluator?.value === evaluationTypes[1].value &&
-          p1 >= p2 &&
-          a.typeEvaluator === evaluationTypes[0].value
-        ) {
-          message = "Priority must be greater than priority of " + a.title + ` (${a.displayOrder})`;
-          return false;
-        } else if (
-          typeEvaluator?.value === evaluationTypes[1].value &&
-          p1 <= p2 &&
-          a.typeEvaluator === evaluationTypes[2].value
-        ) {
-          message = "Priority must be less than priority of " + a.title + ` (${a.displayOrder})`;
-          return false;
-        } else if (
-          typeEvaluator?.value === evaluationTypes[0].value &&
-          p1 <= p2 &&
-          (a.typeEvaluator === evaluationTypes[1].value || a.typeEvaluator === evaluationTypes[2].value)
-        ) {
-          message = "Priority must be less than priority of " + a.title + ` (${a.displayOrder})`;
-          return false;
-        }
-      });
-      if (message !== "") {
-        setError("displayOrder", { type: "manual", message: message });
-        return false;
-      }
     }
     return true;
   };
@@ -111,10 +74,12 @@ const FormModal = ({ id, modal, setModal, assignments, setAssignments, modalType
       ...sData,
       id: id,
       active: sData?.active === "Active",
-      typeEvaluator: sData?.typeEvaluator?.value,
+      evaluationType: sData?.evaluationType?.value,
     };
 
     if (modalType === "add") {
+      const maxDisplayOrder = Math.max(...assignments.map((item) => item.displayOrder), 0);
+      updateAsm.displayOrder = maxDisplayOrder + 1;
       updatedAssignments.push(updateAsm);
     } else if (modalType === "edit") {
       let index = assignments?.findIndex((item) => item.id === id);
@@ -128,7 +93,7 @@ const FormModal = ({ id, modal, setModal, assignments, setAssignments, modalType
   };
 
   return (
-    <Modal isOpen={modal} toggle={() => closeModal()} className="modal-dialog-centered" size="lg">
+    <Modal isOpen={modal} toggle={() => closeModal()} className="modal-dialog-centered" size="xl">
       <ModalBody>
         <a
           href="#cancel"
@@ -142,18 +107,18 @@ const FormModal = ({ id, modal, setModal, assignments, setAssignments, modalType
         </a>
         <div className="p-2">
           <h5 className="title">
-            {modalType === "add" && "Add Assignment"} {modalType === "edit" && "Update Assignment"}
+            {modalType === "add" && "Thêm Bài kiểm tra"} {modalType === "edit" && "Cập Nhật Bài kiểm tra"}
           </h5>
           <div className="mt-4">
             <Form className="row gy-4" onSubmit={handleSubmit(onSubmit)}>
               <Col md="12">
                 <div className="form-group">
-                  <label className="form-label">Title*</label>
+                  <label className="form-label">Tiêu đề*</label>
                   <input
                     type="text"
-                    {...register("title", { required: "This field is required" })}
+                    {...register("title", { required: "Trường này là bắt buộc" })}
                     value={formData.title}
-                    placeholder="Enter title"
+                    placeholder="Nhập tiêu đề"
                     onChange={(e) => {
                       setFormData({ ...formData, title: e.target.value });
                     }}
@@ -164,66 +129,40 @@ const FormModal = ({ id, modal, setModal, assignments, setAssignments, modalType
               </Col>
               <Col md="6">
                 <div className="form-group">
-                  <label className="form-label">Evaluation Weight* (%)</label>
+                  <label className="form-label">Trọng số* (%)</label>
                   <input
                     type="number"
-                    {...register("evalWeight", { required: "This field is required" })}
+                    {...register("evalWeight", { required: "Trường này là bắt buộc" })}
                     value={formData.evalWeight}
-                    placeholder="Enter evaluation weight"
+                    placeholder="Nhập trọng số"
                     onChange={(e) => setFormData({ ...formData, evalWeight: e.target.value })}
                     className="form-control"
                   />
                   {errors.evalWeight && <span className="invalid">{errors.evalWeight.message}</span>}
                 </div>
               </Col>
-              <Col md="6">
+              {/* <Col md="6">
                 <div className="form-group">
-                  <label className="form-label">Expected LOC*</label>
+                  <label className="form-label">Dự kiến LOC*</label>
                   <input
                     type="number"
                     value={formData.expectedLoc}
-                    {...register("expectedLoc", { required: "This field is required" })}
-                    placeholder="Enter expected loc"
+                    {...register("expectedLoc", { required: "Trường này là bắt buộc" })}
+                    placeholder="Nhập LOC dự kiến"
                     onChange={(e) => setFormData({ ...formData, expectedLoc: e.target.value })}
                     className="form-control"
                   />
                   {errors.expectedLoc && <span className="invalid">{errors.expectedLoc.message}</span>}
                 </div>
-              </Col>
+              </Col> */}
               <Col md="6">
                 <div className="form-group">
-                  <label className="form-label">Evaluation Type*</label>
-                  <RSelect
-                    options={evaluationTypes.filter((item) => {
-                      const hasGrandFinal = assignments.some(
-                        (assignment) => assignment.typeEvaluator === "Grand Final"
-                      );
-                      const hasFinal = assignments.some((assignment) => assignment.typeEvaluator === "Final");
-                      if (hasGrandFinal && item.value === "Grand Final") {
-                        return false;
-                      }
-                      if (hasFinal && item.value === "Final") {
-                        return false;
-                      }
-                      return true;
-                    })}
-                    value={formData.typeEvaluator}
-                    {...register("typeEvaluator", { required: "This field is required" })}
-                    onChange={(e) => {
-                      setFormData({ ...formData, typeEvaluator: e });
-                    }}
-                  />
-                  {errors.typeEvaluator && <span className="invalid text-danger">{errors.typeEvaluator.message}</span>}
-                </div>
-              </Col>
-              <Col md="6">
-                <div className="form-group">
-                  <label className="form-label">Priority</label>
+                  <label className="form-label">Thứ tự xuất hiện</label>
                   <input
                     type="number"
-                    {...register("displayOrder", { required: "This field is required" })}
+                    {...register("displayOrder", { required: "Trường này là bắt buộc" })}
                     value={formData.displayOrder}
-                    placeholder="Enter priority"
+                    placeholder="Nhập Thứ tự xuất hiện"
                     onChange={(e) => setFormData({ ...formData, displayOrder: e.target.value })}
                     className="form-control"
                   />
@@ -231,65 +170,121 @@ const FormModal = ({ id, modal, setModal, assignments, setAssignments, modalType
                 </div>
               </Col>
               <Col md="6">
-                <label className="form-label">Status</label>
-                <br />
-                <ul className="custom-control-group">
-                  <li>
-                    <div
-                      style={{ height: 40 }}
-                      className="custom-control custom-control-sm custom-radio custom-control-pro checked"
-                    >
-                      <input
-                        type="radio"
-                        className="custom-control-input"
-                        name="btnRadioControl"
-                        id="btnActiveAss"
-                        defaultChecked={formData.active === "Active" || modalType === "add"}
-                        value={"Active"}
-                        onClick={(e) => setFormData({ ...formData, active: e.target.value })}
-                      />
-                      <label className="custom-control-label" htmlFor="btnActiveAss">
-                        Active
-                      </label>
-                    </div>
-                  </li>
-                  <li>
-                    <div
-                      style={{ height: 40 }}
-                      className="custom-control custom-control-sm custom-radio custom-control-pro"
-                    >
-                      <input
-                        type="radio"
-                        className="custom-control-input"
-                        name="btnRadioControl"
-                        id="btnInActiveAss"
-                        defaultChecked={formData.active === "InActive"}
-                        value={"InActive"}
-                        onClick={(e) => setFormData({ ...formData, active: e.target.value })}
-                      />
-                      <label className="custom-control-label" htmlFor="btnInActiveAss">
-                        InActive
-                      </label>
-                    </div>
-                  </li>
-                </ul>
-              </Col>
-              <Col size="12">
                 <div className="form-group">
-                  <label className="form-label">Note</label>
-                  <textarea
-                    value={formData.note}
-                    placeholder="Your note"
-                    onChange={(e) => setFormData({ ...formData, note: e.target.value })}
-                    className="form-control-xl form-control no-resize"
+                  <label className="form-label">Loại đánh giá*</label>
+                  <RSelect
+                    options={evaluationTypes.filter((item) => {
+                      const hasGrandFinal = assignments.some(
+                        (assignment) => assignment.evaluationType === "Grand Final"
+                      );
+                      const hasFinal = assignments.some((assignment) => assignment.evaluationType === "Final");
+                      if ((!subject?.isCouncil || hasGrandFinal) && item.value === "Grand Final") {
+                        return false;
+                      }
+                      if (hasFinal && item.value === "Final") {
+                        return false;
+                      }
+                      return true;
+                    })}
+                    value={formData.evaluationType}
+                    {...register("evaluationType", { required: "Trường này là bắt buộc" })}
+                    onChange={(e) => {
+                      setFormData({ ...formData, evaluationType: e });
+                    }}
                   />
+                  {errors.evaluationType && <span className="invalid text-danger">{errors.evaluationType.message}</span>}
                 </div>
               </Col>
+              <Col md="6">
+                <div className="form-group">
+                  <label className="form-label">Trạng Thái</label>
+                  <br />
+                  <ul className="custom-control-group">
+                    <li>
+                      <div
+                        style={{ height: 40 }}
+                        className="custom-control custom-control-sm custom-radio custom-control-pro checked"
+                      >
+                        <input
+                          type="radio"
+                          className="custom-control-input"
+                          name="btnRadioControl"
+                          id="btnRadioControl1"
+                          defaultChecked={formData.active === "Active" || modalType === "add"}
+                          value={"Active"}
+                          onClick={(e) => {
+                            setFormData({ ...formData, active: e.target.value });
+                          }}
+                        />
+                        <label className="custom-control-label" htmlFor="btnRadioControl1">
+                          Hoạt Động
+                        </label>
+                      </div>
+                    </li>
+                    <li>
+                      <div
+                        style={{ height: 40 }}
+                        className="custom-control custom-control-sm custom-radio custom-control-pro"
+                      >
+                        <input
+                          type="radio"
+                          className="custom-control-input"
+                          name="btnRadioControl"
+                          id="btnRadioControl5"
+                          defaultChecked={formData.active === "InActive"}
+                          value={"InActive"}
+                          onClick={(e) => {
+                            setFormData({ ...formData, active: e.target.value });
+                          }}
+                        />
+                        <label className="custom-control-label" htmlFor="btnRadioControl5">
+                          Không Hoạt Động
+                        </label>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+              </Col>
+              {/* <Col md="6">
+                <div className="form-group mt-4">
+                  <label className="form-label">Trạng thái</label>
+                  <div className="custom-control custom-checkbox">
+                    <input
+                      type="checkbox"
+                      className="custom-control-input"
+                      id="isActiveCheckbox12"
+                      checked={formData.active == "Active" || modalType == "add"}
+                      onChange={(e) => setFormData({ ...formData, active: e.target.checked ? "Active" : "InActive" })}
+                    />
+                    <label className="custom-control-label" htmlFor="isActiveCheckbox12">
+                      Bài kiểm tra này có đang hoạt động?
+                    </label>
+                  </div>
+                </div>
+              </Col> */}
+              <Col md="12">
+                <div className="form-group">
+                  <label className="form-label">Ghi chú</label>
+                  <textarea
+                    {...register("note")}
+                    value={formData?.note}
+                    onChange={(e) => setFormData({ ...formData, note: e.target.value })}
+                    rows="3"
+                    placeholder="Nhập ghi chú"
+                    className="form-control"
+                  ></textarea>
+                </div>
+              </Col>
+              {/* <div className="text-end w-25 mt-5">
+                <Button type="submit" color="primary" className="btn-block">
+                  {modalType === "add" && "Thêm"} {modalType === "edit" && "Cập Nhật"}
+                </Button>
+              </div> */}
               <Col size="12">
-                <ul className=" text-end">
+                <ul className="text-end">
                   <li>
                     <Button color="primary" size="md" type="submit">
-                      {modalType === "add" && "Add Assignment"} {modalType === "edit" && "Update Assignment"}
+                      {modalType === "add" && "Thêm"} {modalType === "edit" && "Cập nhật"}
                     </Button>
                   </li>
                 </ul>

@@ -52,6 +52,7 @@ public class SecurityConfig {
                     auth.requestMatchers("/sessions/**").permitAll();
                     auth.requestMatchers("/council-team/**").permitAll();
                     auth.requestMatchers("/dashboard/**").permitAll();
+                    auth.requestMatchers("/students/**").permitAll();
 
 
                 })

@@ -107,26 +107,31 @@ const menu = [
   },
   {
     icon: "setting-alt",
-    text: "System Administration",
+    text: "Quản trị hệ thống",
     subMenu: [
       {
-        text: "Training Subjects",
+        text: "Quản lý môn học",
         link: "/subject-manage",
-        roles: ["ADMIN"],
+        roles: ["ADMIN", "MANAGER"],
       },
+      // {
+      //   text: "Quản lý môn học",
+      //   link: "/subject-list",
+      //   roles: ["MANAGER"],
+      // },
       {
-        text: "Training Subjects",
-        link: "/subject-list",
-        roles: ["MANAGER"],
-      },
-      {
-        text: "System Settings",
+        text: "Cấu hình hệ thống",
         link: "/setting-list",
         roles: ["ADMIN"],
       },
       {
-        text: "User Accounts",
-        link: "/user-list",
+        text: "Quản lý sinh viên",
+        link: "/manage-student",
+        roles: ["ADMIN"],
+      },
+      {
+        text: "Quản lý giảng viên",
+        link: "/manage-teacher",
         roles: ["ADMIN"],
       },
     ],

@@ -18,11 +18,11 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.UnsupportedEncodingException;
 
 @RestController
-@RequestMapping("user")
+@RequestMapping("students")
 @RequiredArgsConstructor
 @Log4j2
 @SecurityRequirement(name = "Authorization")
-public class UserController {
+public class StudentController {
     private final UserService userService;
 
     @PreAuthorize("hasAnyAuthority('ADMIN')")
