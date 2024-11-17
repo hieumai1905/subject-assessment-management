@@ -65,7 +65,7 @@ const AddSubjectTeachersModal = ({ modal, closeModal, onSubmit, formData, setFor
           <Icon name="cross-sm"></Icon>
         </a>
         <div className="p-2">
-          <h5 className="title">Add Subject Teachers</h5>
+          <h5 className="title">Thêm Giáo Viên Môn Học</h5>
           <div className="mt-4">
             <Form className="row gy-4" onSubmit={handleSubmit(onSubmit)}>
               <Block>
@@ -88,11 +88,11 @@ const AddSubjectTeachersModal = ({ modal, closeModal, onSubmit, formData, setFor
                     {isFetching ? (
                       <Button disabled color="primary">
                         <Spinner size="sm" />
-                        <span> Adding... </span>
+                        <span> Đang thêm... </span>
                       </Button>
                     ) : (
                       <Button color="primary" size="md" type="button" onClick={() => onSubmit("add")}>
-                        Add Subject Teachers
+                        Thêm Giáo Viên Môn Học
                       </Button>
                     )}
                   </li>

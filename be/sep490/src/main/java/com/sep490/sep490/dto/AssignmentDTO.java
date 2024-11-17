@@ -17,7 +17,7 @@ public class AssignmentDTO {
     private  Integer evalWeight;
     private  String note;
     private  Integer subjectId;
-    private String typeEvaluator;
+    private String evaluationType;
     private  String subjectName;
     private Boolean active;
     private  Integer displayOrder;

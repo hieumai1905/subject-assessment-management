@@ -16,7 +16,7 @@ public class CreateAssignmentRequest {
     private List<AssignmentRequest> assignmentList;
 
     public void validateInput(){
-        ValidateUtils.checkNullOrEmpty(assignmentList, "List");
+        ValidateUtils.checkNullOrEmpty(assignmentList, "Danh sách");
         ValidateUtils.checkNullOrEmpty(subjectId, "Id");
         for (AssignmentRequest assignmentRequest : assignmentList){
             assignmentRequest.validateInput();

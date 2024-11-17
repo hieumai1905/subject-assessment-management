@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 public class UserDTO {
     private Integer id;
     private String username;
+    private String code;
     private String fullname;
     private String gender;
     private String email;
@@ -22,12 +23,13 @@ public class UserDTO {
     private Integer roleId;
 
     public void validateInput(){
-        ValidateUtils.checkNullOrEmpty(username, "User name");
-        username = ValidateUtils.checkLength(username, "User name", Constants.LengthCheck.MIN, Constants.LengthCheck.MAX);
-        ValidateUtils.checkNullOrEmpty(fullname, "Full name");
-        fullname = ValidateUtils.checkLength(fullname, "Full name", Constants.LengthCheck.MIN, Constants.LengthCheck.MAX);
-        ValidateUtils.checkNullOrEmpty(mobile, "Phone number");
-        mobile = ValidateUtils.checkLength(mobile, "Phone number", Constants.LengthCheck.MIN, Constants.LengthCheck.MAX);
+        ValidateUtils.checkNullOrEmpty(email, "Email");
+        email = ValidateUtils.checkLength(email, "Email", Constants.LengthCheck.MIN, Constants.LengthCheck.MAX);
+        ValidateUtils.checkNullOrEmpty(fullname, "Tên");
+        fullname = ValidateUtils.checkLength(fullname, "Tên", Constants.LengthCheck.MIN, Constants.LengthCheck.MAX);
+        mobile = ValidateUtils.checkLength(mobile, "Số điện thoại", 0, Constants.LengthCheck.MAX);
+        avatar_url = ValidateUtils.checkLength(avatar_url, "Tên tệp", 0, 50);
+        note = ValidateUtils.checkLength(note, "Ghi chú", 0, 750);
     }
 
 

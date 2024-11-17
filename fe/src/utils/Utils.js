@@ -757,3 +757,14 @@ export const formatDateToDDMMYYYY = (date) => {
   const year = date.getFullYear();
   return `${year}-${month}-${day}`;
 };
+
+export const findItemValue = (arr, findByKey, resultKey, target) => {
+  try {
+    const foundItem = arr.find(item => item[findByKey] === target);
+    return foundItem ? foundItem[resultKey] || "" : "";
+  } catch (error) {
+    console.error("Error while finding item:", error);
+    return "";
+  }
+}
+

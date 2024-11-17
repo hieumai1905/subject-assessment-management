@@ -9,7 +9,7 @@ const FormModal = ({ id, modal, setModal, modalType, criterias, setCriterias, up
   const ininialCriteria = {
     criteriaName: '',
     evalWeight: 1,
-    locEvaluation: criterias.find(item => item.locEvaluation && item.id !== id) !== undefined ? 'InActive' : 'Active',
+    locEvaluation: criterias.find(item => item.locEvaluation && item.id !== id) !== undefined ? 'Không hoạt động' : 'Hoạt động',
     active: 'Active',
     guides: '',
   };
@@ -27,15 +27,15 @@ const FormModal = ({ id, modal, setModal, modalType, criterias, setCriterias, up
       && criteria.id !== id
     );
     if(isNullOrEmpty(criteriaName.trim())){
-      setError("criteriaName", { type: "manual", message: "Criteria name can't be blank" });
+      setError("criteriaName", { type: "manual", message: "Tên tiêu chí không được để trống" });
       return false;
     }
     else if(existByName) {
-      setError("criteriaName", { type: "manual", message: "Criteria name already exists" });
+      setError("criteriaName", { type: "manual", message: "Tên tiêu chí đã tồn tại" });
       return false;
     }
     if(evalWeight < 0){
-      setError("evalWeight", { type: "manual", message: "Eval Weight must be greater than zero" });
+      setError("evalWeight", { type: "manual", message: "Trọng số đánh giá phải lớn hơn 0" });
       return false;
     }
     return true;
@@ -51,7 +51,7 @@ const FormModal = ({ id, modal, setModal, modalType, criterias, setCriterias, up
       id: id,
       criteriaName: sData.criteriaName,
       evalWeight: sData.evalWeight,
-      locEvaluation: sData.locEvaluation === "Active",
+      locEvaluation: sData.locEvaluation === "Hoạt động",
       active: sData.active === "Active",
       guides: sData.guides, 
     };
@@ -92,18 +92,18 @@ const FormModal = ({ id, modal, setModal, modalType, criterias, setCriterias, up
         </a>
         <div className="p-2">
           <h5 className="title">
-            {modalType === "add" && "Add Criteria"} {modalType === "edit" && "Update Criteria"}
+            {modalType === "add" && "Thêm tiêu chí"} {modalType === "edit" && "Cập nhật tiêu chí"}
           </h5>
           <div className="mt-4">
             <Form className="row gy-4" onSubmit={handleSubmit(onSubmit)}>
               <Col md="6">
                 <div className="form-group">
-                  <label className="form-label">Criteria Name*</label>
+                  <label className="form-label">Tên tiêu chí*</label>
                   <input
                     type="text"
-                    {...register("criteriaName", { required: "This field is required" })}
+                    {...register("criteriaName", { required: "Trường này là bắt buộc" })}
                     value={formData.criteriaName}
-                    placeholder="Enter criteria name"
+                    placeholder="Nhập tên tiêu chí"
                     onChange={(e) => setFormData({ ...formData, criteriaName: e.target.value })}
                     className="form-control"
                   />
@@ -112,21 +112,21 @@ const FormModal = ({ id, modal, setModal, modalType, criterias, setCriterias, up
               </Col>
               <Col md="6">
                 <div className="form-group">
-                  <label className="form-label">Evaluation Weight (%)*</label>
+                  <label className="form-label">Trọng số đánh giá (%)*</label>
                   <input
                     type="number"
-                    {...register("evalWeight", { required: "This field is required" })}
+                    {...register("evalWeight", { required: "Trường này là bắt buộc" })}
                     value={formData.evalWeight}
-                    placeholder="Enter evaluation weight"
+                    placeholder="Nhập trọng số đánh giá"
                     onChange={(e) => setFormData({ ...formData, evalWeight: e.target.value })}
                     className="form-control"
                   />
                   {errors.evalWeight && <span className="invalid">{errors.evalWeight.message}</span>}
                 </div>
               </Col>
-              <Col md="6">
+              {/* <Col md="6">
               <div className="form-group">
-                  <label className="form-label">LOC Evaluation</label>
+                  <label className="form-label">Đánh giá LOC</label>
                   <br />
                   <ul className="custom-control-group">
                     <li>
@@ -140,14 +140,14 @@ const FormModal = ({ id, modal, setModal, modalType, criterias, setCriterias, up
                           className="custom-control-input"
                           name="btnRadioControlLOC"
                           id="btnRadioControl1LOC"
-                          defaultChecked={formData.locEvaluation === "Active"}
-                          value={"Active"}
+                          defaultChecked={formData.locEvaluation === "Hoạt động"}
+                          value={"Hoạt động"}
                           onClick={(e) => {
                             setFormData({ ...formData, locEvaluation: e.target.value });
                           }}
                         />
                         <label className="custom-control-label" htmlFor="btnRadioControl1LOC">
-                          Yes
+                          Có
                         </label>
                       </div>
                     </li>
@@ -161,23 +161,23 @@ const FormModal = ({ id, modal, setModal, modalType, criterias, setCriterias, up
                           className="custom-control-input"
                           name="btnRadioControlLOC"
                           id="btnRadioControl5LOC"
-                          defaultChecked={formData.locEvaluation === "InActive"}
-                          value={"InActive"}
+                          defaultChecked={formData.locEvaluation === "Không hoạt động"}
+                          value={"Không hoạt động"}
                           onClick={(e) => {
                             setFormData({ ...formData, locEvaluation: e.target.value });
                           }}
                         />
                         <label className="custom-control-label" htmlFor="btnRadioControl5LOC">
-                          No
+                          Không
                         </label>
                       </div>
                     </li>
                   </ul>
                 </div>
-              </Col>
+              </Col> */}
               <Col md="6">
                 <div className="form-group">
-                  <label className="form-label">Status</label>
+                  <label className="form-label">Trạng thái</label>
                   <br />
                   <ul className="custom-control-group">
                     <li>
@@ -197,7 +197,7 @@ const FormModal = ({ id, modal, setModal, modalType, criterias, setCriterias, up
                           }}
                         />
                         <label className="custom-control-label" htmlFor="btnRadioControl1">
-                          Active
+                          Hoạt động
                         </label>
                       </div>
                     </li>
@@ -218,7 +218,7 @@ const FormModal = ({ id, modal, setModal, modalType, criterias, setCriterias, up
                           }}
                         />
                         <label className="custom-control-label" htmlFor="btnRadioControl5">
-                          InActive
+                          Không hoạt động
                         </label>
                       </div>
                     </li>
@@ -227,10 +227,10 @@ const FormModal = ({ id, modal, setModal, modalType, criterias, setCriterias, up
               </Col>
               <Col size="12">
                 <div className="form-group">
-                  <label className="form-label">Guides</label>
+                  <label className="form-label">Hướng dẫn</label>
                   <textarea
                     value={formData.guides}
-                    placeholder="Your guides"
+                    placeholder="Nhập hướng dẫn"
                     onChange={(e) => setFormData({ ...formData, guides: e.target.value })}
                     className="form-control-xl form-control no-resize"
                   />
@@ -240,20 +240,9 @@ const FormModal = ({ id, modal, setModal, modalType, criterias, setCriterias, up
                 <ul className=" text-end">
                   <li>
                     <Button color="primary" size="md" type="submit">
-                      {modalType === "add" && "Add Criteria"} {modalType === "edit" && "Update Criteria"}
+                      {modalType === "add" && "Thêm tiêu chí"} {modalType === "edit" && "Cập nhật tiêu chí"}
                     </Button>
                   </li>
-                  {/* <li>
-                    <Button
-                      onClick={(ev) => {
-                        ev.preventDefault();
-                        closeModal();
-                      }}
-                      className="link link-light"
-                    >
-                      Cancel
-                    </Button>
-                  </li> */}
                 </ul>
               </Col>
             </Form>
@@ -264,3 +253,4 @@ const FormModal = ({ id, modal, setModal, modalType, criterias, setCriterias, up
   );
 };
 export default FormModal;
+

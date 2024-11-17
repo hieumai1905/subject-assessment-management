@@ -128,6 +128,7 @@ public class SubjectService implements BaseService<Subject, Integer>{
         foundSubject.setDescription(request.getDescription());
         foundSubject.setManagers(managers);
         foundSubject.setActive(request.getActive());
+        foundSubject.setIsCouncil(request.getIsCouncil());
         subjectRepository.save(foundSubject);
 
         SubjectDTO subjectDTO = ConvertUtils.convert(foundSubject, SubjectDTO.class);

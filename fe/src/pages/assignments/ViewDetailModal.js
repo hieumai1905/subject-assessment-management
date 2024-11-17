@@ -36,18 +36,18 @@ const ViewDetailModal = ({ modal, setModal, updateData }) => {
           <Icon name="cross-sm"></Icon>
         </a>
         <div className="p-2">
-          <h4 className="title">Detail Assignment</h4>
+          <h4 className="title">Chi tiết bài kiểm tra</h4>
           <div className="mt-4">
             <Form className="row gy-4">
               <Col size={12}>
-                <h5>Title: {formData?.title}</h5>
-                <span className="fw-bold">Weight:</span> {formData?.evalWeight}%
-                <span className="ms-3 fw-bold">Expected LOC:</span> {formData?.expectedLoc}
+                <h5>Tiêu đề: {formData?.title}</h5>
+                <span className="fw-bold">Trọng số:</span> {formData?.evalWeight}%
+                {/* <span className="ms-3 fw-bold">Số dòng mã dự kiến:</span> {formData?.expectedLoc} */}
                 <p>
-                  <span className="fw-bold">Type Evaluation:</span> {formData?.typeEvaluator?.label}{" "}
+                  <span className="fw-bold">Loại đánh giá:</span> {formData?.typeEvaluator?.label}{" "}
                 </p>
                 <p>
-                  <span className="fw-bold">Note:</span> {formData?.note}
+                  <span className="fw-bold">Ghi chú:</span> {formData?.note}
                 </p>
               </Col>
             </Form>

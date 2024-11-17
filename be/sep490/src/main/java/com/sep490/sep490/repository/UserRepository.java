@@ -29,7 +29,7 @@ public interface UserRepository extends BaseRepository<User, Integer>{
     );
     @Query("select u from User u where (:keyWord is null or lower(u.fullname) like %:keyWord% " +
             "   or lower(u.username) like %:keyWord% or lower(u.email) like %:keyWord% " +
-            "   or lower(u.mobile) like %:keyWord%) " +
+            "   or lower(u.mobile) like %:keyWord% or lower(u.code) like %:keyWord%) " +
             "and (:roleName is null or lower(u.role.name) = :roleName) " +
             "and (:status is null or :status = u.status)" +
             "and (:active is null or :active = u.active)")
@@ -46,4 +46,7 @@ public interface UserRepository extends BaseRepository<User, Integer>{
                                          @Param("teamId") Integer teamId);
     List<User> findByActiveTrue();
     List<User> findByActiveFalse();
+    @Query(value = "SELECT s.code FROM users s WHERE s.code LIKE CONCAT(:monthCode, :yearCode, '%') ORDER BY s.code DESC LIMIT 1",
+    nativeQuery = true)
+    Optional<String> findLatestCodeByMonthAndYear(String monthCode, String yearCode);
 }

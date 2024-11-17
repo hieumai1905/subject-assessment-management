@@ -57,7 +57,7 @@ export default function SubjectTeachersTable({ subject }) {
         subjectId: subject?.id,
         type: "added",
       });
-      console.log("selected teachers: ", response.data.data);
+      console.log("Giáo viên đã chọn: ", response.data.data);
       if (response.data.statusCode === 200) {
         let newData = response.data.data.map((item) => ({
           ...item,
@@ -70,8 +70,8 @@ export default function SubjectTeachersTable({ subject }) {
         });
       }
     } catch (error) {
-      console.error("fetch selected teachers:", error);
-      toast.error(`${error}`, {
+      console.error("Lỗi khi lấy giáo viên đã chọn:", error);
+      toast.error(`Lỗi: ${error}`, {
         position: toast.POSITION.TOP_CENTER,
       });
     } finally {
@@ -88,7 +88,7 @@ export default function SubjectTeachersTable({ subject }) {
         roleName: "teacher",
         keyWord: filterText,
       });
-      console.log("teachers: ", response.data.data);
+      console.log("Giáo viên: ", response.data.data);
       if (response.data.statusCode === 200) {
         let teachers = response.data.data.users.filter((item) => data.findIndex((a) => a.id === item.id) === -1);
         setUsers(teachers);
@@ -98,8 +98,8 @@ export default function SubjectTeachersTable({ subject }) {
         });
       }
     } catch (error) {
-      console.error("fetch teachers:", error);
-      toast.error(`${error}`, {
+      console.error("Lỗi khi lấy giáo viên:", error);
+      toast.error(`Lỗi: ${error}`, {
         position: toast.POSITION.TOP_CENTER,
       });
     } finally {
@@ -137,17 +137,17 @@ export default function SubjectTeachersTable({ subject }) {
     if (action === "delete") {
       let selectedTeachers = data.filter((item) => item.checked === true);
       if (!selectedTeachers || selectedTeachers.length === 0) {
-        toast.info("Please select at least a teacher to " + action, {
+        toast.info("Vui lòng chọn ít nhất một giáo viên để xóa!", {
           position: toast.POSITION.TOP_CENTER,
         });
         return;
       }
       Swal.fire({
-        title: "Are you sure?",
-        text: `Do you want to delete teachers?`,
+        title: "Bạn có chắc chắn không?",
+        text: `Bạn có muốn xóa các giáo viên không?`,
         icon: "warning",
         showCancelButton: true,
-        confirmButtonText: "Yes, delete it!",
+        confirmButtonText: "Vâng, xóa đi!",
       }).then(async (result) => {
         if (result.isConfirmed) {
           let ids = data.filter((item) => item.checked === false || item.checked === undefined).map((item) => item.id);
@@ -156,7 +156,7 @@ export default function SubjectTeachersTable({ subject }) {
       });
     } else if (action === "add") {
       if (!formData || formData.length === 0) {
-        toast.info("Please select at least a teacher to " + action, {
+        toast.info("Vui lòng chọn ít nhất một giáo viên để thêm!", {
           position: toast.POSITION.TOP_CENTER,
         });
         return;
@@ -177,9 +177,9 @@ export default function SubjectTeachersTable({ subject }) {
         subjectId: subject?.id,
         teacherIds: ids,
       });
-      console.log("update teachers: ", response.data.data);
+      console.log("Cập nhật giáo viên: ", response.data.data);
       if (response.data.statusCode === 200) {
-        toast.success(`${action} subject teacher successfully!`, {
+        toast.success(`${action == "add" ? 'Thêm' : 'Xóa'} giáo viên môn học thành công!`, {
           position: toast.POSITION.TOP_CENTER,
         });
         if (action === "delete") {
@@ -197,8 +197,8 @@ export default function SubjectTeachersTable({ subject }) {
         });
       }
     } catch (error) {
-      console.error("update teachers:", error);
-      toast.error(`${error}`, {
+      console.error("Lỗi cập nhật giáo viên:", error);
+      toast.error(`Lỗi: ${error}`, {
         position: toast.POSITION.TOP_CENTER,
       });
     } finally {
@@ -221,7 +221,7 @@ export default function SubjectTeachersTable({ subject }) {
 
   return (
     <>
-      <Head title="Teachers" />
+      <Head title="Giáo viên bộ môn" />
       {isFetching.allTeachers || isFetching.existedTeachers ? (
         <div className="d-flex justify-content-center">
           <Spinner style={{ width: "3rem", height: "3rem" }} />
@@ -241,18 +241,18 @@ export default function SubjectTeachersTable({ subject }) {
                         <>
                           <li>
                             <Button color="primary" onClick={() => setModal({ add: true })}>
-                              Add New Teachers
+                              Thêm mới
                             </Button>
                           </li>
                           <li>
                             {isFetching.delete ? (
                               <Button disabled color="danger">
                                 <Spinner size="sm" />
-                                <span> Deleting... </span>
+                                <span> Đang xóa... </span>
                               </Button>
                             ) : (
                               <Button color="danger" onClick={() => handleSaveChanges("delete")}>
-                                Delete Teachers
+                                Xóa giáo viên
                               </Button>
                             )}
                           </li>
@@ -281,7 +281,7 @@ export default function SubjectTeachersTable({ subject }) {
                     <span className="sub-text">ID</span>
                   </DataTableRow>
                   <DataTableRow size="lg">
-                    <span className="sub-text">FullName</span>
+                    <span className="sub-text">Họ và Tên</span>
                   </DataTableRow>
                   <DataTableRow size="lg">
                     <span className="sub-text">Email</span>
@@ -323,7 +323,7 @@ export default function SubjectTeachersTable({ subject }) {
               <div className="card-inner">
                 {data.length === 0 && (
                   <div className="text-center">
-                    <span className="text-silent">No data found</span>
+                    <span className="text-silent">Không tìm thấy kết quả nào</span>
                   </div>
                 )}
               </div>

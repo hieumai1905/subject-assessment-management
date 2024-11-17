@@ -386,13 +386,13 @@ public class MilestoneService implements BaseService<Milestone, Integer>{
             milestone.setDisplayOrder(assignment.getDisplayOrder());
             milestone.setEvalWeight(assignment.getEvalWeight());
             milestone.setExpectedLoc(assignment.getExpectedLoc());
-            milestone.setTypeEvaluator(assignment.getTypeEvaluator());
-            if(isFirstMilestone && assignment.getTypeEvaluator().equals(Constants.TypeAssignments.NORMAL)){
-                milestone.setActive(true);
-                isFirstMilestone = false;
-            } else{
-              milestone.setActive(false);
-            }
+//            milestone.setTypeEvaluator(assignment.getTypeEvaluator());
+//            if(isFirstMilestone && assignment.getTypeEvaluator().equals(Constants.TypeAssignments.NORMAL)){
+//                milestone.setActive(true);
+//                isFirstMilestone = false;
+//            } else{
+//              milestone.setActive(false);
+//            }
 //            milestone.setAssignment(assignment);
             milestone.setClasses(classes);
             cloneCriteria(assignment, milestone);

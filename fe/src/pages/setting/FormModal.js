@@ -17,7 +17,7 @@ const FormModal = ({ modal, closeModal, onSubmit, formData, setFormData, modalTy
   } = useForm();
 
   return (
-    <Modal isOpen={modal} toggle={() => closeModal()} className="modal-dialog-centered" size="lg">
+    <Modal isOpen={modal} toggle={() => closeModal()} className="modal-dialog-centered" size="xl">
       <ModalBody>
         <a
           href="#cancel"
@@ -31,19 +31,19 @@ const FormModal = ({ modal, closeModal, onSubmit, formData, setFormData, modalTy
         </a>
         <div className="p-2">
           <h5 className="title">
-            {modalType === "add" && "Add Setting"} {modalType === "edit" && "Update Setting"}
+            {modalType === "add" && "Thêm Cài Đặt"} {modalType === "edit" && "Cập Nhật Cài Đặt"}
           </h5>
           <div className="mt-4">
             <Form className="row gy-4" onSubmit={handleSubmit(onSubmit)}>
               <Col md="6">
                 <div className="form-group">
-                  <label className="form-label">Setting Name*</label>
+                  <label className="form-label">Tên Cài Đặt*</label>
                   <input
                     disabled={modalType === "edit" && formData.settingType === "Role"}
                     type="text"
-                    {...register("name", { required: "This field is required" })}
+                    {...register("name", { required: "Trường này là bắt buộc" })}
                     value={formData.name}
-                    placeholder="Enter name"
+                    placeholder="Nhập tên"
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     className="form-control"
                   />
@@ -52,12 +52,12 @@ const FormModal = ({ modal, closeModal, onSubmit, formData, setFormData, modalTy
               </Col>
               <Col md="6">
                 {modalType === "edit" && formData.settingType === "Role" ? (
-                  <div className="mt-4 fw-bold" style={{fontSize: '16px'}}>Setting Type: Role</div>
+                  <div className="mt-4 fw-bold" style={{fontSize: '16px'}}>Loại Cài Đặt: Vai Trò</div>
                 ) : (
                   <div className="form-group">
-                    <label className="form-label">Setting Type*</label>
+                    <label className="form-label">Loại Cài Đặt*</label>
                     <RSelect
-                      {...register("settingType", { required: "This field is required" })}
+                      {...register("settingType", { required: "Trường này là bắt buộc" })}
                       options={settingTypeList}
                       value={[{ value: formData.settingType, label: formData.settingType }]}
                       onChange={(e) => setFormData({ ...formData, settingType: e.value })}
@@ -68,11 +68,11 @@ const FormModal = ({ modal, closeModal, onSubmit, formData, setFormData, modalTy
               </Col>
               <Col md="12">
                 <div className="form-group">
-                  <label className="form-label">Detail</label>
+                  <label className="form-label">Chi Tiết</label>
                   <input
                     type="text"
                     value={formData.extValue}
-                    placeholder="Enter detail"
+                    placeholder="Nhập chi tiết"
                     onChange={(e) => setFormData({ ...formData, extValue: e.target.value })}
                     className="form-control"
                   />
@@ -80,10 +80,10 @@ const FormModal = ({ modal, closeModal, onSubmit, formData, setFormData, modalTy
               </Col>
               <Col md="6">
                 <div className="form-group">
-                  <label className="form-label">Display Order</label>
+                  <label className="form-label">Sắp Xếp Hiển Thị</label>
                   <input
                     type="number"
-                    {...register("displayOrder", { required: "This field is required" })}
+                    {...register("displayOrder", { required: "Trường này là bắt buộc" })}
                     value={formData.displayOrder}
                     onChange={(e) => setFormData({ ...formData, displayOrder: e.target.value })}
                     className="form-control"
@@ -93,7 +93,7 @@ const FormModal = ({ modal, closeModal, onSubmit, formData, setFormData, modalTy
               </Col>
               <Col md="6">
                 <div className="form-group">
-                  <label className="form-label">Status</label>
+                  <label className="form-label">Trạng Thái</label>
                   <br />
                   <ul className="custom-control-group">
                     <li>
@@ -114,7 +114,7 @@ const FormModal = ({ modal, closeModal, onSubmit, formData, setFormData, modalTy
                           }}
                         />
                         <label className="custom-control-label" htmlFor="btnRadioControl1">
-                          Active
+                          Hoạt Động
                         </label>
                       </div>
                     </li>
@@ -136,7 +136,7 @@ const FormModal = ({ modal, closeModal, onSubmit, formData, setFormData, modalTy
                           }}
                         />
                         <label className="custom-control-label" htmlFor="btnRadioControl5">
-                          InActive
+                          Không Hoạt Động
                         </label>
                       </div>
                     </li>
@@ -145,35 +145,22 @@ const FormModal = ({ modal, closeModal, onSubmit, formData, setFormData, modalTy
               </Col>
               <Col size="12">
                 <div className="form-group">
-                  <label className="form-label">Description</label>
+                  <label className="form-label">Mô Tả</label>
                   <textarea
-                    // {...register("description", { required: "This field is required" })}
                     value={formData.description}
-                    placeholder="Your description"
+                    placeholder="Mô tả của bạn"
                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                     className="form-control-xl form-control no-resize"
                   />
-                  {/* {errors.description && <span className="invalid">{errors.description.message}</span>} */}
                 </div>
               </Col>
               <Col size="12">
                 <ul className=" text-end">
                   <li>
                     <Button color="primary" size="md" type="submit">
-                      {modalType === "add" && "Add Setting"} {modalType === "edit" && "Update Setting"}
+                      {modalType === "add" && "Thêm Cài Đặt"} {modalType === "edit" && "Cập Nhật Cài Đặt"}
                     </Button>
                   </li>
-                  {/* <li>
-                    <Button
-                      onClick={(ev) => {
-                        ev.preventDefault();
-                        closeModal();
-                      }}
-                      className="link link-light"
-                    >
-                      Cancel
-                    </Button>
-                  </li> */}
                 </ul>
               </Col>
             </Form>

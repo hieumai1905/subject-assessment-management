@@ -50,7 +50,7 @@ function EditToolbar(props) {
   return (
     <GridToolbarContainer>
       <Button color="primary" startIcon={<AddIcon />} onClick={handleClick}>
-        Add Criteria
+        Thêm mới
       </Button>
     </GridToolbarContainer>
   );
@@ -108,8 +108,8 @@ export default function CriteriaListDatagrid({ subject }) {
           });
         }
       } catch (error) {
-        console.error("Error fetching data:", error);
-        toast.error("Error search assignments!", {
+        console.error("Lỗi khi tìm kiếm bài kiểm tra:", error);
+        toast.error("Lỗi khi tìm kiếm bài kiểm tra!", {
           position: toast.POSITION.TOP_CENTER,
         });
       } finally {
@@ -138,8 +138,8 @@ export default function CriteriaListDatagrid({ subject }) {
           });
         }
       } catch (error) {
-        console.error("Error fetching data:", error);
-        toast.error("Error search evaluation criterias!", {
+        console.error("Lỗi khi tìm kiếm tiêu chí đánh giá:", error);
+        toast.error("Lỗi khi tìm kiếm tiêu chí đánh giá!", {
           position: toast.POSITION.TOP_CENTER,
         });
       } finally {
@@ -154,36 +154,36 @@ export default function CriteriaListDatagrid({ subject }) {
     const submitForm = {
       assignmentId: selectedAssignment?.value,
       listEvaluationCriteria: criterias.map((criteria) => {
-        if (criteria.locEvaluation) {
-          haveLocEval++;
-        }
+        // if (criteria.locEvaluation) {
+        //   haveLocEval++;
+        // }
         if (typeof criteria.id === "string") {
           return { ...criteria, id: null };
         }
         return criteria;
       }),
     };
-    if (haveLocEval === 0) {
-      toast.error(`The evaluation criteria need to include an item for assessing LOC!`, {
-        position: toast.POSITION.TOP_CENTER,
-      });
-      return;
-    }
-    if (haveLocEval > 1) {
-      toast.error(`The evaluation criteria only need one item, which is assessing LOC!`, {
-        position: toast.POSITION.TOP_CENTER,
-      });
-      return;
-    }
+    // if (haveLocEval === 0) {
+    //   toast.error(`Tiêu chí đánh giá cần bao gồm một mục để đánh giá LOC!`, {
+    //     position: toast.POSITION.TOP_CENTER,
+    //   });
+    //   return;
+    // }
+    // if (haveLocEval > 1) {
+    //   toast.error(`Tiêu chí đánh giá chỉ cần một mục để đánh giá LOC!`, {
+    //     position: toast.POSITION.TOP_CENTER,
+    //   });
+    //   return;
+    // }
     setIsFetching({ ...isFetching, criterias: true });
     console.log("sData", submitForm);
     try {
-      let action = "Update";
+      let action = "Cập nhật";
       let url = "/evaluation-criteria/update-evaluation-criteria";
       const response = await authApi.put(url, submitForm);
-      console.log(`${action} criterias:`, response.data.data);
+      console.log(`${action} tiêu chí:`, response.data.data);
       if (response.data.statusCode === 200) {
-        toast.success(`${action} criterias successfully!`, {
+        toast.success(`${action} tiêu chí thành công!`, {
           position: toast.POSITION.TOP_CENTER,
         });
         setReload(!reload);
@@ -194,10 +194,8 @@ export default function CriteriaListDatagrid({ subject }) {
       }
       setIsFetching({ ...isFetching, criterias: false });
     } catch (error) {
-      // eslint-disable-next-line no-undef
-      console.error(`Error ${action} criterias:`, error);
-      // eslint-disable-next-line no-undef
-      toast.error(`Error ${action} criterias!`, {
+      console.error(`Lỗi khi ${action} tiêu chí:`, error);
+      toast.error(`Lỗi khi ${action} tiêu chí!`, {
         position: toast.POSITION.TOP_CENTER,
       });
       setIsFetching({ ...isFetching, criterias: false });
@@ -272,26 +270,26 @@ export default function CriteriaListDatagrid({ subject }) {
   };
 
   const columns = [
-    { field: "criteriaName", headerName: "Name", width: 280, editable: false },
+    { field: "criteriaName", headerName: "Tên tiêu chí", width: 280, editable: false },
     {
       field: "evalWeight",
-      headerName: "Evaluation Weight",
+      headerName: "Trọng số(%)",
       type: "number",
       width: 140,
       align: "left",
       headerAlign: "left",
       editable: false,
     },
-    {
-      field: "locEvaluation",
-      headerName: "LOC Eval",
-      type: "boolean",
-      width: 180,
-      editable: false,
-    },
+    // {
+    //   field: "locEvaluation",
+    //   headerName: "LOC Eval",
+    //   type: "boolean",
+    //   width: 180,
+    //   editable: false,
+    // },
     {
       field: "active",
-      headerName: "Active",
+      headerName: "Trạng thái",
       width: 80,
       editable: false,
       type: "boolean",
@@ -305,7 +303,7 @@ export default function CriteriaListDatagrid({ subject }) {
     {
       field: "actions",
       type: "actions",
-      headerName: "Actions",
+      headerName: "Hành động",
       width: 100,
       cellClassName: "actions",
       getActions: ({ id }) => {
@@ -385,11 +383,11 @@ export default function CriteriaListDatagrid({ subject }) {
               {/* <div className="col-md-7 text-warning fw-bold">
                 All changes will only be saved to the system when you click the Save Changes button.
               </div> */}
-              <div className="col-md-2 text-end">
+              <div className="col-md-2 ms-5 text-end">
                 {isFetching.criterias ? (
                   <Spinner color="primary" />
                 ) : (
-                  <Button onClick={() => onSubmit()}>Save Changes</Button>
+                  <Button onClick={() => onSubmit()}>Lưu thay đổi</Button>
                 )}
               </div>
             </React.Fragment>

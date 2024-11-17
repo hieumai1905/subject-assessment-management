@@ -22,13 +22,13 @@ import {
   RSelect,
 } from "../../components/Component";
 import FormModal from "./FormModal";
-import { settingData, statusList, settingTypeList } from "./SettingData";
 import authApi from "../../utils/ApiAuth";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { addFirstAndDeleteLast, findItemValue, upDownArrow } from "../../utils/Utils";
+import { statusList } from "../../data/ConstantData";
 
-export const SettingList = () => {
+export const TeacherList = () => {
   const [sm, updateSm] = useState(false);
   const [modal, setModal] = useState({
     edit: false,
@@ -47,22 +47,27 @@ export const SettingList = () => {
     active: null,
   });
   const [filterForm, setFilterForm] = useState({});
+  const [isFetching, setIsFetching] = useState({
+    add: false,
+    edit: false,
+    get: false,
+  });
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await authApi.post("/setting/search", {
+        const response = await authApi.post("/user/search", {
           pageSize: itemPerPage,
           pageIndex: currentPage,
-          name: search.name,
-          type: search?.type?.value,
-          active: search?.active === null ? null : search?.active?.value === "Active",
+          keyWord: search.name,
+          roleName: "TEACHER",
+          active: search?.active === null ? null : search?.active?.value,
           sortBy: sortBy,
           orderBy: orderBy,
         });
         console.log(response);
         if (response.data.statusCode === 200) {
-          setData(response.data.data.settingDTOS);
+          setData(response.data.data.users);
           setTotalElements(response.data.data.totalElements);
         } else {
           toast.error(`${response.data.data}`, {
@@ -71,7 +76,7 @@ export const SettingList = () => {
         }
       } catch (error) {
         console.error("Lỗi khi lấy dữ liệu:", error);
-        toast.error("Lỗi khi tìm kiếm cài đặt!", {
+        toast.error("Lỗi khi tìm kiếm giảng viên!", {
           position: toast.POSITION.TOP_CENTER,
         });
       }
@@ -82,31 +87,25 @@ export const SettingList = () => {
 
   const [formError, setFormError] = useState({});
   const [formData, setFormData] = useState({
-    name: "",
-    extValue: "",
-    settingType: "",
-    displayOrder: 0,
-    active: "Active",
-    description: "",
+    fullname: "",
+    email: "",
+    note: "",
+    gender: "Nam",
   });
   const [editFormData, setEditFormData] = useState({
-    name: "",
-    extValue: "",
-    settingType: "",
-    displayOrder: 0,
-    active: "",
-    description: "",
+    fullname: "",
+    email: "",
+    note: "",
+    gender: "Nam",
   });
 
   // function to reset the form
   const resetForm = () => {
     setFormData({
-      name: "",
-      extValue: "",
-      settingType: "",
-      displayOrder: 0,
-      active: "Active",
-      description: "",
+      fullname: "",
+      email: "",
+      note: "",
+      gender: "Nam",
     });
     setFormError({});
   };
@@ -123,22 +122,21 @@ export const SettingList = () => {
 
   // submit function to add a new item
   const onFormSubmit = async (sData) => {
-    const { name, extValue, settingType, displayOrder, active, description } = sData;
-    console.log(active);
+    const { fullname, email, note, gender } = sData;
     const submittedData = {
-      name: name,
-      extValue: extValue,
-      settingType: settingType,
-      displayOrder: displayOrder,
-      active: active === "Active",
-      description: description,
+      fullname: fullname,
+      email: email,
+      note: note,
+      gender: gender,
+      roleId: 4,
     };
 
     try {
-      const response = await authApi.post("/setting/create", submittedData);
-      console.log("Tạo cài đặt:", response.data.data);
+      setIsFetching({ ...isFetching, add: true });
+      const response = await authApi.post("/user/create", submittedData);
+      console.log("Tạo giảng viên:", response.data.data);
       if (response.data.statusCode === 200) {
-        toast.success("Tạo cài đặt thành công!", {
+        toast.success("Thêm mới giảng viên thành công!", {
           position: toast.POSITION.TOP_CENTER,
         });
         setTotalElements(totalElements + 1);
@@ -151,48 +149,66 @@ export const SettingList = () => {
         });
       }
     } catch (error) {
-      console.error("Lỗi khi tạo cài đặt:", error);
-      toast.error("Lỗi khi tạo cài đặt!", {
+      console.error("Lỗi khi tạo giảng viên:", error);
+      toast.error("Lỗi khi thêm mới giảng viên!", {
         position: toast.POSITION.TOP_CENTER,
       });
+    } finally {
+      setIsFetching({ ...isFetching, add: false });
     }
   };
 
   // submit function to update a new item
   const onEditSubmit = async (sData) => {
-    const { name, extValue, settingType, displayOrder, active, description } = sData;
+    const { fullname, email, mobile, gender, note, active, avatar } = sData;
     try {
-      const response = await authApi.put("/setting/update/" + editId, {
-        id: editId,
-        name: name,
-        extValue: extValue,
-        settingType: settingType,
-        displayOrder: displayOrder,
-        active: active === "Active",
-        description: description,
+      setIsFetching({ ...isFetching, edit: true });
+      // Tạo đối tượng FormData
+      const formData = new FormData();
+
+      // Thêm các trường thông tin vào FormData
+      formData.append("id", editId);
+      formData.append("fullname", fullname);
+      formData.append("email", email);
+      if(mobile)
+        formData.append("mobile", mobile);
+      formData.append("gender", gender);
+      if(note)
+        formData.append("note", note);
+      formData.append("active", active === "Active");
+
+      // Thêm file avatar nếu có
+      if (avatar) {
+        formData.append("file", avatar);
+      }
+      // Gửi request PUT
+      const response = await authApi.put(`/user/update/${editId}`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data", // Đảm bảo gửi dưới dạng FormData
+        },
       });
-      console.log("Chỉnh sửa cài đặt: ", response.data);
+      console.log("Chỉnh sửa thông tin giảng viên: ", response.data);
       if (response.data.statusCode === 200) {
-        toast.success("Cập nhật cài đặt thành công!", {
+        toast.success("Cập nhật thông tin giảng viên thành công!", {
           position: toast.POSITION.TOP_CENTER,
         });
         let submittedData;
         let newitems = data;
-        newitems.forEach((item) => {
-          if (item.id === editId) {
-            submittedData = {
-              id: item.id,
-              name: name,
-              extValue: extValue,
-              settingType: settingType,
-              displayOrder: displayOrder,
-              active: active === "Active",
-              description: description,
-            };
-          }
-        });
+        // newitems.forEach((item) => {
+        //   if (item.id === editId) {
+        //     submittedData = {
+        //       id: item.id,
+        //       fullname: fullname,
+        //       email: email,
+        //       gender: gender,
+        //       note: note,
+        //       active: active === "Active",
+        //       avatar_url: avatar,
+        //     };
+        //   }
+        // });
         let index = newitems.findIndex((item) => item.id === editId);
-        newitems[index] = submittedData;
+        newitems[index] = response.data?.data;
         setModal({ edit: false });
         resetForm();
       } else {
@@ -201,10 +217,12 @@ export const SettingList = () => {
         });
       }
     } catch (error) {
-      console.error("Lỗi khi cập nhật cài đặt:", error);
-      toast.error("Lỗi khi cập nhật cài đặt!", {
+      console.error("Lỗi khi cập nhật thông tin giảng viên:", error);
+      toast.error("Lỗi khi cập nhật thông tin giảng viên!", {
         position: toast.POSITION.TOP_CENTER,
       });
+    } finally {
+      setIsFetching({ ...isFetching, edit: false });
     }
   };
 
@@ -213,12 +231,14 @@ export const SettingList = () => {
     data.forEach((item) => {
       if (item.id === id) {
         setEditFormData({
-          name: item.name,
-          extValue: item.extValue,
-          settingType: item.settingType,
+          fullname: item.fullname,
+          email: item.email,
+          gender: item.gender,
           displayOrder: item.displayOrder,
           active: item.active ? "Active" : "InActive",
-          description: item.description,
+          note: item.note,
+          avatar_url: item.avatar_url,
+          mobile: item.mobile
         });
         setModal({ edit: true }, { add: false });
         setEditedId(id);
@@ -269,13 +289,13 @@ export const SettingList = () => {
 
   return (
     <>
-      <Head title="Danh sách cài đặt"></Head>
+      <Head title="Quản lý giảng viên"></Head>
       <Content>
         <BlockHead size="sm">
           <BlockBetween>
             <BlockHeadContent>
-              <BlockTitle page> Cài đặt </BlockTitle>
-              <BlockDes className="text-soft"> Bạn có tổng cộng {totalElements} cài đặt </BlockDes>
+              <BlockTitle page> Quản lý giảng viên </BlockTitle>
+              <BlockDes className="text-soft"> Bạn có tổng cộng {totalElements} giảng viên </BlockDes>
             </BlockHeadContent>
             <BlockHeadContent>
               <div className="toggle-wrap nk-block-tools-toggle">
@@ -296,7 +316,7 @@ export const SettingList = () => {
                         </DropdownToggle>
                         <DropdownMenu end className="filter-wg dropdown-menu-xl" style={{ overflow: "visible" }}>
                           <div className="dropdown-head">
-                            <span className="sub-title dropdown-title"> Lọc cài đặt </span>
+                            <span className="sub-title dropdown-title"> Lọc giảng viên </span>
                             <div className="dropdown">
                               <a
                                 href="#more"
@@ -313,27 +333,17 @@ export const SettingList = () => {
                             <Row className="gx-6 gy-3">
                               <Col size="12">
                                 <div className="form-group">
-                                  <label className="form-label">Tên</label>
+                                  <label className="form-label">Từ khóa</label>
                                   <input
                                     type="text"
                                     value={search.name}
-                                    placeholder="Nhập tên"
+                                    placeholder="Nhập từ khóa"
                                     onChange={(e) => setSearch({ ...search, name: e.target.value })}
                                     className="form-control"
                                   />
                                 </div>
                               </Col>
-                              <Col size="6">
-                                <div className="form-group">
-                                  <label className="overline-title overline-title-alt">Loại cài đặt</label>
-                                  <RSelect
-                                    options={settingTypeList}
-                                    value={search.type}
-                                    onChange={(e) => setSearch({ ...search, type: e })}
-                                  />
-                                </div>
-                              </Col>
-                              <Col size="6">
+                              <Col size="12">
                                 <div className="form-group">
                                   <label className="overline-title overline-title-alt">Trạng thái</label>
                                   <RSelect
@@ -377,7 +387,7 @@ export const SettingList = () => {
                     <li className="nk-block-tools-opt" onClick={() => setModal({ add: true })}>
                       <Button color="primary">
                         <Icon name="plus"></Icon>
-                        <span> Thêm cài đặt </span>
+                        <span> Thêm giảng viên </span>
                       </Button>
                     </li>
                   </ul>
@@ -396,27 +406,24 @@ export const SettingList = () => {
                   </span>
                 </DataTableRow>
                 <DataTableRow>
-                  <span onClick={() => handleSort("name")} className="sub-text">
-                    Tên {upDownArrow(sortBy === "name" ? orderBy : "")}
+                  <span onClick={() => handleSort("fullname")} className="sub-text">
+                    Tên {upDownArrow(sortBy === "fullname" ? orderBy : "")}
                   </span>
                 </DataTableRow>
                 <DataTableRow size="mb">
-                  <span onClick={() => handleSort("extValue")} className="sub-text">
-                    Chi tiết {upDownArrow(sortBy === "extValue" ? orderBy : "")}
+                  <span onClick={() => handleSort("email")} className="sub-text">
+                    Email {upDownArrow(sortBy === "email" ? orderBy : "")}
                   </span>
                 </DataTableRow>
                 <DataTableRow size="mb">
-                  <span onClick={() => handleSort("settingType")} className="sub-text">
-                    Loại cài đặt {upDownArrow(sortBy === "settingType" ? orderBy : "")}
+                  <span onClick={() => handleSort("mobile")} className="sub-text">
+                    Số điện thoại {upDownArrow(sortBy === "mobile" ? orderBy : "")}
                   </span>
                 </DataTableRow>
                 <DataTableRow size="mb">
-                  <span onClick={() => handleSort("displayOrder")} className="sub-text">
-                    Thứ tự hiển thị {upDownArrow(sortBy === "displayOrder" ? orderBy : "")}
+                  <span onClick={() => handleSort("active")} className="sub-text">
+                    Trạng thái {upDownArrow(sortBy === "active" ? orderBy : "")}
                   </span>
-                </DataTableRow>
-                <DataTableRow size="mb">
-                  <span className="sub-text">Trạng thái</span>
                 </DataTableRow>
                 <DataTableRow className="nk-tb-col-tools text-end">
                   <span className="sub-text">Hành động</span>
@@ -430,16 +437,13 @@ export const SettingList = () => {
                           <span>{item.id}</span>
                         </DataTableRow>
                         <DataTableRow>
-                          <span>{item.name}</span>
+                          <span>{item.fullname}</span>
                         </DataTableRow>
                         <DataTableRow size="mb">
-                          <span>{item.extValue}</span>
+                          <span>{item.email}</span>
                         </DataTableRow>
                         <DataTableRow size="mb">
-                          <span>{findItemValue(settingTypeList, "value", "label", item.settingType)}</span>
-                        </DataTableRow>
-                        <DataTableRow size="mb" className="text-center">
-                          <span>{item.displayOrder}</span>
+                          <span>{item.mobile}</span>
                         </DataTableRow>
                         <DataTableRow size="mb">
                           <Badge color={item.active ? "success" : "danger"}>
@@ -504,7 +508,7 @@ export const SettingList = () => {
                 />
               ) : (
                 <div className="text-center">
-                  <span className="text-silent">Không tìm thấy cài đặt</span>
+                  <span className="text-silent">Không tìm thấy kết quả nào!</span>
                 </div>
               )}
             </div>
@@ -518,6 +522,7 @@ export const SettingList = () => {
           setFormData={setFormData}
           closeModal={closeModal}
           onSubmit={onFormSubmit}
+          isLoading={isFetching?.add}
         />
         <FormModal
           modal={modal.edit}
@@ -526,6 +531,7 @@ export const SettingList = () => {
           setFormData={setEditFormData}
           closeModal={closeEditModal}
           onSubmit={onEditSubmit}
+          isLoading={isFetching?.edit}
         />
         <ToastContainer />
       </Content>
@@ -533,4 +539,4 @@ export const SettingList = () => {
   );
 };
 
-export default SettingList;
+export default TeacherList;
