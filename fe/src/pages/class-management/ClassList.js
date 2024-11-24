@@ -60,6 +60,10 @@ export const ClassList = () => {
     active: null,
   });
   const [isFetching, setIsFetching] = useState(true);
+  const [isLoading, setIsLoading] = useState({
+    add: false,
+    edit: false,
+  });
   const [filterForm, setFilterForm] = useState({});
   const [teacherList, setTeacherList] = useState([]);
   const [semesters, setSemesters] = useState([]);
@@ -85,7 +89,7 @@ export const ClassList = () => {
           });
         }
       } catch (err) {
-        toast.error("Error fetching semesters", {
+        toast.error("Lỗi khi lấy danh sách học kỳ", {
           position: toast.POSITION.TOP_CENTER,
         });
       }
@@ -111,7 +115,7 @@ export const ClassList = () => {
           });
         }
       } catch (error) {
-        toast.error("Error fetching subjects", {
+        toast.error("Lỗi khi lấy danh sách môn học", {
           position: toast.POSITION.TOP_CENTER,
         });
       }
@@ -135,7 +139,7 @@ export const ClassList = () => {
           });
         }
       } catch (err) {
-        toast.error("Error fetching teachers", {
+        toast.error("Lỗi khi lấy danh sách giáo viên", {
           position: toast.POSITION.TOP_CENTER,
         });
       }
@@ -170,7 +174,7 @@ export const ClassList = () => {
           });
         }
       } catch (error) {
-        toast.error("Error fetching classes", {
+        toast.error("Lỗi khi lấy danh sách lớp học", {
           position: toast.POSITION.TOP_CENTER,
         });
       } finally {
@@ -245,9 +249,10 @@ export const ClassList = () => {
     };
 
     try {
+      setIsLoading({...isLoading, add: true});
       const response = await authApi.post("/class/create", submittedData);
       if (response.data.statusCode === 200) {
-        toast.success("Create class successfully!", {
+        toast.success("Tạo lớp học thành công!", {
           position: toast.POSITION.TOP_CENTER,
         });
         setTotalElements(totalElements + 1);
@@ -260,9 +265,11 @@ export const ClassList = () => {
         });
       }
     } catch (error) {
-      toast.error("Error creating class", {
+      toast.error("Lỗi khi tạo lớp học", {
         position: toast.POSITION.TOP_CENTER,
       });
+    } finally {
+      setIsLoading({...isLoading, add: false});
     }
   };
 
@@ -270,6 +277,7 @@ export const ClassList = () => {
   const onEditSubmit = async (sData) => {
     const { name, code, semester, teacher, subject, active, description, listEvaluator } = sData;
     try {
+      setIsLoading({...isLoading, edit: true});
       const response = await authApi.put("/class/update/" + editId, {
         id: editId,
         name: name,
@@ -284,7 +292,7 @@ export const ClassList = () => {
         })),
       });
       if (response.data.statusCode === 200) {
-        toast.success("Update class successfully!", {
+        toast.success("Cập nhật lớp học thành công!", {
           position: toast.POSITION.TOP_CENTER,
         });
         let submittedData;
@@ -312,13 +320,15 @@ export const ClassList = () => {
         });
       }
     } catch (error) {
-      toast.error("Error updating class", {
+      toast.error("Lỗi khi cập nhật lớp học", {
         position: toast.POSITION.TOP_CENTER,
       });
+    } finally{
+      setIsLoading({...isLoading, edit: false});
     }
   };
 
-  // function that loads the want to editted data
+  // function that loads the want to edited data
   const onEditClick = async (id) => {
     try {
       const response = await authApi.get("/class/get-by-id/" + id);
@@ -349,7 +359,7 @@ export const ClassList = () => {
         });
       }
     } catch {
-      toast.error("Error while getting class", {
+      toast.error("Lỗi khi lấy thông tin lớp học", {
         position: "top-center",
       });
     }
@@ -396,13 +406,13 @@ export const ClassList = () => {
 
   return (
     <>
-      <Head title="Class List"></Head>
+      <Head title="Danh sách lớp học"></Head>
       <Content>
         <BlockHead size="sm">
           <BlockBetween>
             <BlockHeadContent>
-              <BlockTitle page>Class Management</BlockTitle>
-              <BlockDes className="text-soft">You have total {totalElements} classes</BlockDes>
+              <BlockTitle page>Quản lý lớp học</BlockTitle>
+              <BlockDes className="text-soft">Bạn có tổng cộng {totalElements} lớp học</BlockDes>
             </BlockHeadContent>
             <BlockHeadContent>
               <div className="toggle-wrap nk-block-tools-toggle">
@@ -418,22 +428,22 @@ export const ClassList = () => {
                       <UncontrolledDropdown>
                         <DropdownToggle tag="a" className="dropdown-toggle btn btn-white btn-dim btn-outline-light">
                           <Icon name="filter-alt" className="d-none d-sm-inline"></Icon>
-                          <span>Filtered By</span>
+                          <span>Bộ lọc</span>
                           <Icon name="chevron-right" className="dd-indc"></Icon>
                         </DropdownToggle>
                         <DropdownMenu end className="filter-wg dropdown-menu-xxl" style={{ overflow: "visible" }}>
                           <div className="dropdown-head">
-                            <span className="sub-title dropdown-title">Filter Setting</span>
+                            <span className="sub-title dropdown-title">Cài đặt bộ lọc</span>
                           </div>
                           <div className="dropdown-body dropdown-body-rg">
                             <Row className="gx-6 gy-3">
                               <Col size="12">
                                 <div className="form-group">
-                                  <label className="form-label">Name or Code</label>
+                                  <label className="form-label">Tên hoặc Mã lớp</label>
                                   <input
                                     type="text"
                                     value={search.name}
-                                    placeholder="Enter name or code"
+                                    placeholder="Nhập tên hoặc mã lớp"
                                     onChange={(e) => setSearch({ ...search, name: e.target.value })}
                                     className="form-control"
                                   />
@@ -441,7 +451,7 @@ export const ClassList = () => {
                               </Col>
                               <Col size="6">
                                 <div className="form-group">
-                                  <label className="overline-title overline-title-alt">Semester</label>
+                                  <label className="overline-title overline-title-alt">Học kỳ</label>
                                   <RSelect
                                     options={semesters}
                                     value={search.semester}
@@ -451,7 +461,7 @@ export const ClassList = () => {
                               </Col>
                               <Col size="6">
                                 <div className="form-group">
-                                  <label className="overline-title overline-title-alt">Subject</label>
+                                  <label className="overline-title overline-title-alt">Môn học</label>
                                   <RSelect
                                     options={subjects}
                                     value={search.subject}
@@ -461,7 +471,7 @@ export const ClassList = () => {
                               </Col>
                               <Col size="6">
                                 <div className="form-group">
-                                  <label className="overline-title overline-title-alt">Teacher</label>
+                                  <label className="overline-title overline-title-alt">Giáo viên</label>
                                   <RSelect
                                     options={teacherList}
                                     value={search.teacher}
@@ -472,7 +482,7 @@ export const ClassList = () => {
 
                               <Col size="6">
                                 <div className="form-group">
-                                  <label className="overline-title overline-title-alt">Status</label>
+                                  <label className="overline-title overline-title-alt">Trạng thái</label>
                                   <RSelect
                                     options={statusList}
                                     value={[{ value: search.active, label: search.active }]}
@@ -498,7 +508,7 @@ export const ClassList = () => {
                               }}
                               className="clickable"
                             >
-                              Reset Filter
+                              Đặt lại bộ lọc
                             </a>
                             <button
                               onClick={() => {
@@ -507,17 +517,17 @@ export const ClassList = () => {
                               type="button"
                               className="btn btn-secondary"
                             >
-                              Filter
+                              Lọc
                             </button>
                           </div>
                         </DropdownMenu>
                       </UncontrolledDropdown>
                     </li>
-                    {(role === 'ADMIN' || role === 'MANAGER') && (
+                    {(role === "ADMIN" || role === "MANAGER") && (
                       <li className="nk-block-tools-opt" onClick={() => setModal({ add: true })}>
                         <Button color="primary">
                           <Icon name="plus"></Icon>
-                          <span>Add new class</span>
+                          <span>Thêm lớp mới</span>
                         </Button>
                       </li>
                     )}
@@ -531,7 +541,7 @@ export const ClassList = () => {
           <DataTable className="card-stretch">
             <DataTableBody>
               <DataTableHead className="nk-tb-item nk-tb-head">
-                <DataTableRow>
+                {/* <DataTableRow>
                   <span
                     onClick={() => handleSort("id")}
                     className="sub-text"
@@ -539,14 +549,14 @@ export const ClassList = () => {
                   >
                     ID {upDownArrow(sortBy === "id" ? orderBy : "")}
                   </span>
-                </DataTableRow>
+                </DataTableRow> */}
                 <DataTableRow>
                   <span
                     onClick={() => handleSort("name")}
                     className="sub-text"
                     style={{ fontWeight: "bold", cursor: "pointer" }}
                   >
-                    Name {upDownArrow(sortBy === "name" ? orderBy : "")}
+                    Tên lớp {upDownArrow(sortBy === "name" ? orderBy : "")}
                   </span>
                 </DataTableRow>
                 <DataTableRow>
@@ -555,30 +565,30 @@ export const ClassList = () => {
                     className="sub-text"
                     style={{ fontWeight: "bold", cursor: "pointer" }}
                   >
-                    Class Code {upDownArrow(sortBy === "classCode" ? orderBy : "")}
+                    Mã lớp {upDownArrow(sortBy === "classCode" ? orderBy : "")}
                   </span>
                 </DataTableRow>
                 <DataTableRow>
                   <span className="sub-text" style={{ fontWeight: "bold" }}>
-                    Teacher
+                    Giáo viên
                   </span>
                 </DataTableRow>
                 <DataTableRow>
-                  <span style={{ fontWeight: "bold" }}>Subject</span>
+                  <span style={{ fontWeight: "bold" }}>Môn học</span>
                 </DataTableRow>
                 <DataTableRow>
                   <span className="sub-text" style={{ fontWeight: "bold" }}>
-                    Semester
+                    Học kỳ
                   </span>
                 </DataTableRow>
                 <DataTableRow size="mb">
                   <span className="sub-text" style={{ fontWeight: "bold" }}>
-                    Status
+                    Trạng thái
                   </span>
                 </DataTableRow>
                 <DataTableRow className="nk-tb-col-tools text-end">
                   <span className="sub-text" style={{ fontWeight: "bold" }}>
-                    Action
+                    Hành động
                   </span>
                 </DataTableRow>
               </DataTableHead>
@@ -591,9 +601,9 @@ export const ClassList = () => {
                 data.map((item) => {
                   return (
                     <DataTableItem key={item.id} className="nk-tb-item">
-                      <DataTableRow>
+                      {/* <DataTableRow>
                         <span>{item.id}</span>
-                      </DataTableRow>
+                      </DataTableRow> */}
                       <DataTableRow>
                         <span className="sub-text">{item.name}</span>
                       </DataTableRow>
@@ -610,7 +620,9 @@ export const ClassList = () => {
                         <span>{getItemByValue(semesters, item.semesterId)?.label}</span>
                       </DataTableRow>
                       <DataTableRow size="mb">
-                        <Badge color={item.active ? "success" : "danger"}>{item.active ? "Active" : "Inactive"}</Badge>
+                        <Badge color={item.active ? "success" : "danger"}>
+                          {item.active ? "Hoạt động" : "Không hoạt động"}
+                        </Badge>
                       </DataTableRow>
                       <DataTableRow className="nk-tb-col-tools text-end">
                         <ul className="nk-tb-actions gx-1">
@@ -621,7 +633,7 @@ export const ClassList = () => {
                               </DropdownToggle>
                               <DropdownMenu end>
                                 <ul className="link-list-opt no-bdr">
-                                  {(role === 'ADMIN' || role === 'MANAGER') && (
+                                  {(role === "ADMIN" || role === "MANAGER") && (
                                     <li onClick={() => onEditClick(item.id)}>
                                       <DropdownItem
                                         tag="a"
@@ -631,7 +643,7 @@ export const ClassList = () => {
                                         }}
                                       >
                                         <Icon name="edit"></Icon>
-                                        <span>Edit</span>
+                                        <span>Chỉnh sửa</span>
                                       </DropdownItem>
                                     </li>
                                   )}
@@ -639,24 +651,9 @@ export const ClassList = () => {
                                   <li>
                                     <Link to={`/class-list/get-by-id/${item.id}`}>
                                       <Icon name="eye-fill" />
-                                      <span>View</span>
+                                      <span>Xem</span>
                                     </Link>
                                   </li>
-                                  {/* 
-                                  {canModify(role, "class", "crud") && (
-                                    <li onClick={() => onDeleteClick(item.id)}>
-                                      <DropdownItem
-                                        tag="a"
-                                        href="#delete"
-                                        onClick={(ev) => {
-                                          ev.preventDefault();
-                                        }}
-                                      >
-                                        <Icon name="trash"></Icon>
-                                        <span>Delete</span>
-                                      </DropdownItem>
-                                    </li>
-                                  )} */}
                                 </ul>
                               </DropdownMenu>
                             </UncontrolledDropdown>
@@ -667,7 +664,7 @@ export const ClassList = () => {
                   );
                 })
               ) : (
-                <div className="text-center">No classes found</div>
+                <div className="text-center">Không tìm thấy lớp học nào</div>
               )}
             </DataTableBody>
             <div className="card-inner">
@@ -692,6 +689,7 @@ export const ClassList = () => {
           subjects={subjects}
           closeModal={closeModal}
           onSubmit={onFormSubmit}
+          isLoading={isLoading?.add}
         />
         <ClassFormModal
           modal={modal.edit}
@@ -702,6 +700,7 @@ export const ClassList = () => {
           setFormData={setEditFormData}
           closeModal={closeEditModal}
           onSubmit={onEditSubmit}
+          isLoading={isLoading?.edit}
         />
         <ToastContainer />
       </Content>

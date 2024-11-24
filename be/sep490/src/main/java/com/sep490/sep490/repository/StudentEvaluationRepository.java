@@ -24,8 +24,8 @@ public interface StudentEvaluationRepository extends BaseRepository<StudentEvalu
     Optional<StudentEvaluation> findStudentEvaluation(Integer milestoneId, Integer criteriaId, Integer userId);
 
     @Modifying
-    @Query("DELETE FROM StudentEvaluation se WHERE se.user.id = :memberId and se.milestone.id = :milestoneId")
-    void deleteByMilestoneIdAndMemberId(Integer milestoneId, Integer memberId);
+    @Query("DELETE FROM StudentEvaluation se WHERE se.user.id = :memberId and se.milestone.classes.id = :classId")
+    void deleteByClassIdAndMemberId(Integer classId, Integer memberId);
     @Query("select se from StudentEvaluation se where se.milestone.id = :milestoneId " +
             "and ((:criteriaId is null and se.criteria is null) or se.criteria.id = :criteriaId )" +
             "and se.user.id = :userId and se.evaluator is not null " +

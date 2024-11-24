@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ClassUserSuccessDTO {
     private Integer id;
+    private String code;
     private Integer classesId;
     private String classCode;
     private Integer userId;
@@ -18,7 +19,7 @@ public class ClassUserSuccessDTO {
     private String role;
     private Boolean active;
     public  void validateInput(){
-        ValidateUtils.checkNullOrEmpty(note, "note about student in class");
-        note = ValidateUtils.checkLength(note, "note about student in class", 0, 255);
+        ValidateUtils.checkNullOrEmpty(note, "Ghi chú");
+        note = ValidateUtils.checkLength(note, "Ghi chú", 0, 255);
     }
 }

@@ -26,9 +26,10 @@ public class ClassesDTO {
     private List<CreateUserRequest> listEvaluator;
     private Boolean active;
     public void validateInput(){
-        ValidateUtils.checkNullOrEmpty(classCode, "Class code");
-        name = ValidateUtils.checkLength(name, "Class name", 0, 255);
-        classCode = ValidateUtils.checkLength(classCode, "Class code", 1, 255);
-        description = ValidateUtils.checkLength(description, "Class description", 0, Constants.DefaultValueEntity.DESCRIPTION_LENGTH);
+        ValidateUtils.checkNullOrEmpty(classCode, "Mã lớp");
+        ValidateUtils.checkNullOrEmpty(name, "Tên lớp");
+        name = ValidateUtils.checkLength(name, "Tên lớp", 1, 255);
+        classCode = ValidateUtils.checkLength(classCode, "Mã lớp", 1, 255);
+        description = ValidateUtils.checkLength(description, "Mô tả", 0, Constants.DefaultValueEntity.DESCRIPTION_LENGTH);
     }
 }

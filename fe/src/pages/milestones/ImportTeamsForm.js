@@ -2,11 +2,11 @@ import React, { useEffect, useState } from "react";
 import { Form, Input, Nav, NavItem, NavLink, TabContent, TabPane } from "reactstrap";
 import { Button, Col, Icon, Row, RSelect } from "../../components/Component";
 import authApi from "../../utils/ApiAuth";
-import { convertToOptions, exportToExcel } from "../../utils/Utils";
+import { convertToOptions, exportToExcel, isNullOrEmpty } from "../../utils/Utils";
 import { toast } from "react-toastify";
 import * as XLSX from "xlsx";
 import classnames from "classnames";
-import { evaluationTypes } from '../../data/ConstantData';
+import { evaluationTypes } from "../../data/ConstantData";
 
 export default function ImportTeamsForm({
   milestone,
@@ -21,16 +21,16 @@ export default function ImportTeamsForm({
   setCloneMilestone,
   inputFile,
   setInputFile,
+  classId,
 }) {
   const [activeTab, setActiveTab] = useState("1");
   const [milestones, setMilestones] = useState([]);
   const toggle = (tab) => {
     if (activeTab !== tab) setActiveTab(tab);
     if (tab == 1) setTypeImport("file");
-    else if (tab == 2){ 
+    else if (tab == 2) {
       setTypeImport("random");
-    }
-    else if (tab == 3) setTypeImport("clone");
+    } else if (tab == 3) setTypeImport("clone");
   };
   const handleFileUpload = (event) => {
     if (!event.target.files) return;
@@ -52,14 +52,14 @@ export default function ImportTeamsForm({
   const dowloadTemplate = async () => {
     try {
       const response = await authApi.post("/class/search-students", {
-        classId: milestone?.classesId,
+        classId: classId,
         roleId: 4,
         pageSize: 9999,
       });
       console.log("search student:", response.data.data.classUserSuccessDTOS);
       if (response.data.statusCode === 200) {
         response.data.data = response.data.data.classUserSuccessDTOS.map((item) => ({
-          id: item.userId,
+          code: item.code,
           fullname: item.fullname,
           // gender: item.gender,
           email: item.email,
@@ -75,44 +75,44 @@ export default function ImportTeamsForm({
       }
     } catch (error) {
       console.error("Error dowload template:", error);
-      toast.error("Error dowload template!", {
+      toast.error("Xảy ra lỗi khi tải mẫu!", {
         position: toast.POSITION.TOP_CENTER,
       });
     }
   };
 
-  useEffect(() => {
-    const fetchMilestones = async () => {
-      try {
-        const response = await authApi.post("/milestone/search", {
-          pageSize: 9999,
-          // active: true,
-          classId: milestone?.classesId,
-        });
-        console.log("milestone: ", response.data.data);
-        if (response.data.statusCode === 200) {
-          let options = response.data.data.milestoneResponses
-            .filter((item) => item?.id !== milestone.id && item.typeEvaluator !== evaluationTypes[2].value)
-            .map((item) => ({
-              value: item?.id,
-              label: item?.title,
-            }));
-          setMilestones(options);
-        } else {
-          toast.error(`${response.data.data}`, {
-            position: "top-center",
-          });
-        }
-      } catch (error) {
-        console.error("Error search milestone:", error);
-        toast.error("Error search milestone!", {
-          position: toast.POSITION.TOP_CENTER,
-        });
-      }
-    };
+  // useEffect(() => {
+  //   const fetchMilestones = async () => {
+  //     try {
+  //       const response = await authApi.post("/milestone/search", {
+  //         pageSize: 9999,
+  //         // active: true,
+  //         classId: milestone?.classesId,
+  //       });
+  //       console.log("milestone: ", response.data.data);
+  //       if (response.data.statusCode === 200) {
+  //         let options = response.data.data.milestoneResponses
+  //           .filter((item) => item?.id !== milestone.id && item.typeEvaluator !== evaluationTypes[2].value)
+  //           .map((item) => ({
+  //             value: item?.id,
+  //             label: item?.title,
+  //           }));
+  //         setMilestones(options);
+  //       } else {
+  //         toast.error(`${response.data.data}`, {
+  //           position: "top-center",
+  //         });
+  //       }
+  //     } catch (error) {
+  //       console.error("Error search milestone:", error);
+  //       toast.error("Error search milestone!", {
+  //         position: toast.POSITION.TOP_CENTER,
+  //       });
+  //     }
+  //   };
 
-    fetchMilestones();
-  }, []);
+  //   fetchMilestones();
+  // }, []);
 
   return (
     <Form className="row gy-4" onSubmit={handleSubmit(onSubmit)}>
@@ -127,7 +127,7 @@ export default function ImportTeamsForm({
               toggle("1");
             }}
           >
-            Import
+            Nhập File
           </NavLink>
         </NavItem>
         <NavItem>
@@ -140,10 +140,10 @@ export default function ImportTeamsForm({
               toggle("2");
             }}
           >
-            Random
+            Ngẫu nhiên
           </NavLink>
         </NavItem>
-        <NavItem>
+        {/* <NavItem>
           <NavLink
             tag="a"
             href="#tab"
@@ -155,7 +155,7 @@ export default function ImportTeamsForm({
           >
             Clone
           </NavLink>
-        </NavItem>
+        </NavItem> */}
       </Nav>
       <TabContent activeTab={activeTab}>
         <TabPane tabId="1">
@@ -168,18 +168,24 @@ export default function ImportTeamsForm({
                   className="text-primary"
                   onClick={dowloadTemplate}
                 >
-                  <Icon name="file-download" /> Download Template
+                  <Icon name="file-download" /> Tải xuống mẫu
                 </a>
               </Col>
               <Col sm="12">
-                <label className="form-label">Upload Excel File</label>
+                <label className="form-label">Tải lên tệp Excel</label>
                 <div className="input-group">
                   <div className="input-group-prepend">
                     <span className="input-group-text">
                       <Icon name="upload" />
                     </span>
                   </div>
-                  <Input type="file" id="customFile" value={inputFile} onChange={handleFileUpload} className="form-control" />
+                  <Input
+                    type="file"
+                    id="customFile"
+                    value={inputFile}
+                    onChange={handleFileUpload}
+                    className="form-control"
+                  />
                 </div>
               </Col>
             </Row>
@@ -193,11 +199,11 @@ export default function ImportTeamsForm({
               <Row className="m-2 p-2">
                 <Col sm="12">
                   <div className="form-group">
-                    <label className="form-label">Number of members for each team</label>
+                    <label className="form-label">Số thành viên cho mỗi nhóm</label>
                     <input
                       type="number"
                       value={random}
-                      placeholder="Enter code"
+                      placeholder="Nhập số"
                       onChange={(e) => setRandom(e.target.value)}
                       className="form-control"
                     />
@@ -215,7 +221,7 @@ export default function ImportTeamsForm({
               <Row className="m-2 p-2">
                 <Col sm="12">
                   <div className="form-group">
-                    <label className="form-label">Clone from milestone</label>
+                    <label className="form-label">Sao chép từ cột mốc</label>
                     <RSelect
                       options={milestones}
                       value={cloneMilestone}
@@ -238,11 +244,11 @@ export default function ImportTeamsForm({
           <li>
             {isFetching ? (
               <Button type="button" color="gray">
-                Importing...
+                Đang nhập...
               </Button>
             ) : (
               <Button color="primary" size="md" type="submit">
-                Import
+                Nhập
               </Button>
             )}
           </li>

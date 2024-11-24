@@ -89,13 +89,14 @@ const FormModal = ({
         <div className="p-2">
           <h5 className="title">
             {modalType === "add" && "Add Milestone"} {modalType === "edit" && "Update Milestone"}
-            {modalType === "import" && "Import Team"}
+            {modalType === "import" && "Nhập nhóm"}
           </h5>
-          {modalType === "import" && <p className="text-danger">If you change the set of teams, the set of teams for this milestone will differ from the set of teams for the previous milestone.</p>}
+          {/* {modalType === "import" && <p className="text-danger">If you change the set of teams, the set of teams for this milestone will differ from the set of teams for the previous milestone.</p>} */}
           <div className="mt-4">
             {modalType === "import" ? (
               <ImportTeamsForm
-                milestone={milestone}
+                milestone={{}}
+                classId={classId}
                 onSubmit={onSubmit}
                 isFetching={isFetching}
                 setFormData={setFormData}

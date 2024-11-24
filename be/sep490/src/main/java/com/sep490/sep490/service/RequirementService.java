@@ -87,38 +87,16 @@ public class RequirementService{
     }
 
     private void getCurrentTeamId(SearchRequirementRequest request, User user) {
-        Milestone milestone = checkExistMilestone(request.getMilestoneId());
-        if (milestone.getTeams() != null) {
-//            milestone.getTeams().stream()
-//                    .filter(team -> team.getTeamMembers() != null)
-//                    .flatMap(team -> team.getTeamMembers().stream())
-//                    .filter(teamMember -> teamMember.getMember().getId().equals(user.getId()))
-//                    .findFirst()
-//                    .ifPresent(teamMember -> request.setTeamId(teamMember.getTeam().getId()));
-            List<Milestone> milestones = milestone.getClasses().getMilestones().stream()
-                    .sorted(Comparator.comparing(Milestone::getDisplayOrder))
-                    .toList();
-            if(milestones.size() > 1){
-                int lastMilestoneId = milestones.get(0).getId(), index = -1;
-                for (int i = 1; i < milestones.size(); i++) {
-                    if(milestone.getId().equals(milestones.get(i).getId())){
-                        index = i-1;
-                        break;
-                    }
-                }
-                while (index >= 0){
-                    if(milestones.get(index).getTeams() != null && milestones.get(index).getTeams().size() > 0){
-                        lastMilestoneId = milestones.get(index).getId();
-                        break;
-                    }
-                    index--;
-                }
-                List<Team> teams = teamRepository.findByMilestoneId(lastMilestoneId);
-                teams.stream().flatMap(item -> item.getTeamMembers().stream())
-                        .filter(teamMember -> teamMember.getMember().getId().equals(user.getId()))
-                        .findFirst()
-                        .ifPresent(teamMember -> request.setTeamId(teamMember.getTeam().getId()));
-            }
+        Classes classes = classesRepository.findById(request.getClassId()).orElseThrow(
+                () -> new RecordNotFoundException("Lớp học")
+        );
+        if(classes.getTeams() != null){
+            classes.getTeams().stream().flatMap(item -> item.getTeamMembers().stream())
+                    .forEach(member -> {
+                        if(member.getMember().getId().equals(user.getId())){
+                            request.setTeamId(member.getTeam().getId());
+                        }
+                    });
         }
     }
 

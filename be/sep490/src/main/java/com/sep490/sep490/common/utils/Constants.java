@@ -121,9 +121,9 @@ public class Constants {
         public static final String EVALUATED = "Evaluated";
     }
     public static class ClassUser{
-        public static final String EMAIL_VALID="EMAIL DOMAIN DOESN'T MATCH";
-        public static final String STUDENT_CLASS_VALID="ALREADY LEARNED THIS SUBJECT";
-        public static final String STUDENT_VALID="NOT A STUDENT ACCOUNT";
+        public static final String EMAIL_VALID="Tên miền email không được cho phép";
+        public static final String STUDENT_CLASS_VALID="đã có lớp học tại môn học này";
+        public static final String STUDENT_VALID="không phải là tài khoản của học sinh";
     }
 
     public static class EmailDomain{

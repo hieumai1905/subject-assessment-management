@@ -226,22 +226,58 @@ export const getValueByLabel = (list, label) => {
   return list.find((item) => item.label === label)?.value;
 };
 
-export const generateExcel = () => {
+export const generateExcel = (students) => {
+  // Tạo workbook mới
   const wb = XLSX.utils.book_new();
-  const ws = XLSX.utils.aoa_to_sheet([["fullname", "email"]]);
+
+  // Tạo mảng dữ liệu ban đầu với tiêu đề
+  const data = [["Mã học sinh", "Họ và Tên", "Email"]];
+
+  // Thêm dữ liệu của students vào mảng data
+  students.forEach((student) => {
+    data.push([student.code, student.fullname, student.email]);
+  });
+
+  // Tạo worksheet từ mảng data
+  const ws = XLSX.utils.aoa_to_sheet(data);
+
+  // Định dạng tiêu đề (header)
   const headerStyle = {
     font: { bold: true },
     fill: { fgColor: { rgb: "FFFF00" } },
     alignment: { horizontal: "center" },
   };
-  ["A1", "B1"].forEach((cell) => {
-    ws[cell].s = headerStyle;
+
+  // Áp dụng định dạng cho dòng tiêu đề
+  ["A1", "B1", "C1"].forEach((cell) => {
+    if (ws[cell]) {
+      ws[cell].s = headerStyle;
+    }
   });
+
+  // Thêm worksheet vào workbook
   XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+
+  // Chuyển đổi workbook thành định dạng binary
   const wbout = XLSX.write(wb, { bookType: "xlsx", type: "binary" });
+
+  // Hàm chuyển đổi chuỗi sang mảng buffer
+  const s2ab = (s) => {
+    const buf = new ArrayBuffer(s.length);
+    const view = new Uint8Array(buf);
+    for (let i = 0; i < s.length; i++) {
+      view[i] = s.charCodeAt(i) & 0xff;
+    }
+    return buf;
+  };
+
+  // Tạo blob từ dữ liệu workbook
   const blob = new Blob([s2ab(wbout)], { type: "application/octet-stream" });
+
+  // Tải file về máy
   saveAs(blob, "template.xlsx");
 };
+
 
 const s2ab = (s) => {
   const buf = new ArrayBuffer(s.length);
@@ -298,7 +334,7 @@ export const convertExcelTeamToRequest = (sData) => {
       let team = findTeamByName(teamsMap, item.teamName);
 
       if (!team) {
-        team = { teamName: item.teamName, memberIds: [] };
+        team = { teamName: item.teamName, memberCodes: [] };
         teamsMap.set(item.teamName, team);
       }
 
@@ -307,10 +343,10 @@ export const convertExcelTeamToRequest = (sData) => {
       }
 
       if (!isNullOrEmpty(item.isLeader)) {
-        team.leaderId = item.id;
+        team.leaderId = item.code;
       }
 
-      team.memberIds.push(item.id);
+      team.memberCodes.push(item.code);
     }
   }
 
@@ -333,7 +369,7 @@ export const divideIntoTeams = (array, teamSize) => {
   for (let i = 0; i < array.length; i += teamSize) {
     let team = array.slice(i, i + teamSize).map((member) => ({
       ...member,
-      teamName: `Team ${teamCounter}`,
+      teamName: `Nhóm ${teamCounter}`,
     }));
     teams.push(...team);
     console.log("slicett", i, i + teamSize, array.slice(i, i + teamSize));

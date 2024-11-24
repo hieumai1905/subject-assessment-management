@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ClassUserErrorDTO {
     String email;
+    String code;
     String fullname;
     String errorDetails;
 }

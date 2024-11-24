@@ -163,7 +163,7 @@ export default function RequirementsInClass() {
       }
     } catch (error) {
       console.error("Error fetching data:", error);
-      toast.error("Error search setting!", { position: toast.POSITION.TOP_CENTER });
+      toast.error("Xảy ra lỗi khi tìm kiếm học kỳ", { position: toast.POSITION.TOP_CENTER });
     } finally {
       setIsFetching((prev) => ({ ...prev, semester: false }));
     }
@@ -196,7 +196,7 @@ export default function RequirementsInClass() {
       }
     } catch (error) {
       console.error("Error fetching data:", error);
-      toast.error("Error search subject!", { position: toast.POSITION.TOP_CENTER });
+      toast.error("Xảy ra lỗi khi tìm kiếm môn học", { position: toast.POSITION.TOP_CENTER });
     } finally {
       setIsFetching((prev) => ({ ...prev, subject: false }));
     }
@@ -249,7 +249,7 @@ export default function RequirementsInClass() {
       }
     } catch (error) {
       console.error("Error fetching data:", error);
-      toast.error("Error search class!", { position: toast.POSITION.TOP_CENTER });
+      toast.error("Xảy ra lỗi khi tìm kiếm lớp học", { position: toast.POSITION.TOP_CENTER });
     } finally {
       setIsFetching((prev) => ({ ...prev, class: false }));
     }
@@ -296,7 +296,7 @@ export default function RequirementsInClass() {
       }
     } catch (error) {
       console.error("Error fetching data:", error);
-      toast.error("Error search milestone!", { position: toast.POSITION.TOP_CENTER });
+      toast.error("Xảy ra lỗi khi tìm kiếm cột mốc", { position: toast.POSITION.TOP_CENTER });
     } finally {
       setIsFetching((prev) => ({ ...prev, milestone: false }));
     }
@@ -315,7 +315,7 @@ export default function RequirementsInClass() {
       const response = await authApi.post("/teams/search", {
         pageSize: 9999,
         pageIndex: 1,
-        milestoneId: filterForm?.milestone?.value,
+        classId: filterForm?.class?.value,
       });
       console.log("teams:", response.data.data);
       if (response.data.statusCode === 200) {
@@ -364,7 +364,7 @@ export default function RequirementsInClass() {
       }
     } catch (error) {
       console.error("Error fetching data:", error);
-      toast.error("Error search teams!", { position: toast.POSITION.TOP_CENTER });
+      toast.error("Xảy ra lỗi khi tìm kiếm nhóm", { position: toast.POSITION.TOP_CENTER });
     } finally {
       setIsFetching((prev) => ({ ...prev, team: false }));
     }
@@ -435,7 +435,7 @@ export default function RequirementsInClass() {
       }
     } catch (error) {
       console.error("Error fetching data:", error);
-      toast.error("Error search requirements!", { position: toast.POSITION.TOP_CENTER });
+      toast.error("Xảy ra lỗi khi tìm kiếm yêu cầu", { position: toast.POSITION.TOP_CENTER });
     } finally {
       setIsFetching({ ...isFetching, requirement: false });
       setIsFirst(false);

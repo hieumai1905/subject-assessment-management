@@ -32,18 +32,18 @@ const FormModal = ({ modal, closeModal, onSubmit, formData, setFormData, modalTy
         </a>
         <div className="p-2">
           <h5 className="title">
-            {modalType === "add" && "Add Team"} {modalType === "edit" && "Update Team"}
+            {modalType === "add" && "Thêm Nhóm"} {modalType === "edit" && "Cập Nhật Nhóm"}
           </h5>
           <div className="mt-4">
             <Form className="row gy-4" onSubmit={handleSubmit(onSubmit)}>
               <Col md="12">
                 <div className="form-group">
-                  <label className="form-label">Team Name*</label>
+                  <label className="form-label">Tên Nhóm*</label>
                   <input
                     type="text"
-                    {...register("teamName", { required: "This field is required" })}
+                    {...register("teamName", { required: "Trường này là bắt buộc" })}
                     value={formData.teamName}
-                    placeholder="Enter team name"
+                    placeholder="Nhập tên nhóm"
                     onChange={(e) => setFormData({ ...formData, teamName: e.target.value })}
                     className="form-control"
                   />
@@ -52,11 +52,11 @@ const FormModal = ({ modal, closeModal, onSubmit, formData, setFormData, modalTy
               </Col>
               <Col md="12">
                 <div className="form-group">
-                  <label className="form-label">Topic Name</label>
+                  <label className="form-label">Tên Đề Tài</label>
                   <input
                     type="text"
                     value={formData.topicName}
-                    placeholder="Enter topic name"
+                    placeholder="Nhập tên đề tài"
                     onChange={(e) => setFormData({ ...formData, topicName: e.target.value })}
                     className="form-control"
                   />
@@ -64,10 +64,10 @@ const FormModal = ({ modal, closeModal, onSubmit, formData, setFormData, modalTy
               </Col>
               <Col size="12">
                 <div className="form-group">
-                  <label className="form-label">Note</label>
+                  <label className="form-label">Ghi Chú</label>
                   <textarea
                     value={formData.note}
-                    placeholder="Your note"
+                    placeholder="Ghi chú của bạn"
                     onChange={(e) => setFormData({ ...formData, note: e.target.value })}
                     className="form-control-xl form-control no-resize"
                   />
@@ -79,11 +79,11 @@ const FormModal = ({ modal, closeModal, onSubmit, formData, setFormData, modalTy
                     {isSubmitting ? (
                       <Button disabled color="primary">
                         <Spinner size="sm" />
-                        <span> Saving... </span>
+                        <span> Đang lưu... </span>
                       </Button>
                     ) : (
                       <Button color="primary" size="md" type="submit">
-                        {modalType === "add" && "Add Team"} {modalType === "edit" && "Update Team"}
+                        {modalType === "add" && "Thêm Nhóm"} {modalType === "edit" && "Cập Nhật Nhóm"}
                       </Button>
                     )}
                   </li>
