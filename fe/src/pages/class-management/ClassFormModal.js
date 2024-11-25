@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Icon, Button, Col, RSelect, Row } from "../../components/Component";
-import { Modal, ModalBody, Form, Input } from "reactstrap";
+import { Modal, ModalBody, Form, Input, Spinner } from "reactstrap";
 import { useForm } from "react-hook-form";
 import "react-toastify/dist/ReactToastify.css";
 import { generateExcel, isNullOrEmpty, transformToOptions } from "../../utils/Utils";
@@ -22,6 +22,8 @@ const ClassFormModal = ({
   setSelectedManager,
   errImportList,
   changeSelectedManager,
+  isLoading,
+  students
 }) => {
   useEffect(() => {
     reset(formData);
@@ -46,7 +48,7 @@ const ClassFormModal = ({
           subjectId: formData?.subject?.value,
           type: "added",
         });
-        console.log("subject teacher:", response.data.data);
+        console.log("Giáo viên của môn học:", response.data.data);
         if (response.data.statusCode === 200) {
           selectedTeachers(transformToOptions(response.data.data));
           if (response.data.data.length > 0) {
@@ -81,8 +83,8 @@ const ClassFormModal = ({
           });
         }
       } catch (err) {
-        console.error("Error fetching data:", err);
-        toast.error("Error search subject teacher!", {
+        console.error("Lỗi khi tải dữ liệu:", err);
+        toast.error("Lỗi tìm kiếm giáo viên của môn học!", {
           position: toast.POSITION.TOP_CENTER,
         });
       }
@@ -103,8 +105,15 @@ const ClassFormModal = ({
       const sheetName = workbook.SheetNames[0];
       const worksheet = workbook.Sheets[sheetName];
       const jsonData = XLSX.utils.sheet_to_json(worksheet);
-      console.log("JSON Data:", jsonData);
-      setFormData(jsonData);
+      if(jsonData){
+        setFormData(jsonData.map((row) => ({
+          code: row["Mã học sinh"],
+          fullname: row["Họ và Tên"],
+          email: row["Email"],
+        })));
+      }
+      console.log("JSON Data:", jsonData, formData);
+      
     };
 
     reader.readAsArrayBuffer(file);
@@ -119,7 +128,7 @@ const ClassFormModal = ({
   } = useForm();
 
   return (
-    <Modal isOpen={modal} toggle={() => closeModal()} className="modal-dialog-centered" size="lg">
+    <Modal isOpen={modal} toggle={() => closeModal()} className="modal-dialog-centered" size="xl">
       <ModalBody>
         <a
           href="#cancel"
@@ -133,8 +142,9 @@ const ClassFormModal = ({
         </a>
         <div className="p-2">
           <h5 className="title">
-            {modalType === "add" && "Add Class"} {modalType === "edit" && "Update Class"}
-            {modalType === "import" && "Import Students"}
+            {modalType === "add" && "Thêm Lớp Học"}
+            {modalType === "edit" && "Cập Nhật Lớp Học"}
+            {modalType === "import" && "Nhập Học Sinh"}
           </h5>
           <div className="mt-4">
             {modalType === "import" ? (
@@ -145,13 +155,13 @@ const ClassFormModal = ({
                       href="#download"
                       style={{ cursor: "pointer", fontSize: "13px", textDecoration: "underline" }}
                       className="text-primary"
-                      onClick={generateExcel}
+                      onClick={() => generateExcel(students)}
                     >
-                      <Icon name="file-download" /> Download Template
+                      <Icon name="file-download" /> Tải Mẫu File
                     </a>
                   </Col>
                   <Col sm="12">
-                    <label className="form-label">Upload Excel File</label>
+                    <label className="form-label">Tải Tệp Excel</label>
                     <div className="input-group">
                       <div className="input-group-prepend">
                         <span className="input-group-text">
@@ -168,7 +178,7 @@ const ClassFormModal = ({
                     </div>
                   </Col>
                   <Col sm="12">
-                    {errImportList.length > 0 && ( // Kiểm tra xem có lỗi hay không
+                    {errImportList.length > 0 && (
                       <div className="form-group mt-4">
                         <div
                           style={{
@@ -181,7 +191,7 @@ const ClassFormModal = ({
                         >
                           <h6 style={{ margin: "0 0 10px 0", fontSize: "16px", fontWeight: "bold" }}>
                             <Icon name="alert-circle" style={{ marginRight: "8px", verticalAlign: "middle" }} />
-                            Errors while importing students!
+                            Lỗi khi nhập danh sách học sinh!
                           </h6>
                           <div
                             style={{
@@ -216,12 +226,12 @@ const ClassFormModal = ({
                   <Col sm="12">
                     {isFetching ? (
                       <Button type="button" color="gray" disabled>
-                        Importing...
+                        Đang nhập...
                       </Button>
                     ) : (
                       <Button color="success" size="md" type="submit">
                         <Icon name="upload-cloud" className="me-2" />
-                        {modalType === "import" && "Import"}
+                        {modalType === "import" && "Nhập"}
                       </Button>
                     )}
                   </Col>
@@ -231,77 +241,86 @@ const ClassFormModal = ({
               <Form className="row gy-4" onSubmit={handleSubmit(onSubmit)}>
                 <Col md="6">
                   <div className="form-group">
-                    <label className="form-label">Semester*</label>
+                    <label className="form-label">Học Kỳ*</label>
                     <RSelect
                       options={semesters}
                       value={formData.semester}
-                      {...register("semester", { required: "This field is required" })}
+                      {...register("semester", { required: "Trường này là bắt buộc" })}
                       onChange={(e) => {
-                        setFormData({ ...formData, semester: e });
+                        setFormData({
+                          ...formData,
+                          semester: e,
+                          name: `${formData?.subject?.label || ""} - ${
+                            e?.label || ""
+                          } - ${new Date().getFullYear()} - ${formData?.code || ""}`,
+                        });
                       }}
                     />
                     {errors.semester && <span className="invalid text-danger">{errors.semester.message}</span>}
                   </div>
                 </Col>
+
                 <Col md="6">
                   <div className="form-group">
-                    <label className="form-label">Subject*</label>
+                    <label className="form-label">Môn Học*</label>
                     <RSelect
                       options={subjects}
                       value={formData.subject}
-                      {...register("subject", { required: "This field is required" })}
+                      {...register("subject", { required: "Trường này là bắt buộc" })}
                       onChange={(e) => {
                         setFormData({
                           ...formData,
                           subject: e,
-                          code: `${formData?.name}${"-" + e?.label}`,
+                          name: `${e?.label || ""} - ${
+                            formData?.semester?.label || ""
+                          } - ${new Date().getFullYear()} - ${formData?.code || ""}`,
                         });
                       }}
                     />
                     {errors.subject && <span className="invalid text-danger">{errors.subject.message}</span>}
                   </div>
                 </Col>
+
                 <Col md="6">
                   <div className="form-group">
-                    <label className="form-label">Class Name*</label>
+                    <label className="form-label">Mã Lớp*</label>
                     <input
                       type="text"
-                      {...register("name", { required: "This field is required" })}
-                      value={formData.name}
-                      placeholder="Enter name"
+                      {...register("code", { required: "Trường này là bắt buộc" })}
+                      value={formData.code}
+                      placeholder="Nhập mã lớp"
                       onChange={(e) => {
                         setFormData({
                           ...formData,
-                          name: e.target.value,
-                          code: `${e.target.value}${
-                            !isNullOrEmpty(formData?.subject?.value) ? "-" + formData?.subject?.label : ""
-                          }`,
+                          code: e.target.value,
+                          name: `${formData?.subject?.label || ""} - ${
+                            formData?.semester?.label || ""
+                          } - ${new Date().getFullYear()} - ${e.target.value}`,
                         });
                       }}
-                      className="form-control"
-                    />
-                    {errors.name && <span className="invalid">{errors.name.message}</span>}
-                  </div>
-                </Col>
-                <Col md="6">
-                  <div className="form-group">
-                    <label className="form-label">Class Code</label>
-                    <input
-                      type="text"
-                      readOnly={true}
-                      {...register("code", { required: "This field is required" })}
-                      value={formData.code}
-                      placeholder="Enter code"
-                      onChange={(e) => setFormData({ ...formData, code: e.target.value })}
                       className="form-control"
                     />
                     {errors.code && <span className="invalid">{errors.code.message}</span>}
                   </div>
                 </Col>
+                <Col md="6">
+                  <div className="form-group">
+                    <label className="form-label">Tên Lớp*</label>
+                    <input
+                      type="text"
+                      readOnly={true}
+                      {...register("name", { required: "Trường này là bắt buộc" })}
+                      value={formData.name}
+                      placeholder="Tên lớp sẽ tự động tạo"
+                      className="form-control"
+                    />
+                    {errors.name && <span className="invalid">{errors.name.message}</span>}
+                  </div>
+                </Col>
 
                 <Col md="6">
                   <div className="form-group">
-                    <label className="form-label">Teacher</label>
+                    <label className="form-label">Giáo Viên</label>
                     <RSelect
                       options={subjectTeachers}
                       value={formData.teacher}
@@ -313,7 +332,7 @@ const ClassFormModal = ({
                 </Col>
                 <Col md="6">
                   <div className="form-group">
-                    <label className="form-label">Status</label>
+                    <label className="form-label">Trạng Thái</label>
                     <br />
                     <ul className="custom-control-group">
                       <li>
@@ -333,7 +352,7 @@ const ClassFormModal = ({
                             }}
                           />
                           <label className="custom-control-label" htmlFor="btnClassRadioControl1">
-                            Active
+                            Hoạt Động
                           </label>
                         </div>
                       </li>
@@ -354,32 +373,19 @@ const ClassFormModal = ({
                             }}
                           />
                           <label className="custom-control-label" htmlFor="btnClassRadioControl5">
-                            Inactive
+                            Không Hoạt Động
                           </label>
                         </div>
                       </li>
                     </ul>
                   </div>
                 </Col>
-                {/* <Col md="12">
-                  <div className="form-group">
-                    <label className="form-label">Final Evaluator</label>
-                    <RSelect
-                      options={subjectTeachers.filter((item) => item.value !== formData?.teacher?.value)}
-                      value={formData.listEvaluator}
-                      isMulti
-                      onChange={(e) => {
-                        setFormData({ ...formData, listEvaluator: e });
-                      }}
-                    />
-                  </div>
-                </Col> */}
                 <Col size="12">
                   <div className="form-group">
-                    <label className="form-label">Description</label>
+                    <label className="form-label">Mô Tả</label>
                     <textarea
                       value={formData.description}
-                      placeholder="Your description"
+                      placeholder="Nhập mô tả"
                       onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                       className="form-control-xl form-control no-resize"
                     />
@@ -388,9 +394,17 @@ const ClassFormModal = ({
                 <Col size="12">
                   <ul className="text-end">
                     <li>
-                      <Button color="primary" size="md" type="submit">
-                        {modalType === "add" && "Add Class"} {modalType === "edit" && "Update Class"}
-                      </Button>
+                      {isLoading ? (
+                        <Button disabled color="primary">
+                          <Spinner size="sm" />
+                          <span> Đang lưu... </span>
+                        </Button>
+                      ) : (
+                        <Button color="primary" size="md" type="submit">
+                          {modalType === "add" && "Thêm Lớp Học"}
+                          {modalType === "edit" && "Cập Nhật"}
+                        </Button>
+                      )}
                     </li>
                   </ul>
                 </Col>

@@ -34,50 +34,46 @@ public class TeamMemberService{
         TeamMember teamMember = teamMemberRepository.findByTeamIdAndMemberId(request.getOldTeamId(), request.getMemberId());
         if(request.getOldTeamId() != null && request.getNewTeamId() == null){
             if(teamMember == null)
-                throw new RecordNotFoundException("Team member");
-            deleteStudentInReqAndEvaluations(teamMember);
+                throw new RecordNotFoundException("Thành viên");
+//            deleteStudentInReqAndEvaluations(teamMember);
             teamMemberRepository.deleteByTeamIdAndMemberId(teamMember.getTeam().getId(), teamMember.getMember().getId());
         }else{
             Team team = teamRepository.findById(request.getNewTeamId()).orElseThrow(
-                    () -> new RecordNotFoundException("Team")
+                    () -> new RecordNotFoundException("Nhóm")
             );
-            isExistInClass(team, request);
+            User member = isExistInClass(team, request);
             if(request.getOldTeamId() == null)
                 teamMember = new TeamMember();
-            else
-                deleteStudentInReqAndEvaluations(teamMember);
-            teamMember.setMember(new User());
-            teamMember.getMember().setId(request.getMemberId());
+//            else
+//                deleteStudentInReqAndEvaluations(teamMember);
+            teamMember.setMember(member);
             teamMember.setTeam(team);
             teamMemberRepository.save(teamMember);
         }
     }
 
-    private void deleteStudentInReqAndEvaluations(TeamMember teamMember){
-        studentEvaluationRepository.deleteByMilestoneIdAndMemberId(
-                teamMember.getTeam().getMilestone().getId(),
-                teamMember.getMember().getId()
-        );
-        updateTrackingRepository.deleteByTeamIdAndMemberId(teamMember.getTeam().getId(), teamMember.getMember().getId());
-        workEvaluationRepository.deleteByTeamIdAndMemberId(teamMember.getTeam().getId(), teamMember.getMember().getId());
-        requirementRepository.resetStudentInRequirements(teamMember.getTeam().getId(), teamMember.getMember().getId());
-    }
+//    private void deleteStudentInReqAndEvaluations(TeamMember teamMember){
+//        studentEvaluationRepository.deleteByMilestoneIdAndMemberId(
+//                teamMember.getTeam().getMilestone().getId(),
+//                teamMember.getMember().getId()
+//        );
+//        updateTrackingRepository.deleteByTeamIdAndMemberId(teamMember.getTeam().getId(), teamMember.getMember().getId());
+//        workEvaluationRepository.deleteByTeamIdAndMemberId(teamMember.getTeam().getId(), teamMember.getMember().getId());
+//        requirementRepository.resetStudentInRequirements(teamMember.getTeam().getId(), teamMember.getMember().getId());
+//    }
 
-    private void isExistInClass(Team team, UpdateTeamMemberRequest request) {
-        boolean isExistInClass = false;
+    private User isExistInClass(Team team, UpdateTeamMemberRequest request) {
         for (ClassUser classUser : team.getClasses().getClassesUsers()) {
-            if(classUser.getUser().getId().equals(request.getMemberId())){
-                isExistInClass = true;
-                break;
+            if(classUser.getUser().getCode().equals(request.getMemberId())){
+                return classUser.getUser();
             }
         }
-        if(!isExistInClass)
-            throw new ConflictException("The member is not in the class's new team!");
+        throw new ConflictException("Thành viên này không tồn tại trong lớp");
     }
 
     public List<CreateUserRequest> getMembers(Integer teamId) {
         Team team = teamRepository.findById(teamId).orElseThrow(
-                () -> new RecordNotFoundException("Team")
+                () -> new RecordNotFoundException("Nhóm")
         );
         List<CreateUserRequest> members = new ArrayList<>();
         if(team.getTeamMembers() != null){

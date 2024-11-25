@@ -25,7 +25,7 @@ public class TeamMemberController {
     @PutMapping
     public HttpResponse<?> update(@RequestBody UpdateTeamMemberRequest request) {
         teamMemberService.updateTeamMember(request);
-        return HttpResponse.ok("Update team member successfully!");
+        return HttpResponse.ok("Cập nhật thành viên trong nhóm thành công!");
     }
 
     @GetMapping("/find-by-team-id/{teamId}")

@@ -8,11 +8,11 @@ import lombok.Data;
 public class UpdateTeamMemberRequest {
     private Integer oldTeamId;
     private Integer newTeamId;
-    private Integer memberId;
+    private String memberId;
 
     public void validateInput(){
-        ValidateUtils.checkNullOrEmpty(memberId, "Member id");
+        ValidateUtils.checkNullOrEmpty(memberId, "Mã thành viên");
         if(oldTeamId == null && newTeamId == null)
-            throw new ApiInputException("New team id or old team id must not be null!");
+            throw new ApiInputException("Bắt buộc phải có thông tin nhóm mới hoặc nhóm cũ");
     }
 }

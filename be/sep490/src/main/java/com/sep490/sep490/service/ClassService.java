@@ -85,7 +85,7 @@ public class ClassService implements BaseService<Classes, Integer> {
         milestoneService.cloneAssignmentToMilestone(saveClass);
 
         var response = ConvertUtils.convert(saveClass, ClassesDTO.class);
-        enrichResponse(response, request);
+//        enrichResponse(response, request);
 
         return response;
     }
@@ -94,7 +94,7 @@ public class ClassService implements BaseService<Classes, Integer> {
     public Object update(Integer integer, Object objectRequest) {
         log.info("update class ");
         var checkClass = classesRepository.findById(integer).orElseThrow(
-                () -> new RecordNotFoundException("Class")
+                () -> new RecordNotFoundException("Lớp học")
         );
         var request = (ClassesDTO) objectRequest;
         request.validateInput();
@@ -109,7 +109,7 @@ public class ClassService implements BaseService<Classes, Integer> {
         classesRepository.save(updateClass);
 
         var response = ConvertUtils.convert(updateClass, ClassesDTO.class);
-        updateEvaluators(response, request);
+//        updateEvaluators(response, request);
 
         settingRepository.findById(response.getSemesterId()).ifPresent(setting -> {
             response.setSemesterName(setting.getName());
@@ -119,7 +119,7 @@ public class ClassService implements BaseService<Classes, Integer> {
             response.setTeacherName(user.getFullname());
         });
 
-        enrichEvaluators(response, request);
+//        enrichEvaluators(response, request);
 
         subjectRepository.findById(response.getSubjectId()).ifPresent(subject -> {
             response.setSubjectName(subject.getSubjectName());
@@ -131,7 +131,7 @@ public class ClassService implements BaseService<Classes, Integer> {
     @Override
     public Object get(Integer integer) {
         var checkClass = classesRepository.findById(integer).orElseThrow(
-                () -> new RecordNotFoundException("Class")
+                () -> new RecordNotFoundException("Lớp học")
         );
         var response = ConvertUtils.convert(checkClass, ClassesDTO.class);
         classesRepository.findById(response.getId()).ifPresent(classes1 -> {
@@ -152,7 +152,7 @@ public class ClassService implements BaseService<Classes, Integer> {
     @Override
     public void delete(Integer integer) {
         var checkClass = classesRepository.findById(integer).orElseThrow(
-                () -> new RecordNotFoundException("Class")
+                () -> new RecordNotFoundException("Lớp học")
         );
         classesRepository.delete(checkClass);
     }
@@ -196,12 +196,12 @@ public class ClassService implements BaseService<Classes, Integer> {
 
             return ConvertUtils.convert(request, ClassUserSuccessDTO.class);
         } else {
-            throw new ConflictException("Student not learn in this class");
+            throw new ConflictException("Sinh viên không tồn tại trong lớp này");
         }
     }
 
     private void deleteStudentInReqAndEvaluations(Integer classId, Integer studentId){
-        Classes classes = classesRepository.findById(classId).orElseThrow(() -> new RecordNotFoundException("Class"));
+        Classes classes = classesRepository.findById(classId).orElseThrow(() -> new RecordNotFoundException("Lớp học"));
         if(classes.getMilestones() != null && !classes.getMilestones().isEmpty()){
             List<TeamMember> teamMembers = classes.getMilestones().stream()
                     .flatMap(item -> item.getTeams().stream())
@@ -211,8 +211,8 @@ public class ClassService implements BaseService<Classes, Integer> {
                 for (TeamMember teamMember : teamMembers) {
                       if(teamMember.getMember().getId().equals(studentId)){
                           // TO DO: ko bt nên xóa hay ko??
-                          studentEvaluationRepository.deleteByMilestoneIdAndMemberId(
-                                  teamMember.getTeam().getMilestone().getId(),
+                          studentEvaluationRepository.deleteByClassIdAndMemberId(
+                                  teamMember.getTeam().getClasses().getId(),
                                   teamMember.getMember().getId()
                           );
                           updateTrackingRepository.deleteByTeamIdAndMemberId(teamMember.getTeam().getId(), teamMember.getMember().getId());
@@ -229,29 +229,27 @@ public class ClassService implements BaseService<Classes, Integer> {
     public ClassUserResponeDTO addListStudent(ClassListStudentRequest classListStudentRequest) throws MessagingException, UnsupportedEncodingException {
         ClassUserResponeDTO classUserResponeDTO=new ClassUserResponeDTO();
         classListStudentRequest.validateInput();
-        validateClassExistence(classListStudentRequest.getClassId());
+        Classes classes = validateClassExistence(classListStudentRequest.getClassId());
         deleteExistingStudentsInClass(classListStudentRequest.getClassId());
 
         List<ClassUserSuccessDTO> list = new ArrayList<>();
         for (CreateUserRequest request : classListStudentRequest.getList()) {
-            if(validateEmailDomain(request.getEmail(),classUserResponeDTO)){
-                ClassUser classUser = new ClassUser();
-                classUser.setClasses(classesRepository.findById(classListStudentRequest.getClassId()).get());
-                classUser.setActive(true);
-                classUser.setNote("");
-                User user = userRepository.findFirstByEmail(request.getEmail());
-                if (user != null) {
-                    if (validateExistingStudent(user, classUser.getClasses(),classUserResponeDTO)){
-                        classUser.setUser(user);
-                        classUserRepository.save(classUser);
-                        list.add(buildClassUserDTO(classUser));
-                    }
-                } else {
-                    user = createUser(request);
+            ClassUser classUser = new ClassUser();
+            classUser.setClasses(classes);
+            classUser.setActive(true);
+            classUser.setNote("");
+            User user = userRepository.findByCode(request.getCode());
+            if (user != null) {
+                if (validateExistingStudent(user, classUser.getClasses(),classUserResponeDTO)){
                     classUser.setUser(user);
                     classUserRepository.save(classUser);
                     list.add(buildClassUserDTO(classUser));
                 }
+            } else {
+                ClassUserErrorDTO temp= new ClassUserErrorDTO();
+                temp.setCode(request.getCode());
+                temp.setErrorDetails(Constants.ClassUser.STUDENT_VALID);
+                classUserResponeDTO.addError(temp);
             }
         }
         classUserResponeDTO.setClassUserSuccess(list);
@@ -263,7 +261,7 @@ public class ClassService implements BaseService<Classes, Integer> {
         if (foundUser != null) {
             return sendEmailContent(foundUser, password);
         }
-        throw new RecordNotFoundException("User");
+        throw new RecordNotFoundException("Sinh viên");
     }
 
     private String sendEmailContent(User user, String password) throws MessagingException, UnsupportedEncodingException {
@@ -376,7 +374,6 @@ public class ClassService implements BaseService<Classes, Integer> {
         Page<ClassUser> classUsers = classUserRepository.search(
                 request.getClassId(),
                 request.getKeyWord(),
-                request.getRoleId(),
                 pageable
         );
         SearchClassUserResponse response = new SearchClassUserResponse();
@@ -400,6 +397,7 @@ public class ClassService implements BaseService<Classes, Integer> {
     private ClassUserSuccessDTO getClassUserSuccessDTO(ClassUser classUser) {
         ClassUserSuccessDTO classUserSuccessDTO = new ClassUserSuccessDTO();
         classUserSuccessDTO.setId(classUser.getId());
+        classUserSuccessDTO.setCode(classUser.getUser().getCode());
         classUserSuccessDTO.setClassesId(classUser.getClasses().getId());
         classUserSuccessDTO.setClassCode(classUser.getClasses().getClassCode());
         classUserSuccessDTO.setUserId(classUser.getUser().getId());
@@ -412,9 +410,9 @@ public class ClassService implements BaseService<Classes, Integer> {
         return classUserSuccessDTO;
     }
 
-    private void validateClassExistence(Integer classId) {
-        classesRepository.findById(classId).orElseThrow(
-                () -> new ApiInputException("classId not already exist!")
+    private Classes validateClassExistence(Integer classId) {
+        return classesRepository.findById(classId).orElseThrow(
+                () -> new ApiInputException("Lớp học không tồn tại!")
         );
     }
 
@@ -444,24 +442,19 @@ public class ClassService implements BaseService<Classes, Integer> {
         if (!classesRepository.findByUserIdAndSemesterIdAndSubjectId(user.getId(), semesterId, subjectId).isEmpty()) {
            if(classUserResponeDTO!=null){
                ClassUserErrorDTO temp= new ClassUserErrorDTO();
-               temp.setEmail(user.getEmail());
+               temp.setEmail(user.getCode());
                temp.setErrorDetails(Constants.ClassUser.STUDENT_CLASS_VALID);
                classUserResponeDTO.addError(temp);
                return false;
-           }
-           else {
-               throw new ApiInputException(user.getEmail()+" " + Constants.ClassUser.STUDENT_CLASS_VALID);
            }
         }
         if (!user.getRole().getId().equals(Constants.Role.STUDENT)) {
             if(classUserResponeDTO!=null){
                 ClassUserErrorDTO temp= new ClassUserErrorDTO();
-                temp.setEmail(user.getEmail());
+                temp.setEmail(user.getCode());
                 temp.setErrorDetails(Constants.ClassUser.STUDENT_VALID);
                 classUserResponeDTO.addError(temp);
                 return false;
-            }else {
-                throw new ApiInputException(user.getEmail() + " " + Constants.ClassUser.STUDENT_VALID);
             }
         }
         return true;
@@ -484,15 +477,26 @@ public class ClassService implements BaseService<Classes, Integer> {
     }
 
     private ClassUserSuccessDTO buildClassUserDTO(ClassUser classUser) {
-        var response = ConvertUtils.convert(classUser, ClassUserSuccessDTO.class);
-        classesRepository.findById(classUser.getClasses().getId()).ifPresent(classes -> {
-            response.setClassCode(classes.getClassCode());
-        });
-        userRepository.findById(classUser.getUser().getId()).ifPresent(user -> {
-            response.setFullname(user.getFullname());
-            response.setEmail(user.getEmail());
-            response.setPhone(user.getMobile());
-        });
+        var response = new ClassUserSuccessDTO();
+        if(classUser.getUser() != null){
+            response.setCode(classUser.getUser().getCode());
+            response.setEmail(classUser.getUser().getEmail());
+            response.setFullname(classUser.getUser().getFullname());
+            response.setId(classUser.getUser().getId());
+        }
+        if(classUser.getClasses() != null){
+            response.setClassCode(classUser.getClasses().getClassCode());
+            response.setClassesId(classUser.getClasses().getId());
+        }
+//        classesRepository.findById(classUser.getClasses().getId()).ifPresent(classes -> {
+//            response.setClassCode(classes.getClassCode());
+//        });
+//        userRepository.findById(classUser.getUser().getId()).ifPresent(user -> {
+//            response.setFullname(user.getFullname());
+//            response.setEmail(user.getEmail());
+//            response.setPhone(user.getMobile());
+//            response.setCode(user.getCode());
+//        });
         return response;
     }
     private void deleteExistingStudentsInClass(Integer classId) {
@@ -505,13 +509,13 @@ public class ClassService implements BaseService<Classes, Integer> {
     }
     private void validateSemester(Integer semesterId) {
         if (settingRepository.findSettingBySettingTypeAndSettingId("semester", semesterId) == null) {
-            throw new ApiInputException("Semester not valid!");
+            throw new ApiInputException("Học kỳ không tồn tại!");
         }
     }
 
     private void validateTeacher(Integer subjectId, Integer teacherId) {
         if (subjectRepository.checkSubjectTeacher(subjectId, "added", teacherId) == null) {
-            throw new ApiInputException("Teacher do not teach this subject!");
+            throw new ApiInputException("Giáo viên không có trong môn học này!");
         }
     }
 
@@ -519,10 +523,10 @@ public class ClassService implements BaseService<Classes, Integer> {
         if (listEvaluator != null) {
             for (CreateUserRequest userRequest : listEvaluator) {
                 if (userRequest.getId().equals(teacherId)) {
-                    throw new ApiInputException("The teacher who teaches this class cannot be added to the list of evaluation teachers");
+                    throw new ApiInputException("Giáo viên giảng dạy lớp này không thể được thêm vào danh sách giáo viên đánh giá.");
                 }
                 if (subjectRepository.checkSubjectTeacher(subjectId, "added", userRequest.getId()) == null) {
-                    throw new ApiInputException("The list of evaluated teachers includes teachers who do not teach this subject!");
+                    throw new ApiInputException("Danh sách giáo viên đánh giá bao gồm những giáo viên không giảng dạy môn học này!");
                 }
             }
         }
@@ -531,114 +535,82 @@ public class ClassService implements BaseService<Classes, Integer> {
     private void checkClassExistence(String classCode, Integer semesterId, Integer classId) {
         var foundClass = classesRepository.findFirstByClassCodeAndSettingId(classCode, semesterId, classId);
         foundClass.ifPresent(classes -> {
-            throw new NameAlreadyExistsException("Class ");
+            throw new NameAlreadyExistsException("Lớp học đã tồn tại.");
         });
-    }
-
-    private void enrichResponse(ClassesDTO response, ClassesDTO request) {
-        settingRepository.findById(response.getSemesterId()).ifPresent(setting -> {
-            response.setSemesterName(setting.getName());
-        });
-
-        if (request.getListEvaluator() != null) {
-            for (CreateUserRequest createUserRequest : request.getListEvaluator()) {
-                ClassUser classUser = new ClassUser();
-                classUser.setActive(true);
-                classUser.setNote("");
-                classUser.setClasses(classesRepository.findById(response.getId()).get());
-                classUser.setUser(userRepository.findById(createUserRequest.getId()).get());
-                classUserRepository.save(classUser);
-            }
-        }
-
-        userRepository.findById(response.getTeacherId()).ifPresent(user -> {
-            response.setTeacherName(user.getFullname());
-        });
-
-        if (request.getListEvaluator() != null) {
-            List<CreateUserRequest> list = new ArrayList<>();
-            for (CreateUserRequest userRequest : request.getListEvaluator()) {
-                userRepository.findById(userRequest.getId()).ifPresent(user -> {
-                    userRequest.setRoleId(user.getRole().getId());
-                    userRequest.setFullname(user.getFullname());
-                    userRequest.setGender(user.getGender());
-                    userRequest.setEmail(user.getEmail());
-                });
-                list.add(userRequest);
-            }
-            response.setListEvaluator(list);
-        }
-
-        subjectRepository.findById(response.getSubjectId()).ifPresent(subject -> {
-            response.setSubjectName(subject.getSubjectName());
-        });
-    }
-    private void updateEvaluators(ClassesDTO response, ClassesDTO request) {
-        if (request.getListEvaluator() != null) {
-            var list = classUserRepository.findAllByClassIdAndRole(response.getId(), Constants.Role.TEACHER);
-            if (!list.isEmpty()) {
-                classUserRepository.deleteAll(list);
-            }
-            for (CreateUserRequest createUserRequest : request.getListEvaluator()) {
-                ClassUser classUser = new ClassUser();
-                classUser.setActive(true);
-                classUser.setNote("");
-                classUser.setClasses(classesRepository.findById(response.getId()).get());
-                classUser.setUser(userRepository.findById(createUserRequest.getId()).get());
-                classUserRepository.save(classUser);
-            }
-        }
-}
-    private void enrichEvaluators(ClassesDTO response, ClassesDTO request) {
-        var list = classUserRepository.findAllByClassIdAndRole(response.getId(), Constants.Role.TEACHER);
-        if (!list.isEmpty()) {
-            List<CreateUserRequest> listUser = new ArrayList<>();
-            for (CreateUserRequest userRequest : request.getListEvaluator()) {
-                userRepository.findById(userRequest.getId()).ifPresent(user -> {
-                    userRequest.setRoleId(user.getRole().getId());
-                    userRequest.setFullname(user.getFullname());
-                    userRequest.setGender(user.getGender());
-                    userRequest.setEmail(user.getEmail());
-                });
-                listUser.add(userRequest);
-            }
-            response.setListEvaluator(listUser);
-        }
     }
 
     public Object searchBySemesterId(SearchClassForGrandFinal request) {
         SearchClassResponseForGrandFinal response = new SearchClassResponseForGrandFinal();
         response.setClassList(new ArrayList<>());
         List<BaseDTO> classList = new ArrayList<>();
-        if(request.getSemesterId() == null || request.getRoundId() == null){
+        if (request.getSemesterId() == null || request.getRoundId() == null) {
             return response;
         }
+
         User currentUser = commonService.getCurrentUser();
-        Setting semester = (Setting) settingRepository.findSettingBySettingTypeAndSettingId( "semester", request.getSemesterId());
-        if(semester == null){
-            throw new RecordNotFoundException("Semester");
+        Setting semester = (Setting) settingRepository.findSettingBySettingTypeAndSettingId("semester", request.getSemesterId());
+        if (semester == null) {
+            throw new RecordNotFoundException("Không thể tìm thấy học kỳ được chỉ định.");
         }
-        Setting round = (Setting) settingRepository.findSettingBySettingTypeAndSettingId( "round", request.getRoundId());
-        if(round == null){
-            throw new RecordNotFoundException("Round");
+
+        Setting round = (Setting) settingRepository.findSettingBySettingTypeAndSettingId("round", request.getRoundId());
+        if (round == null) {
+            throw new RecordNotFoundException("Không thể tìm thấy vòng được chỉ định.");
         }
+
         List<Council> councils = councilRepository.findBySemesterIdAndRoundId(round.getId(), semester.getId());
         List<Session> sessions = sessionRepository.findBySemesterIdAndRoundId(semester.getId(), round.getId());
         List<Integer> councilIds = councils.stream().map(Council::getId).toList();
         List<Integer> sessionIds = sessions.stream().map(Session::getId).toList();
+
         List<Classes> classes = councilTeamRepository.findSessionsAndCouncils(
                 councilIds, sessionIds, request.getSessionId(),
                 currentUser.getRole().getId().equals(Constants.Role.STUDENT),
                 currentUser.getRole().getId().equals(Constants.Role.TEACHER),
                 currentUser.getId()
         );
-        if(classes != null){
+
+        if (classes != null) {
             for (Classes c : classes) {
                 classList.add(new BaseDTO(c.getId(), c.getClassCode()));
             }
         }
         response.setClassList(classList);
         response.setCanEvaluate(currentUser.getRole().getId().equals(Constants.Role.TEACHER));
+        return response;
+    }
+
+    public Object searchStudentsHasNoClass(SearchClassStudentRequest request) {
+        request.validateInput();
+        Classes classes = classesRepository.findById(request.getClassId()).orElseThrow(
+                () -> new RecordNotFoundException("Lớp học không tồn tại")
+        );
+        Pageable pageable;
+        if (request.getOrderBy().equals("DESC")) {
+            pageable = PageRequest.of(request.getPageIndex() - 1
+                    , request.getPageSize(), Sort.by(request.getSortBy()).descending());
+        } else {
+            pageable = PageRequest.of(request.getPageIndex() - 1
+                    , request.getPageSize(), Sort.by(request.getSortBy()).ascending());
+        }
+        Page<User> classUsers = classUserRepository.searchStudentsHasNoClass(
+                classes.getSubject().getId(),
+                classes.getSemester().getId(),
+                request.getYear(),
+                pageable
+        );
+        SearchClassUserResponse response = new SearchClassUserResponse();
+
+        List<ClassUserSuccessDTO> success= new ArrayList<>();
+        for(User user : classUsers.getContent()){
+            ClassUserSuccessDTO dto = new ClassUserSuccessDTO();
+            dto.setId(dto.getId());
+            dto.setEmail(user.getEmail());
+            dto.setFullname(user.getFullname());
+            dto.setCode(user.getCode());
+            success.add(dto);
+        }
+        response.setClassUserSuccessDTOS(success);
         return response;
     }
 }

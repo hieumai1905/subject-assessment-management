@@ -38,16 +38,16 @@ public class TeamController {
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'MANAGER', 'TEACHER', 'STUDENT')")
     @PutMapping("/update-team-leader")
-    public HttpResponse<?> updateTeamLeader(@RequestParam Integer teamId, @RequestParam Integer leaderId) {
+    public HttpResponse<?> updateTeamLeader(@RequestParam Integer teamId, @RequestParam String leaderId) {
         teamService.updateTeamLeader(teamId, leaderId);
-        return HttpResponse.ok("Update team leader successfully!");
+        return HttpResponse.ok("Cập nhật trưởng nhóm thành công");
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'MANAGER', 'TEACHER')")
     @PutMapping("/close-update/{milestoneId}")
     public HttpResponse<?> closeUpdate(@PathVariable Integer milestoneId) {
         teamService.closeUpdate(milestoneId);
-        return HttpResponse.ok("Close update successfully!");
+        return HttpResponse.ok("Đóng cập nhật nhóm thành công");
     }
 
     @GetMapping("/get-teams-progression-by-milestone/{milestoneId}")
@@ -55,11 +55,11 @@ public class TeamController {
         return HttpResponse.ok(teamService.getTeamsProgressionByMilestone(milestoneId));
     }
 
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'MANAGER', 'TEACHER')")
-    @GetMapping("/clone-from")
-    public HttpResponse<?> cloneTeams(@RequestParam Integer milestoneId, @RequestParam Integer cloneMilestoneId) {
-        return HttpResponse.ok(teamService.cloneTeamsInOtherMilestone(milestoneId, cloneMilestoneId));
-    }
+//    @PreAuthorize("hasAnyAuthority('ADMIN', 'MANAGER', 'TEACHER')")
+//    @GetMapping("/clone-from")
+//    public HttpResponse<?> cloneTeams(@RequestParam Integer milestoneId, @RequestParam Integer cloneMilestoneId) {
+//        return HttpResponse.ok(teamService.cloneTeamsInOtherMilestone(milestoneId, cloneMilestoneId));
+//    }
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'MANAGER', 'TEACHER')")
     @PostMapping
@@ -77,7 +77,7 @@ public class TeamController {
     @DeleteMapping("{id}")
     public HttpResponse<?> delete(@PathVariable("id") Integer id) {
         teamService.delete(id);
-        return HttpResponse.ok("Delete team successfully!");
+        return HttpResponse.ok("Xóa nhóm thành công!");
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'MANAGER', 'TEACHER')")

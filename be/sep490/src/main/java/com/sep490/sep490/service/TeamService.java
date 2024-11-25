@@ -54,12 +54,13 @@ public class TeamService implements BaseService<Milestone, Integer>{
         log.info("create team:");
         var request = (TeamDTO) requestObject;
         request.validateInput();
-        Milestone milestone = checkExistMilestone(request.getMilestoneId());
+//        Milestone milestone = checkExistMilestone(request.getMilestoneId());
+        Classes classes = checkExistClass(request.getClassId());
         Team findByName = teamRepository.findByTeamName(request.getTeamName(), request.getMilestoneId());
         if(findByName != null)
-            throw new NameAlreadyExistsException("Team name");
+            throw new NameAlreadyExistsException("Tên nhóm");
         Team saveTeam = new Team();
-        setBaseTeam(null, saveTeam, request, milestone);
+        setBaseTeam(null, saveTeam, request, classes);
         List<TeamMember> teamMembers = new ArrayList<>();
         for (CreateUserRequest member : request.getMembers()) {
             TeamMember teamMember = new TeamMember();
@@ -73,20 +74,25 @@ public class TeamService implements BaseService<Milestone, Integer>{
         return ConvertUtils.convert(saveTeam, TeamDTO.class);
     }
 
-    private void setBaseTeam(Integer id, Team baseTeam, TeamDTO request, Milestone milestone) {
+    private void setBaseTeam(Integer id, Team baseTeam, TeamDTO request, Classes classes) {
         if(id != null)
             baseTeam.setId(id);
         baseTeam.setTeamName(request.getTeamName());
         baseTeam.setTopicName(request.getTopicName());
         baseTeam.setNote(request.getNote());
         baseTeam.setActive(false);
-        baseTeam.setMilestone(milestone);
-        baseTeam.setClasses(milestone.getClasses());
+        baseTeam.setClasses(classes);
     }
 
     private Milestone checkExistMilestone(Integer milestoneId) {
         return milestoneRepository.findById(milestoneId).orElseThrow(
                 () -> new RecordNotFoundException("Milestone")
+        );
+    }
+
+    private Classes checkExistClass(Integer classId) {
+        return classesRepository.findById(classId).orElseThrow(
+                () -> new RecordNotFoundException("Lớp học")
         );
     }
 
@@ -98,11 +104,12 @@ public class TeamService implements BaseService<Milestone, Integer>{
         Team saveTeam = teamRepository.findById(id).orElseThrow(
                 () -> new RecordNotFoundException("Team")
         );
-        Milestone milestone = checkExistMilestone(request.getMilestoneId());
-        Team findByName = teamRepository.findByTeamNameAndOtherId(request.getTeamName(), id, request.getMilestoneId());
+//        Milestone milestone = checkExistMilestone(request.getMilestoneId());
+        Classes classes = checkExistClass(request.getClassId());
+        Team findByName = teamRepository.findByTeamNameAndOtherId(request.getTeamName(), id, request.getClassId());
         if(findByName != null)
-            throw new NameAlreadyExistsException("Team name");
-        setBaseTeam(id, saveTeam, request, milestone);
+            throw new NameAlreadyExistsException("Tên nhóm");
+        setBaseTeam(id, saveTeam, request, classes);
         teamRepository.save(saveTeam);
         return ConvertUtils.convert(saveTeam, TeamDTO.class);
     }
@@ -117,9 +124,9 @@ public class TeamService implements BaseService<Milestone, Integer>{
     public void delete(Integer id) {
         log.info("delete team id: " + id);
         Team team = teamRepository.findById(id).orElseThrow(
-                () -> new RecordNotFoundException("Team")
+                () -> new RecordNotFoundException("Tên nhóm")
         );
-        deleteTeamContraints(team, team.getMilestone());
+        deleteTeamContraints(team, team.getClasses());
         requirementRepository.deleteByTeamId(team.getId(), null);
         teamMemberRepository.deleteByTeamId(team.getId());
         teamRepository.deleteByTeamId(team.getId());
@@ -130,41 +137,41 @@ public class TeamService implements BaseService<Milestone, Integer>{
         log.info("Search team: ");
         var request = (SearchTeamRequest) requestObject;
         request.validateInput();
-        if(request.getMilestoneId() == null){
+        if(request.getClassId() == null){
             SearchTeamResponse response = new SearchTeamResponse();
             response.setTeamDTOs(new ArrayList<>());
             return response;
         }
-        var milestone = milestoneRepository.findById(request.getMilestoneId()).orElseThrow(
-                () -> new RecordNotFoundException("Milestone")
+        var classes = classesRepository.findById(request.getClassId()).orElseThrow(
+                () -> new RecordNotFoundException("Lớp học")
         );
-        List<Milestone> milestones = milestone.getClasses().getMilestones().stream()
-                .sorted(Comparator.comparing(Milestone::getDisplayOrder))
-                .toList();
+//        List<Milestone> milestones = milestone.getClasses().getMilestones().stream()
+//                .sorted(Comparator.comparing(Milestone::getDisplayOrder))
+//                .toList();
         boolean isCurrentMilestone = true;
-        if((milestone.getTeams() == null || milestone.getTeams().size() == 0) && milestones.size() > 1){
-            int lastMilestoneId = milestones.get(0).getId(), index = -1;
-            for (int i = 1; i < milestones.size(); i++) {
-                if(milestone.getId().equals(milestones.get(i).getId())){
-                    index = i-1;
-                    break;
-                }
-            }
-            while (index >= 0){
-                if(milestones.get(index).getTeams() != null && milestones.get(index).getTeams().size() > 0){
-                    lastMilestoneId = milestones.get(index).getId();
-                    break;
-                }
-                index--;
-            }
-            request.setMilestoneId(lastMilestoneId);
-            isCurrentMilestone = false;
-        }
-        List<User> students = new ArrayList<>(milestone.getClasses().getClassesUsers().stream()
+//        if((milestone.getTeams() == null || milestone.getTeams().size() == 0) && milestones.size() > 1){
+//            int lastMilestoneId = milestones.get(0).getId(), index = -1;
+//            for (int i = 1; i < milestones.size(); i++) {
+//                if(milestone.getId().equals(milestones.get(i).getId())){
+//                    index = i-1;
+//                    break;
+//                }
+//            }
+//            while (index >= 0){
+//                if(milestones.get(index).getTeams() != null && milestones.get(index).getTeams().size() > 0){
+//                    lastMilestoneId = milestones.get(index).getId();
+//                    break;
+//                }
+//                index--;
+//            }
+//            request.setMilestoneId(lastMilestoneId);
+//            isCurrentMilestone = false;
+//        }
+        List<User> students = new ArrayList<>(classes.getClassesUsers().stream()
                 .map(ClassUser::getUser)
                 .filter(user -> user.getRole().getId().equals(Constants.Role.STUDENT)).toList());
         List<Team> teams = teamRepository.search(
-                request.getMilestoneId(),
+                request.getClassId(),
                 request.getTeamName(),
                 request.getTopicName()
         );
@@ -173,12 +180,15 @@ public class TeamService implements BaseService<Milestone, Integer>{
         List<CreateUserRequest> userDTOs = null;
         for (Team team : teams) {
             TeamDTO teamDTO = ConvertUtils.convert(team, TeamDTO.class);
-            if(team.getLeader() != null)
+            if(team.getLeader() != null) {
                 teamDTO.setLeaderId(team.getLeader().getId());
+                teamDTO.setLeaderCode(team.getLeader().getCode());
+            }
             userDTOs = new ArrayList<>();
             if(team.getTeamMembers() != null){
                 for (TeamMember teamMember : team.getTeamMembers()) {
                     CreateUserRequest userDTO = new CreateUserRequest();
+                    userDTO.setCode(teamMember.getMember().getCode());
                     userDTO.setEmail(teamMember.getMember().getEmail());
                     userDTO.setFullname(teamMember.getMember().getFullname());
                     userDTO.setId(teamMember.getMember().getId());
@@ -204,6 +214,7 @@ public class TeamService implements BaseService<Milestone, Integer>{
             List<CreateUserRequest> userDTOs = new ArrayList<>();
             for (User user : students) {
                 CreateUserRequest userDTO = new CreateUserRequest();
+                userDTO.setCode(user.getCode());
                 userDTO.setEmail(user.getEmail());
                 userDTO.setFullname(user.getFullname());
                 userDTO.setId(user.getId());
@@ -289,55 +300,57 @@ public class TeamService implements BaseService<Milestone, Integer>{
 
     @Transactional
     public Object importTeams(ImportTeamListRequest request) {
-        log.info("import teams with milestoneId: " + request.getMilestoneId());
+        log.info("import teams with milestoneId: " + request.getClassId());
         request.validateInput();
-        Milestone milestone = milestoneRepository.findById(request.getMilestoneId()).orElseThrow(
-                () -> new RecordNotFoundException("Milestone")
-        );
-        List<Integer> studentIds = new ArrayList<>();
-        if(milestone.getClasses().getClassesUsers() != null){
-            studentIds = milestone.getClasses().getClassesUsers().stream()
+//        Milestone milestone = milestoneRepository.findById(request.getMilestoneId()).orElseThrow(
+//                () -> new RecordNotFoundException("Milestone")
+//        );
+        Classes classes = checkExistClass(request.getClassId());
+        HashMap<String, User> studentIds = new HashMap<>();
+        if(classes.getClassesUsers() != null){
+            classes.getClassesUsers().stream()
                     .filter(item -> item.getUser().getRole().getId().equals(Constants.Role.STUDENT))
-                    .map(item -> item.getUser().getId())
-                    .toList();
+                    .forEach(item -> {
+                        studentIds.putIfAbsent(item.getUser().getCode(), item.getUser());
+                    });
         }
 
-        deleteContraints(milestone);
+        deleteContraints(classes);
         List<Team> teams = new ArrayList<>();
         for (ImportTeamRequest teamRequest : request.getTeams()) {
             Team team = new Team();
             team.setTeamName(teamRequest.getTeamName());
             team.setTopicName(teamRequest.getTopicName());
             team.setActive(false);
-            team.setClasses(milestone.getClasses());
-            team.setMilestone(milestone);
+            team.setClasses(classes);
+//            team.setMilestone(milestone);
             setTeamLeader(team, teamRequest.getLeaderId(), studentIds);
-            setTeamMembers(team, teamRequest.getMemberIds(), studentIds);
+            setTeamMembers(team, teamRequest.getMemberCodes(), studentIds);
             teams.add(team);
         }
-        milestone.setTeams(teams);
-        milestoneRepository.save(milestone);
+        classes.setTeams(teams);
+        classesRepository.save(classes);
         SearchTeamRequest searchRequest = new SearchTeamRequest();
-        searchRequest.setMilestoneId(milestone.getId());
+        searchRequest.setClassId(classes.getId());
         return search(searchRequest);
     }
 
-    public void deleteContraints(Milestone milestone) {
-        for (Team team : milestone.getTeams()) {
+    public void deleteContraints(Classes classes) {
+        for (Team team : classes.getTeams()) {
             // update: delete include evaluation of req and student and team.
-            deleteTeamContraints(team, milestone);
+            deleteTeamContraints(team, classes);
             // end-----
             requirementRepository.deleteByTeamId(team.getId(), null);
             teamMemberRepository.deleteByTeamId(team.getId());
         }
-        teamRepository.deleteByMilestoneId(milestone.getId());
+        teamRepository.deleteByClassId(classes.getId());
     }
 
-    private void deleteTeamContraints(Team team, Milestone milestone) {
+    private void deleteTeamContraints(Team team, Classes classes) {
         if(team.getTeamMembers() != null && team.getTeamMembers().size() > 0){
             for (TeamMember teamMember : team.getTeamMembers()) {
-                studentEvaluationRepository.deleteByMilestoneIdAndMemberId(
-                        milestone.getId(),
+                studentEvaluationRepository.deleteByClassIdAndMemberId(
+                        classes.getId(),
                         teamMember.getMember().getId()
                 );
             }
@@ -351,83 +364,80 @@ public class TeamService implements BaseService<Milestone, Integer>{
         teamEvaluationRepository.deleteByTeamId(team.getId());
     }
 
-    private void setTeamMembers(Team team, List<Integer> memberIds, List<Integer> studentIds) {
+    private void setTeamMembers(Team team, List<String> memberCodes, HashMap<String, User> studentIds) {
         team.setTeamMembers(new ArrayList<>());
-        if(memberIds != null){
-            for (Integer memberId : memberIds) {
-                if(!studentIds.contains(memberId)){
-                    throw new ConflictException("Member with id " + memberId + " is not a student in class");
+        if(memberCodes != null){
+            for (String memberId : memberCodes) {
+                if(!studentIds.containsKey(memberId)){
+                    throw new ConflictException("Thành viên có mã " + memberId + " không phải là học sinh trong lớp này");
                 }
                 TeamMember teamMember = new TeamMember();
                 teamMember.setActive(true);
                 teamMember.setTeam(team);
-                teamMember.setMember(new User());
-                teamMember.getMember().setId(memberId);
+                teamMember.setMember(studentIds.get(memberId));
                 team.getTeamMembers().add(teamMember);
             }
         }
     }
 
-    private void setTeamLeader(Team team, Integer leaderId, List<Integer> studentIds) {
+    private void setTeamLeader(Team team, String leaderId, HashMap<String, User> studentIds) {
         if(leaderId != null){
-            if(!studentIds.contains(leaderId)){
-                throw new ConflictException("Leader with id " + leaderId + " is not a student in class!");
+            if(!studentIds.containsKey(leaderId)){
+                throw new ConflictException("Nhóm trưởng " + leaderId + " không phải là học sinh trong lớp này");
             }
-            team.setLeader(new User());
-            team.getLeader().setId(leaderId);
+            team.setLeader(studentIds.get(leaderId));
         }
     }
 
-    public void updateTeamLeader(Integer teamId, Integer leaderId) {
-        ValidateUtils.checkNullOrEmpty(teamId, "Team id");
-        ValidateUtils.checkNullOrEmpty(leaderId, "Leader id");
+    public void updateTeamLeader(Integer teamId, String leaderId) {
+        ValidateUtils.checkNullOrEmpty(teamId, "Nhóm");
+        ValidateUtils.checkNullOrEmpty(leaderId, "Mã trưởng nhóm");
         Team team = teamRepository.findById(teamId).orElseThrow(
-                () -> new RecordNotFoundException("Team")
+                () -> new RecordNotFoundException("Nhóm")
         );
         User user = commonService.getCurrentUser();
         if(team.getLeader() != null &&
                 !user.getId().equals(team.getLeader().getId())
                 && user.getRole().getId().equals(Constants.Role.STUDENT)){
-            throw new ConflictException("Only leader can change the leader for team!");
+            throw new ConflictException("Chỉ trưởng nhóm được cập nhật");
         }
         boolean isMemberInTeam = false;
         for (TeamMember teamMember : team.getTeamMembers()) {
-            if(teamMember.getMember().getId().equals(leaderId)){
+            if(teamMember.getMember().getCode().equals(leaderId)){
                 isMemberInTeam = true;
+                team.setLeader(teamMember.getMember());
                 break;
             }
         }
         if(!isMemberInTeam)
-            throw new ConflictException("Leader is not member in this team!");
-        team.setLeader(new User());
-        team.getLeader().setId(leaderId);
+            throw new ConflictException("Trưởng nhóm không phải là thành viên trong nhóm");
         teamRepository.save(team);
     }
-    @Transactional
-    public Object cloneTeamsInOtherMilestone(Integer milestoneId, Integer cloneMilestoneId) {
-        log.info("clone teams in milestoneId: " + cloneMilestoneId + " to milestone " + milestoneId);
-        ValidateUtils.checkNullOrEmpty(milestoneId, "Milestone id");
-        ValidateUtils.checkNullOrEmpty(cloneMilestoneId, "Clone milestone id");
-        var milestone = milestoneRepository.findById(milestoneId).orElseThrow(
-                () -> new RecordNotFoundException("Milestone")
-        );
-        var cloneMilestone = milestoneRepository.findById(cloneMilestoneId).orElseThrow(
-                () -> new RecordNotFoundException("Clone milestone")
-        );
-        checkConditionToClone(milestone, cloneMilestone);
-        deleteContraints(milestone);
-        List<Team> teams = new ArrayList<>();
-        for (Team team : cloneMilestone.getTeams()) {
-            Team newTeam = cloneTeam(team, milestone);
-            teams.add(newTeam);
-        }
-        milestone.setTeams(teams);
-        milestoneRepository.save(milestone);
-
-        SearchTeamRequest searchRequest = new SearchTeamRequest();
-        searchRequest.setMilestoneId(milestone.getId());
-        return search(searchRequest);
-    }
+//    @Transactional
+//    public Object cloneTeamsInOtherMilestone(Integer milestoneId, Integer cloneMilestoneId) {
+//        log.info("clone teams in milestoneId: " + cloneMilestoneId + " to milestone " + milestoneId);
+//        ValidateUtils.checkNullOrEmpty(milestoneId, "Milestone id");
+//        ValidateUtils.checkNullOrEmpty(cloneMilestoneId, "Clone milestone id");
+//        var milestone = milestoneRepository.findById(milestoneId).orElseThrow(
+//                () -> new RecordNotFoundException("Milestone")
+//        );
+//        var cloneMilestone = milestoneRepository.findById(cloneMilestoneId).orElseThrow(
+//                () -> new RecordNotFoundException("Clone milestone")
+//        );
+//        checkConditionToClone(milestone, cloneMilestone);
+//        deleteContraints(milestone);
+//        List<Team> teams = new ArrayList<>();
+//        for (Team team : cloneMilestone.getTeams()) {
+//            Team newTeam = cloneTeam(team, milestone);
+//            teams.add(newTeam);
+//        }
+//        milestone.setTeams(teams);
+//        milestoneRepository.save(milestone);
+//
+//        SearchTeamRequest searchRequest = new SearchTeamRequest();
+//        searchRequest.setMilestoneId(milestone.getId());
+//        return search(searchRequest);
+//    }
 
     private Team cloneTeam(Team team, Milestone milestone) {
         Team newTeam = new Team();
@@ -475,7 +485,7 @@ public class TeamService implements BaseService<Milestone, Integer>{
                 .filter(item -> item.getUser().getRole().getId().equals(Constants.Role.STUDENT))
                 .toList().size();
         if(numberOfMembers < numberOfStudents){
-            throw new ConflictException("Please divide students in Wish List to other team!");
+            throw new ConflictException("Vui lòng thêm những học sinh trong danh sách chờ vào các nhóm");
         }
         if(milestone.getTeams() != null && milestone.getTeams().size() > 0){
             List<Team> teams = new ArrayList<>();
@@ -491,7 +501,7 @@ public class TeamService implements BaseService<Milestone, Integer>{
         Milestone milestone = checkExistMilestone(milestoneId);
         if(milestone.getTeams() != null && milestone.getTeams().size() > 0){
             for (Team team : milestone.getTeams()) {
-                deleteTeamContraints(team, team.getMilestone());
+                deleteTeamContraints(team, team.getClasses());
                 requirementRepository.deleteByTeamId(team.getId(), null);
                 teamMemberRepository.deleteByTeamId(team.getId());
                 teamRepository.deleteByTeamId(team.getId());
@@ -500,7 +510,7 @@ public class TeamService implements BaseService<Milestone, Integer>{
 //        SearchTeamRequest searchRequest = new SearchTeamRequest();
 //        searchRequest.setMilestoneId(milestoneId);
 //        return search(searchRequest);
-        return "Reset teams successfully!";
+        return "Làm mới nhóm thành công!";
     }
 
     public Object searchForGrandFinal(SearchClassForGrandFinal request) {

@@ -8,6 +8,7 @@ public class SearchTeamRequest{
     private String teamName;
     private String topicName;
     private Integer milestoneId;
+    private Integer classId;
 
     public void validateInput(){
 //        ValidateUtils.checkNullOrEmpty(milestoneId, "Milestone id");

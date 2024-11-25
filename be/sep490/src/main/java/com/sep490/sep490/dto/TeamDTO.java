@@ -18,16 +18,18 @@ public class TeamDTO {
     private Boolean active;
     private Boolean teamOfCurrentMilestone;
     private Integer milestoneId;
+    private Integer classId;
     private Integer leaderId;
+    private String leaderCode;
     private List<CreateUserRequest> members;
     private List<RequirementDTO> requirementDTOs;
 
     public void validateInput(){
-        ValidateUtils.checkNullOrEmpty(teamName, "Team name");
-        teamName = ValidateUtils.checkLength(teamName, "Team name", Constants.LengthCheck.MIN, Constants.LengthCheck.MAX);
+        ValidateUtils.checkNullOrEmpty(teamName, "Tên nhóm");
+        teamName = ValidateUtils.checkLength(teamName, "Tên nhóm", Constants.LengthCheck.MIN, Constants.LengthCheck.MAX);
 //        ValidateUtils.checkNullOrEmpty(topicName, "Topic name");
-        topicName = ValidateUtils.checkLength(topicName, "Topic name", 0, Constants.LengthCheck.MAX);
-        ValidateUtils.checkNullOrEmpty(milestoneId, "Milestone");
-        note = ValidateUtils.checkLength(note, "Note", Constants.DefaultValueEntity.MIN_LENGTH, Constants.DefaultValueEntity.DESCRIPTION_LENGTH);
+        topicName = ValidateUtils.checkLength(topicName, "Tên chủ đề", 0, Constants.LengthCheck.MAX);
+        ValidateUtils.checkNullOrEmpty(classId, "Lớp học");
+        note = ValidateUtils.checkLength(note, "Ghi chú", Constants.DefaultValueEntity.MIN_LENGTH, Constants.DefaultValueEntity.DESCRIPTION_LENGTH);
     }
 }

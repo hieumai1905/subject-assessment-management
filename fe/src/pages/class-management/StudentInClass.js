@@ -167,7 +167,7 @@ export const StudentInClass = ({ classes, users, setUsers }) => {
   const onImportSubmit = async (sData) => {
     setIsFetching({ ...isFetching, import: true });
     if (sData.length === 0) {
-      toast.info(`No student to import!`, {
+      toast.info(`Không có sinh viên nào để nhập!`, {
         position: "top-center",
       });
       setIsFetching({ ...isFetching, import: false });
@@ -183,7 +183,7 @@ export const StudentInClass = ({ classes, users, setUsers }) => {
     try {
       const response = await authApi.post("/class/import-student-list", importForm);
       if (response.data.data.classUserError && response.data.data.classUserError.length === 0) {
-        toast.success("Import students successfully!", {
+        toast.success("Nhập sinh viên thành công!", {
           position: toast.POSITION.TOP_CENTER,
         });
         setModal({ import: false });
@@ -199,8 +199,8 @@ export const StudentInClass = ({ classes, users, setUsers }) => {
         });
       }
     } catch (error) {
-      console.error("Error import student:", error);
-      toast.error("Error import student!", {
+      console.error("Lỗi khi nhập sinh viên:", error);
+      toast.error("Lỗi khi nhập sinh viên!", {
         position: toast.POSITION.TOP_CENTER,
       });
     } finally {
@@ -210,11 +210,12 @@ export const StudentInClass = ({ classes, users, setUsers }) => {
 
   const onDeleteClick = async (id) => {
     Swal.fire({
-      title: "Are you sure?",
-      text: "If you delete this student, all related information like evaluations, tracking updates will be removed!",
+      title: "Bạn có chắc chắn không?",
+      text: "Nếu bạn xóa sinh viên này, tất cả thông tin liên quan như đánh giá, theo dõi sẽ bị xóa!",
       icon: "warning",
       showCancelButton: true,
-      confirmButtonText: "Yes, delete it!",
+      confirmButtonText: "Đồng ý xóa!",
+      cancelButtonText: "Hủy"
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
@@ -225,7 +226,7 @@ export const StudentInClass = ({ classes, users, setUsers }) => {
             },
           });
           if (response.data.statusCode === 200) {
-            toast.success("Delete student successfully!", {
+            toast.success("Xóa sinh viên thành công!", {
               position: toast.POSITION.TOP_CENTER,
             });
             let newData = [...users];
@@ -237,12 +238,12 @@ export const StudentInClass = ({ classes, users, setUsers }) => {
             }
           } else {
             toast.error(`${response.data.data}`, {
-              position: toast.POSITION.TOP_CENTER,
+              position: "top-center",
             });
           }
         } catch (error) {
-          console.error("Error delete student:", error);
-          toast.error("Error delete student!", {
+          console.error("Lỗi khi xóa sinh viên:", error);
+          toast.error("Lỗi khi xóa sinh viên!", {
             position: toast.POSITION.TOP_CENTER,
           });
         }
@@ -304,14 +305,14 @@ export const StudentInClass = ({ classes, users, setUsers }) => {
 
   return (
     <>
-      <Head title="Subject List"></Head>
+      <Head title="Danh sách học sinh"></Head>
       <Content>
         <BlockHead size="sm">
           <div className="d-flex justify-content-between align-items-center">
             <ButtonGroup style={{ maxWidth: "400px", width: "100%" }}>
               <input
                 type="text"
-                placeholder="Enter student's email address..."
+                placeholder="Nhập email hoặc tên..."
                 className="form-control w-100"
                 value={searchKeyword}
                 onChange={handleSearchChange}
@@ -333,11 +334,11 @@ export const StudentInClass = ({ classes, users, setUsers }) => {
               <div className="d-flex">
                 <Button color="primary" className="me-2 custom-button" onClick={() => setModal({ add: true })}>
                   <Icon name="plus" className="me-1" />
-                  Add Student
+                  Thêm học sinh
                 </Button>
                 <Button color="success" className="custom-button" onClick={() => setModal({ import: true })}>
                   <Icon name="upload-cloud" className="me-1" />
-                  Import Students
+                  Nhập danh sách học sinh
                 </Button>
               </div>
             )}
@@ -354,16 +355,13 @@ export const StudentInClass = ({ classes, users, setUsers }) => {
               <DataTableBody>
                 <DataTableHead className="nk-tb-item nk-tb-head">
                   <DataTableRow>
-                    <span onClick={() => handleSort("id")} className="sub-text">
-                      ID {upDownArrow(sortBy === "id" ? orderBy : "")}
-                    </span>
+                    <span className="sub-text">Mã học sinh</span>
                   </DataTableRow>
                   <DataTableRow>
-                    <span onClick={() => handleSort("fullname")} className="sub-text">
-                      Full Name {upDownArrow(sortBy === "subjectName" ? orderBy : "")}
-                    </span>
+                    <span className="sub-text">Họ và tên</span>
                   </DataTableRow>
                   <DataTableRow size="mb">Email</DataTableRow>
+                  <DataTableRow size="mb" className="text-end"></DataTableRow>
                 </DataTableHead>
 
                 {users?.length > 0 ? (
@@ -371,7 +369,7 @@ export const StudentInClass = ({ classes, users, setUsers }) => {
                     return (
                       <DataTableItem key={item.id}>
                         <DataTableRow>
-                          <span>{item.id}</span>
+                          <span>{item.code}</span>
                         </DataTableRow>
                         <DataTableRow>
                           <span>{item.fullname}</span>
@@ -383,14 +381,14 @@ export const StudentInClass = ({ classes, users, setUsers }) => {
 
                         <DataTableRow className="nk-tb-col-tools text-end">
                           <ul className="nk-tb-actions gx-1">
-                            <li>
+                            {/* <li>
                               <Icon
                                 name="eye"
                                 className="text-primary"
                                 style={{ cursor: "pointer", fontSize: "20px", marginRight: "7px" }}
                                 onClick={() => onViewClick(item)}
                               />
-                            </li>
+                            </li> */}
                             {canModify(role, "class", "crud") && (
                               <li>
                                 <Icon
@@ -408,7 +406,7 @@ export const StudentInClass = ({ classes, users, setUsers }) => {
                   })
                 ) : (
                   <DataTableRow>
-                    <span className="text-center w-100">No students available.</span>
+                    <span className="text-center w-100">Không có học sinh nào.</span>
                   </DataTableRow>
                 )}
               </DataTableBody>
@@ -416,18 +414,21 @@ export const StudentInClass = ({ classes, users, setUsers }) => {
           )}
         </Block>
 
-        <AddStudentModal
-          modal={modal.add}
-          modalType="add"
-          formData={formData}
-          setFormData={setFormData}
-          closeModal={closeModal}
-          onSubmit={onFormSubmit}
-          users={users}
-          setUsers={setUsers}
-          isFetching={isFetching}
-          setIsFetching={setIsFetching}
-        />
+        {modal.add && (
+          <AddStudentModal
+            modal={modal.add}
+            modalType="add"
+            formData={formData}
+            setFormData={setFormData}
+            closeModal={closeModal}
+            onSubmit={onFormSubmit}
+            users={users}
+            setUsers={setUsers}
+            isFetching={isFetching}
+            setIsFetching={setIsFetching}
+            classes={classes}
+          />
+        )}
 
         <ClassFormModal
           modal={modal.import}
@@ -438,14 +439,15 @@ export const StudentInClass = ({ classes, users, setUsers }) => {
           onSubmit={onImportSubmit}
           errImportList={errImportList}
           isFetching={isFetching.import}
+          students={users}
         />
 
         <Modal isOpen={modal.view} toggle={closeViewModal}>
-          <ModalHeader toggle={closeViewModal}>Student Details</ModalHeader>
+          <ModalHeader toggle={closeViewModal}>Chi tiết học sinh</ModalHeader>
           <ModalBody>
             <Form>
               <FormGroup>
-                <Label for="fullName">Full name</Label>
+                <Label for="fullName">Họ và tên</Label>
                 <Input type="text" id="fullName" value={viewStudent.fullname || ""} readOnly />
               </FormGroup>
 
@@ -455,21 +457,21 @@ export const StudentInClass = ({ classes, users, setUsers }) => {
               </FormGroup>
 
               <FormGroup className="d-flex align-items-center">
-                <Label className="me-2 mb-0">Status:</Label>
+                <Label className="me-2 mb-0">Trạng thái:</Label>
                 <Badge color={viewStudent.active ? "success" : "danger"} className="h6 mb-0">
-                  {viewStudent.active ? "Active" : "Inactive"}
+                  {viewStudent.active ? "Hoạt động" : "Không hoạt động"}
                 </Badge>
               </FormGroup>
 
               <FormGroup>
-                <Label for="description">Description</Label>
-                <Input type="textarea" id="description" value={viewStudent.description || "No description"} readOnly />
+                <Label for="description">Mô tả</Label>
+                <Input type="textarea" id="description" value={viewStudent.description || "Không có mô tả"} readOnly />
               </FormGroup>
             </Form>
           </ModalBody>
           <ModalFooter className="d-flex justify-content-end">
             <Button color="secondary" onClick={closeViewModal}>
-              Close
+              Đóng
             </Button>
           </ModalFooter>
         </Modal>

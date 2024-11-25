@@ -49,4 +49,6 @@ public interface UserRepository extends BaseRepository<User, Integer>{
     @Query(value = "SELECT s.code FROM users s WHERE s.code LIKE CONCAT(:monthCode, :yearCode, '%') ORDER BY s.code DESC LIMIT 1",
     nativeQuery = true)
     Optional<String> findLatestCodeByMonthAndYear(String monthCode, String yearCode);
+
+    User findByCode(String code);
 }

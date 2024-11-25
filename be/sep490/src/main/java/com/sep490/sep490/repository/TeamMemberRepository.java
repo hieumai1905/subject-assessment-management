@@ -12,8 +12,8 @@ public interface TeamMemberRepository extends  BaseRepository<TeamMember, Intege
     @Query("delete from TeamMember tm where tm.team.id = :id")
     void deleteByTeamId(Integer id);
 
-    @Query("select tm from TeamMember tm where tm.team.id = :teamId and tm.member.id = :memberId")
-    TeamMember findByTeamIdAndMemberId(Integer teamId, Integer memberId);
+    @Query("select tm from TeamMember tm where tm.team.id = :teamId and tm.member.code = :memberId")
+    TeamMember findByTeamIdAndMemberId(Integer teamId, String memberId);
     @Modifying
     @Query("delete from TeamMember tm where tm.team.id = :teamId and tm.member.id = :memberId")
     void deleteByTeamIdAndMemberId(Integer teamId, Integer memberId);

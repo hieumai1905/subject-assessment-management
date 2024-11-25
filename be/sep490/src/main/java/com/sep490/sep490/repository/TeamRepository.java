@@ -13,10 +13,10 @@ import java.util.List;
 
 @Repository
 public interface TeamRepository extends BaseRepository<Team, Integer>{
-    @Query("select t from Team t where t.milestone.id = :milestoneId " +
+    @Query("select t from Team t where t.classes.id = :classId " +
             "and (:teamName is null or t.teamName like %:teamName%) " +
             "and (:topicName is null or t.topicName like %:topicName%)")
-    List<Team> search(Integer milestoneId, String teamName, String topicName);
+    List<Team> search(Integer classId, String teamName, String topicName);
 
     @Modifying
     @Query("delete from Team t where t.milestone.id = :milestoneId")
@@ -26,8 +26,8 @@ public interface TeamRepository extends BaseRepository<Team, Integer>{
     Team findByTeamName(String teamName, Integer milestoneId);
 
     @Query("select t from Team t where lower(t.teamName) = lower(:teamName) " +
-            "and t.milestone.id = :milestoneId and t.id <> :id")
-    Team findByTeamNameAndOtherId(String teamName, Integer id, Integer milestoneId);
+            "and t.classes.id = :classId and t.id <> :id")
+    Team findByTeamNameAndOtherId(String teamName, Integer id, Integer classId);
     @Modifying
     @Query("delete from Team t where t.id = :id")
     void deleteByTeamId(Integer id);
@@ -42,4 +42,7 @@ public interface TeamRepository extends BaseRepository<Team, Integer>{
     Team findByLeaderAndTeamId(Integer id, Integer teamId);
     @Query("select t from Team t where t.id in (:ids)")
     List<Team> findByIds(List<Integer> ids);
+    @Modifying
+    @Query("delete from Team t where t.classes.id = :id")
+    void deleteByClassId(Integer id);
 }

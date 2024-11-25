@@ -71,4 +71,9 @@ public class ClassesController {
     public HttpResponse<?> searchStudents(@RequestBody SearchClassStudentRequest request) {
         return HttpResponse.ok(classesService.searchStudents(request));
     }
+
+    @PostMapping("/search-students-has-no-class")
+    public HttpResponse<?> searchStudentsHasNoClass(@RequestBody SearchClassStudentRequest request) {
+        return HttpResponse.ok(classesService.searchStudentsHasNoClass(request));
+    }
 }

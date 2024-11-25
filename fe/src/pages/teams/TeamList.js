@@ -21,7 +21,17 @@ import { canModifyMilestone } from "../../utils/CheckPermissions";
 import FormModal from "./FormModal";
 import { isEqual } from "../../utils/Utils";
 
-export default function TeamList({ teams, milestone, setTeams, modal, setModal, isFetching, reset, setReset }) {
+export default function TeamList({
+  teams,
+  milestone,
+  setTeams,
+  modal,
+  setModal,
+  isFetching,
+  reset,
+  setReset,
+  classes,
+}) {
   const { role } = useAuthStore((state) => state);
   const { user } = useAuthStore((state) => state);
   const [editId, setEditedId] = useState();
@@ -70,7 +80,7 @@ export default function TeamList({ teams, milestone, setTeams, modal, setModal, 
       topicName,
       note,
       active: true,
-      milestoneId: milestone?.id,
+      classId: classes?.id,
       members: teams[0].members,
     };
 
@@ -78,7 +88,7 @@ export default function TeamList({ teams, milestone, setTeams, modal, setModal, 
       setIsSubmitting(true);
       const response = await authApi.post("/teams", submittedData);
       if (response.data.statusCode === 200) {
-        toast.success("Create team successfully!", {
+        toast.success("Tạo nhóm thành công!", {
           position: toast.POSITION.TOP_CENTER,
         });
         const team = {
@@ -99,7 +109,7 @@ export default function TeamList({ teams, milestone, setTeams, modal, setModal, 
       }
     } catch (error) {
       console.error("Error creating team:", error);
-      toast.error("Error creating team!", {
+      toast.error("Xảy ra lỗi khi tạo nhóm", {
         position: toast.POSITION.TOP_CENTER,
       });
     } finally {
@@ -117,10 +127,10 @@ export default function TeamList({ teams, milestone, setTeams, modal, setModal, 
         topicName,
         note,
         active: true,
-        milestoneId: milestone?.id,
+        classId: classes?.id,
       });
       if (response.data.statusCode === 200) {
-        toast.success("Update team successfully!", {
+        toast.success("Cập nhật nhóm thành công", {
           position: toast.POSITION.TOP_CENTER,
         });
         setTeams((prev) => {
@@ -142,7 +152,7 @@ export default function TeamList({ teams, milestone, setTeams, modal, setModal, 
       }
     } catch (error) {
       console.error("Error updating team:", error);
-      toast.error("Error updating team!", {
+      toast.error("Xảy ra lỗi khi cập nhật nhóm", {
         position: toast.POSITION.TOP_CENTER,
       });
     } finally {
@@ -166,17 +176,18 @@ export default function TeamList({ teams, milestone, setTeams, modal, setModal, 
 
   const onDeleteClick = (id, teamName) => {
     Swal.fire({
-      title: "Are you sure?",
-      text: `If you delete ${teamName}, all related information such as members and requirements will be removed!`,
+      title: "Bạn có chắc chắn không?",
+      text: `Nếu bạn xóa ${teamName}, tất cả thông tin liên quan như thành viên và yêu cầu sẽ bị xóa!`,
       icon: "warning",
       showCancelButton: true,
-      confirmButtonText: "Yes, delete it!",
+      confirmButtonText: "Đồng ý xóa!",
+      cancelButtonText: "Hủy"
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
           const response = await authApi.delete(`/teams/${id}`);
           if (response.data.statusCode === 200) {
-            toast.success("Delete team successfully!", {
+            toast.success("Xóa nhóm thành công!", {
               position: toast.POSITION.TOP_CENTER,
             });
             setTeams((prev) => {
@@ -199,7 +210,7 @@ export default function TeamList({ teams, milestone, setTeams, modal, setModal, 
           }
         } catch (error) {
           console.error("Error deleting team:", error);
-          toast.error("Error deleting team!", {
+          toast.error("Đã xảy ra lỗi khi xóa nhóm!", {
             position: toast.POSITION.TOP_CENTER,
           });
         }
@@ -224,9 +235,9 @@ export default function TeamList({ teams, milestone, setTeams, modal, setModal, 
           const oldTeamIndex = updatedTeams.findIndex((item) => isEqual(item.id, oldTeamId));
           let member = {};
           if (oldTeamIndex !== -1) {
-            member = updatedTeams[oldTeamIndex].members.find((item) => item.id === memberId);
+            member = updatedTeams[oldTeamIndex].members.find((item) => item.code === memberId);
             updatedTeams[oldTeamIndex].members = updatedTeams[oldTeamIndex].members.filter(
-              (item) => item.id !== memberId
+              (item) => item.code !== memberId
             );
           }
           const newTeamIndex = updatedTeams.findIndex((item) => item.id === newTeamId);
@@ -249,7 +260,7 @@ export default function TeamList({ teams, milestone, setTeams, modal, setModal, 
           }
           return updatedTeams;
         });
-        toast.success("Move member successfully!", {
+        toast.success("Chuyển nhóm thành công", {
           position: toast.POSITION.TOP_CENTER,
         });
       } else {
@@ -259,7 +270,7 @@ export default function TeamList({ teams, milestone, setTeams, modal, setModal, 
       }
     } catch (error) {
       console.error("Error moving member:", error);
-      toast.error("Error moving member!", {
+      toast.error("Xảy ra lỗi khi chuyển nhóm", {
         position: toast.POSITION.TOP_CENTER,
       });
     }
@@ -274,10 +285,11 @@ export default function TeamList({ teams, milestone, setTeams, modal, setModal, 
           const teamIndex = updatedTeams.findIndex((item) => item.id === teamId);
           if (teamIndex !== -1) {
             updatedTeams[teamIndex].leaderId = leaderId;
+            updatedTeams[teamIndex].leaderCode = leaderId;
           }
           return updatedTeams;
         });
-        toast.success("Update team leader successfully!", {
+        toast.success("Cập nhật trưởng nhóm thành công", {
           position: toast.POSITION.TOP_CENTER,
         });
       } else {
@@ -287,7 +299,7 @@ export default function TeamList({ teams, milestone, setTeams, modal, setModal, 
       }
     } catch (error) {
       console.error("Error updating team leader:", error);
-      toast.error("Error updating team leader!", {
+      toast.error("Xảy ra lỗi khi cập nhật trưởng nhóm", {
         position: toast.POSITION.TOP_CENTER,
       });
     }
@@ -365,40 +377,34 @@ export default function TeamList({ teams, milestone, setTeams, modal, setModal, 
 
   return (
     <div className="team-list container">
-      {canModifyMilestone(user, role, milestone?.teacherId) &&
-        milestone?.active &&
-        teams &&
-        teams.length > 0 &&
-        !teams[0]?.active && (
-          <div className="text-end mb-4">
-            <Button
-              className="ms-2"
-              color="primary"
-              onClick={() => {
-                closeUpdateTeams();
-              }}
-            >
-              <Icon name="lock" className="me-1"></Icon>
-              <span>Close Update</span>
-            </Button>
-            {teams[0]?.teamOfCurrentMilestone && (
-              <Button
-                className="ms-2"
-                color="primary"
-                onClick={() => {
-                  resetTeams();
-                }}
-              >
-                <Icon name="undo" className="me-1"></Icon>
-                <span>Reset</span>
-              </Button>
-            )}
-            <Button className="ms-2" color="primary" onClick={() => setModal({ import: true })}>
-              <Icon name="file-xls" className="me-1"></Icon>
-              <span>Import</span>
-            </Button>
-          </div>
-        )}
+      {canModifyMilestone(user, role, milestone?.teacherId) && teams && teams.length > 0 && !teams[0]?.active && (
+        <div className="text-end mb-4">
+          {/* <Button
+            className="ms-2"
+            color="primary"
+            onClick={() => {
+              closeUpdateTeams();
+            }}
+          >
+            <Icon name="lock" className="me-1"></Icon>
+            <span>Đóng cập nhật</span>
+          </Button>
+          <Button
+            className="ms-2"
+            color="primary"
+            onClick={() => {
+              resetTeams();
+            }}
+          >
+            <Icon name="undo" className="me-1"></Icon>
+            <span>Làm mới</span>
+          </Button> */}
+          <Button className="ms-2" color="primary" onClick={() => setModal({ import: true })}>
+            <Icon name="file-xls" className="me-1"></Icon>
+            <span>Nhập</span>
+          </Button>
+        </div>
+      )}
       <ToastContainer />
       {isFetching ? (
         <div className="d-flex justify-content-center align-items-center">
@@ -409,7 +415,7 @@ export default function TeamList({ teams, milestone, setTeams, modal, setModal, 
           {!teams || teams.length === 0 ? (
             <div className="d-flex justify-content-center align-items-center my-5">
               <Icon style={{ fontSize: "30px" }} name="inbox">
-                No data found!
+                Không tìm thấy kết quả nào
               </Icon>
             </div>
           ) : (
@@ -424,17 +430,15 @@ export default function TeamList({ teams, milestone, setTeams, modal, setModal, 
                       <div className="d-flex align-items-center">
                         <Icon name="users" className="me-2" /> {/* Team icon */}
                         <div>
-                          <h5 className="mb-1 text-dark">
-                            {teams[0].teamName} ({teams[0].members.length} students)
-                          </h5>
+                          <h5 className="mb-1 text-dark">Danh sách chờ ({teams[0].members.length} học sinh)</h5>
                           <p className="text-muted">{teams[0].topicName}</p>
                         </div>
                       </div>
                       <div className="text-end">
-                        {milestone?.active && canModifyMilestone(user, role, milestone?.teacherId) && (
+                        {canModifyMilestone(user, role, milestone?.teacherId) && (
                           <Button className="ms-2" color="primary" onClick={() => setModal({ addTeam: true })}>
                             <Icon name="plus" className="me-1"></Icon>
-                            <span>Create Team</span>
+                            <span>Tạo nhóm</span>
                           </Button>
                         )}
                       </div>
@@ -456,7 +460,7 @@ export default function TeamList({ teams, milestone, setTeams, modal, setModal, 
                               <div key={`mem-w-${member.id}`} className="mb-4 row align-items-center">
                                 <div className="col-md-8">
                                   <h6 className="mb-1 text-dark">
-                                    {member.fullname}
+                                    {member.code} - {member.fullname}
                                     {teams[0]?.leaderId === member?.id ? (
                                       <Icon className="ms-2 text-primary" title="Leader" name="star-fill"></Icon>
                                     ) : null}
@@ -465,7 +469,7 @@ export default function TeamList({ teams, milestone, setTeams, modal, setModal, 
                                     {member.email}
                                   </p>
                                 </div>
-                                {canModifyMilestone(user, role, milestone?.teacherId) && milestone.active && (
+                                {canModifyMilestone(user, role, milestone?.teacherId) && (
                                   <div className="col-md-4 text-end">
                                     <>
                                       <UncontrolledDropdown>
@@ -483,7 +487,7 @@ export default function TeamList({ teams, milestone, setTeams, modal, setModal, 
                                                     href="#move"
                                                     onClick={(ev) => {
                                                       ev.preventDefault();
-                                                      moveToOtherTeam(team.id, null, member.id);
+                                                      moveToOtherTeam(team.id, null, member.code);
                                                     }}
                                                   >
                                                     <span>{team.teamName}</span>
@@ -517,16 +521,13 @@ export default function TeamList({ teams, milestone, setTeams, modal, setModal, 
                           <Icon name="users" className="me-2" /> {/* Team icon */}
                           <div>
                             <h5 className="mb-1 text-dark">
-                              {team.teamName} ({team.members.length} students)
+                              {team.teamName} ({team.members.length} học sinh)
                             </h5>
                             <p className="text-muted">{team.topicName}</p>
                           </div>
                         </div>
                         <div className="text-end">
-                          {!team.active &&
-                          milestone?.active &&
-                          team?.teamOfCurrentMilestone &&
-                          canModifyMilestone(user, role, milestone?.teacherId) ? (
+                          {!team.active && canModifyMilestone(user, role, milestone?.teacherId) ? (
                             <>
                               <Button size="sm" color="warning" className="me-2" onClick={() => onEditClick(team?.id)}>
                                 <Icon name="edit"></Icon>
@@ -555,8 +556,8 @@ export default function TeamList({ teams, milestone, setTeams, modal, setModal, 
                                 <div key={`mem-a-${member.id}`} className="mb-4 row align-items-center">
                                   <div className="col-md-8">
                                     <h6 className="mb-1 text-dark">
-                                      {member.fullname}
-                                      {team?.leaderId === member?.id ? (
+                                      {member.code} - {member.fullname}
+                                      {team?.leaderCode === member?.code ? (
                                         <Icon className="ms-2 text-primary" title="Leader" name="star-fill"></Icon>
                                       ) : null}
                                     </h6>
@@ -564,22 +565,23 @@ export default function TeamList({ teams, milestone, setTeams, modal, setModal, 
                                       {member.email}
                                     </p>
                                   </div>
-                                  {(user?.id === team?.leaderId || canModifyMilestone(user, role, milestone?.teacherId)) && (
+                                  {(user?.id === team?.leaderId ||
+                                    canModifyMilestone(user, role, milestone?.teacherId)) && (
                                     <div className="col-md-4 text-end">
-                                      {team?.leaderId !== member?.id ? (
+                                      {team?.leaderCode !== member?.code ? (
                                         <>
                                           <Button
                                             size="sm"
                                             color="primary"
                                             className="me-2"
-                                            onClick={() => updateTeamLeader(team.id, member.id)}
+                                            onClick={() => updateTeamLeader(team.id, member.code)}
                                           >
                                             <Icon name="star"></Icon>
                                           </Button>
-                                          {!team?.active && team?.teamOfCurrentMilestone && milestone.active && (
+                                          {!team?.active && team?.teamOfCurrentMilestone && (
                                             <UncontrolledDropdown>
                                               <DropdownToggle tag="a" className="btn btn-lg btn-icon text-soft">
-                                                <Icon name="repeat" className="text-primary" title="Change team"></Icon>
+                                                <Icon name="repeat" className="text-primary" title="Đổi nhóm"></Icon>
                                               </DropdownToggle>
                                               <DropdownMenu end>
                                                 <ul className="link-list-opt no-bdr">
@@ -590,10 +592,10 @@ export default function TeamList({ teams, milestone, setTeams, modal, setModal, 
                                                         href="#move"
                                                         onClick={(ev) => {
                                                           ev.preventDefault();
-                                                          moveToOtherTeam(null, team.id, member.id);
+                                                          moveToOtherTeam(null, team.id, member.code);
                                                         }}
                                                       >
-                                                        <span>Wish List</span>
+                                                        <span>Danh sách chờ</span>
                                                       </DropdownItem>
                                                     </li>
                                                   ) : null}
@@ -605,7 +607,7 @@ export default function TeamList({ teams, milestone, setTeams, modal, setModal, 
                                                           href="#move"
                                                           onClick={(ev) => {
                                                             ev.preventDefault();
-                                                            moveToOtherTeam(te.id, team.id, member.id);
+                                                            moveToOtherTeam(te.id, team.id, member.code);
                                                           }}
                                                         >
                                                           <span>{te.teamName}</span>
@@ -640,7 +642,7 @@ export default function TeamList({ teams, milestone, setTeams, modal, setModal, 
                         <Icon name="users" className="me-2" /> {/* Team icon */}
                         <div>
                           <h5 className="mb-1 text-dark">
-                            {team.teamName} ({team.members.length} students)
+                            {team.teamName} ({team.members.length} học sinh)
                           </h5>
                           <p className="text-muted">{team.topicName}</p>
                         </div>
@@ -648,7 +650,6 @@ export default function TeamList({ teams, milestone, setTeams, modal, setModal, 
                       <div className="text-end">
                         {team.teamName !== "Wish List" &&
                         !team.active &&
-                        milestone?.active &&
                         team?.teamOfCurrentMilestone &&
                         canModifyMilestone(user, role, milestone?.teacherId) ? (
                           <>
@@ -679,8 +680,8 @@ export default function TeamList({ teams, milestone, setTeams, modal, setModal, 
                               <div key={`mem-b-${member.id}`} className="mb-4 row align-items-center">
                                 <div className="col-md-8">
                                   <h6 className="mb-1 text-dark">
-                                    {member.fullname}
-                                    {team?.leaderId === member?.id ? (
+                                    {member.code} - {member.fullname}
+                                    {team?.leaderCode === member?.code ? (
                                       <Icon className="ms-2 text-primary" title="Leader" name="star-fill"></Icon>
                                     ) : null}
                                   </h6>
@@ -688,61 +689,64 @@ export default function TeamList({ teams, milestone, setTeams, modal, setModal, 
                                     {member.email}
                                   </p>
                                 </div>
-                                {(user?.id === team?.leaderId || canModifyMilestone(user, role, milestone?.teacherId)) && (
+                                {(user?.code === team?.leaderCode ||
+                                  canModifyMilestone(user, role, milestone?.teacherId)) && (
                                   <div className="col-md-4 text-end">
-                                    {team?.leaderId !== member?.id && team.teamName !== "Wish List" ? (
+                                    {team?.leaderCode !== member?.code && team.teamName !== "Wish List" ? (
                                       <div>
                                         <Button
                                           size="sm"
                                           color="primary"
                                           className="me-2"
-                                          onClick={() => updateTeamLeader(team.id, member.id)}
+                                          onClick={() => updateTeamLeader(team.id, member.code)}
                                         >
                                           <Icon name="star"></Icon>
                                         </Button>
-                                        {!team.active && team?.teamOfCurrentMilestone  && milestone.active && canModifyMilestone(user, role, milestone?.teacherId) && (
-                                          <>
-                                            <UncontrolledDropdown>
-                                              <DropdownToggle tag="a" className="btn btn-lg btn-icon text-soft">
-                                                <Icon name="repeat" className="text-primary" title="Change team"></Icon>
-                                              </DropdownToggle>
-                                              <DropdownMenu end>
-                                                <ul className="link-list-opt no-bdr">
-                                                  {!findTeamByName("Wish List") ? (
-                                                    <li key={`move-wish-list`}>
-                                                      <DropdownItem
-                                                        tag="a"
-                                                        href="#move"
-                                                        onClick={(ev) => {
-                                                          ev.preventDefault();
-                                                          moveToOtherTeam(null, team.id, member.id);
-                                                        }}
-                                                      >
-                                                        <span>Wish List</span>
-                                                      </DropdownItem>
-                                                    </li>
-                                                  ) : null}
-                                                  {teams.map((te) =>
-                                                    te.teamName !== team.teamName ? (
-                                                      <li key={`move-${te.teamName}`}>
+                                        {!team.active &&
+                                          team?.teamOfCurrentMilestone &&
+                                          canModifyMilestone(user, role, milestone?.teacherId) && (
+                                            <>
+                                              <UncontrolledDropdown>
+                                                <DropdownToggle tag="a" className="btn btn-lg btn-icon text-soft">
+                                                  <Icon name="repeat" className="text-primary" title="Đổi nhóm"></Icon>
+                                                </DropdownToggle>
+                                                <DropdownMenu end>
+                                                  <ul className="link-list-opt no-bdr">
+                                                    {!findTeamByName("Wish List") ? (
+                                                      <li key={`move-wish-list`}>
                                                         <DropdownItem
                                                           tag="a"
                                                           href="#move"
                                                           onClick={(ev) => {
                                                             ev.preventDefault();
-                                                            moveToOtherTeam(te.id, team.id, member.id);
+                                                            moveToOtherTeam(null, team.id, member.code);
                                                           }}
                                                         >
-                                                          <span>{te.teamName}</span>
+                                                          <span>Danh sách chờ</span>
                                                         </DropdownItem>
                                                       </li>
-                                                    ) : null
-                                                  )}
-                                                </ul>
-                                              </DropdownMenu>
-                                            </UncontrolledDropdown>
-                                          </>
-                                        )}
+                                                    ) : null}
+                                                    {teams.map((te) =>
+                                                      te.teamName !== team.teamName ? (
+                                                        <li key={`move-${te.teamName}`}>
+                                                          <DropdownItem
+                                                            tag="a"
+                                                            href="#move"
+                                                            onClick={(ev) => {
+                                                              ev.preventDefault();
+                                                              moveToOtherTeam(te.id, team.id, member.code);
+                                                            }}
+                                                          >
+                                                            <span>{te.teamName}</span>
+                                                          </DropdownItem>
+                                                        </li>
+                                                      ) : null
+                                                    )}
+                                                  </ul>
+                                                </DropdownMenu>
+                                              </UncontrolledDropdown>
+                                            </>
+                                          )}
                                       </div>
                                     ) : null}
                                   </div>

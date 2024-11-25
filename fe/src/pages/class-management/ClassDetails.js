@@ -17,7 +17,6 @@ const ClassDetail = ({ classes }) => {
             <BlockTitle tag="h3" page></BlockTitle>
           </BlockHeadContent>
           <BlockHeadContent>
-          
             <a
               href="#back"
               onClick={(ev) => {
@@ -36,7 +35,7 @@ const ClassDetail = ({ classes }) => {
         <Card className="card-bordered shadow-sm">
           <CardHeader className="bg-primary text-white">
             <BlockTitle tag="h5" className="mb-0">
-              Class Information{" "}
+              {classes?.name}
               <Badge color={classes?.active ? "success" : "danger"} className="ms-2">
                 {classes?.active ? "Active" : "Inactive"}
               </Badge>
@@ -46,45 +45,45 @@ const ClassDetail = ({ classes }) => {
             <Row className="gy-4">
               <Col md="6" className="profile-ud-item">
                 <div className="profile-ud wider">
-                  <span className="profile-ud-label text-muted">Class Code</span>
+                  <span className="profile-ud-label text-muted">Học Kỳ</span>
+                  <span className="profile-ud-value">
+                    {isNullOrEmpty(classes?.semesterName) ? "Không có học kỳ" : classes?.semesterName}
+                  </span>
+                </div>
+              </Col>
+              <Col md="6" className="profile-ud-item">
+                <div className="profile-ud wider">
+                  <span className="profile-ud-label text-muted">Môn Học</span>
+                  <span className="profile-ud-value">
+                    {isNullOrEmpty(classes?.subjectName) ? "Không có môn học" : classes?.subjectName}
+                  </span>
+                </div>
+              </Col>
+              <Col md="6" className="profile-ud-item">
+                <div className="profile-ud wider">
+                  <span className="profile-ud-label text-muted">Mã Lớp</span>
                   <span className="profile-ud-value text-dark fw-bold">{classes?.classCode}</span>
                 </div>
               </Col>
-              <Col md="6" className="profile-ud-item">
+              {/* <Col md="6" className="profile-ud-item">
                 <div className="profile-ud wider">
-                  <span className="profile-ud-label text-muted">Class Name</span>
+                  <span className="profile-ud-label text-muted">Tên Lớp</span>
                   <span className="profile-ud-value text-dark fw-bold">{classes?.name}</span>
                 </div>
-              </Col>
+              </Col> */}
               <Col md="6" className="profile-ud-item">
                 <div className="profile-ud wider">
-                  <span className="profile-ud-label text-muted">Teacher</span>
+                  <span className="profile-ud-label text-muted">Giáo Viên</span>
                   <span className="profile-ud-value">
-                    {isNullOrEmpty(classes?.teacherName) ? "No teacher available" : classes?.teacherName}
-                  </span>
-                </div>
-              </Col>
-              <Col md="6" className="profile-ud-item">
-                <div className="profile-ud wider">
-                  <span className="profile-ud-label text-muted">Semester</span>
-                  <span className="profile-ud-value">
-                    {isNullOrEmpty(classes?.semesterName) ? "No semester available" : classes?.semesterName}
-                  </span>
-                </div>
-              </Col>
-              <Col md="6" className="profile-ud-item">
-                <div className="profile-ud wider">
-                  <span className="profile-ud-label text-muted">Subject</span>
-                  <span className="profile-ud-value">
-                    {isNullOrEmpty(classes?.subjectName) ? "No subject available" : classes?.subjectName}
+                    {isNullOrEmpty(classes?.teacherName) ? "Không có giáo viên" : classes?.teacherName}
                   </span>
                 </div>
               </Col>
               <Col md="12" className="profile-ud-item">
                 <div className="profile-ud wider">
-                  <span className="profile-ud-label text-muted">Description</span>
+                  <span className="profile-ud-label text-muted">Mô Tả</span>
                   <span className="profile-ud-value border rounded bg-light p-3 d-block">
-                    {isNullOrEmpty(classes.description) ? "No description available" : classes.description}
+                    {isNullOrEmpty(classes.description) ? "Không có mô tả" : classes.description}
                   </span>
                 </div>
               </Col>

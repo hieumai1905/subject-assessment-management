@@ -25,7 +25,7 @@ const AnalyticsHomePage = () => {
         <BlockHead size="sm">
           <BlockHeadContent>
             <BlockTitle page tag="h3">
-              SWP Evaluation System
+              Evaluation System
             </BlockTitle>
             <BlockDes className="text-soft">
               <p>Welcome to SES Dashboard.</p>

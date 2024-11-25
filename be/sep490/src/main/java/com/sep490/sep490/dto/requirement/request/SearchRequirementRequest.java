@@ -16,6 +16,7 @@ import java.util.List;
 public class SearchRequirementRequest extends SearchRequestDTO {
     private Integer teamId;
     private Integer milestoneId;
+    private Integer classId;
     private String status;
     private String sortBy;
     private String title;

@@ -10,6 +10,6 @@ import java.util.List;
 public class ImportTeamRequest {
     private String teamName;
     private String topicName;
-    private Integer leaderId;
-    private List<Integer> memberIds;
+    private String leaderId;
+    private List<String> memberCodes;
 }

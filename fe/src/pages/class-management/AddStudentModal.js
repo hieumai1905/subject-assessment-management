@@ -1,10 +1,29 @@
 import React, { useEffect, useState } from "react";
-import { Icon, Button, Col, Row } from "../../components/Component";
-import { Modal, ModalBody, Form, Input, Spinner } from "reactstrap";
+import { Icon, Button, Col, Row, Block } from "../../components/Component";
+import { Modal, ModalBody, Form, Input, Spinner, ButtonGroup } from "reactstrap";
 import { useForm } from "react-hook-form";
 import "react-toastify/dist/ReactToastify.css";
 import authApi from "../../utils/ApiAuth";
 import { toast } from "react-toastify";
+import { DataGrid } from "@mui/x-data-grid";
+
+const columns = [
+  {
+    field: "code",
+    headerName: "Mã học sinh",
+    width: 180,
+  },
+  {
+    field: "fullname",
+    headerName: "Họ và tên",
+    width: 260,
+  },
+  {
+    field: "email",
+    headerName: "Email",
+    width: 270,
+  },
+];
 
 const AddStudentModal = ({
   modal,
@@ -16,6 +35,7 @@ const AddStudentModal = ({
   users,
   isFetching,
   setIsFetching,
+  classes,
 }) => {
   useEffect(() => {
     reset(users);
@@ -42,47 +62,86 @@ const AddStudentModal = ({
   const onFormSubmit = async () => {
     try {
       setIsFetching({ ...isFetching, addStudent: true });
-      const response = await authApi.post("/class/import-student", formData);
-      console.log('rr', response);
-      if (response.data.statusCode === 200) {
-        toast.success("Add student successfully!", {
+      let studentCodes = [];
+      formData.forEach((idx) => {
+        if (students[idx] && students[idx].code) {
+          studentCodes.push({
+            code: students[idx].code,
+          });
+        }
+      });
+      if (studentCodes.length <= 0) {
+        toast.error(`Vui lòng chọn ít nhất một học sinh để thêm`, {
           position: toast.POSITION.TOP_CENTER,
         });
-
-        const newUser = {
-          id: response.data.data.id,
-          userId: response.data.data.userId,
-          fullname: response.data.data.fullname, // Use the gender from formData
-          email: response.data.data.email,
-          roleId: 4,
-        };
-
-        setUsers((prevUsers) => {
-          const userIds = new Set(prevUsers.map((user) => user.id));
-          if (!userIds.has(newUser.id)) {
-            return [...prevUsers, newUser];
-          }
-          return prevUsers;
+        return;
+      }
+      console.log("xaa", studentCodes);
+      const response = await authApi.post("/class/import-student-list", {
+        classId: classes.id,
+        list: studentCodes,
+      });
+      console.log("rr", response);
+      if (response.data.statusCode === 200) {
+        toast.success("Thêm học sinh thành công", {
+          position: toast.POSITION.TOP_CENTER,
         });
-
+        let res = response.data.data.classUserSuccess;
+        setUsers([...users, ...res]);
         closeModal();
       } else {
         toast.error(`${response.data.data}`, {
           position: toast.POSITION.TOP_CENTER,
         });
       }
-      setIsFetching({ ...isFetching, addStudent: false });
     } catch (error) {
       console.error("Error adding student:", error);
-      toast.error("Error adding student!", {
+      toast.error("Xảy ra lỗi khi thêm học sinh!", {
         position: toast.POSITION.TOP_CENTER,
       });
+    } finally {
       setIsFetching({ ...isFetching, addStudent: false });
     }
   };
 
+  const [students, setStudents] = useState([]);
+  const [rowSelectionModel, setRowSelectionModel] = React.useState([]);
+  const [year, setYear] = useState();
+  const [isLoading, setIsLoading] = useState({
+    users: false,
+  });
+
+  const fetchUsers = async () => {
+    try {
+      setIsLoading({ ...isLoading, users: true });
+      const response = await authApi.post("/class/search-students-has-no-class", {
+        pageSize: 9999,
+        classId: classes.id,
+        year: year,
+      });
+      if (response.data.statusCode === 200) {
+        const data = response.data.data.classUserSuccessDTOS;
+        const rows = data.map((row, index) => ({ ...row, id: index }));
+        setStudents(rows);
+      }
+    } catch (error) {
+      console.error("fetch users:", error);
+      toast.error("Xảy ra lỗi khi tìm kiếm học sinh!", {
+        position: toast.POSITION.TOP_CENTER,
+      });
+    } finally {
+      setIsLoading({ ...isLoading, users: false });
+    }
+  };
+
+  useEffect(() => {
+    if (classes.id) {
+      fetchUsers();
+    }
+  }, [classes.id]);
+
   return (
-    <Modal isOpen={modal} toggle={() => closeModal()} className="modal-dialog-centered" size="lg">
+    <Modal isOpen={modal} toggle={() => closeModal()} className="modal-dialog-centered" size="xl">
       <ModalBody>
         <a
           href="#cancel"
@@ -95,65 +154,62 @@ const AddStudentModal = ({
           <Icon name="cross-sm"></Icon>
         </a>
         <div className="p-2">
-          <h5 className="title">{modalType === "add" && "Add Student"}</h5>
+          <h5 className="title">{modalType === "add" && "Thêm học sinh"}</h5>
           <div className="mt-4">
-            <Form className="row gy-4" onSubmit={handleSubmit(onFormSubmit)}>
-              <Col md="12">
-                <div className="form-group">
-                  <label className="form-label">Full Name</label>
-                  <input
-                    type="text"
-                    name="fullname"
-                    {...register("fullname")}
-                    value={formData.createUserRequest?.fullname || ""}
-                    placeholder="Enter full name"
-                    onChange={handleChange}
-                    className="form-control"
-                  />
-                  {errors.fullname && <span className="invalid">{errors.fullname.message}</span>}
-                </div>
-              </Col>
-              <Col md="12">
-                <div className="form-group">
-                  <label className="form-label">Email</label>
-                  <input
-                    type="email"
-                    name="email"
-                    {...register("email")}
-                    value={formData.createUserRequest?.email || ""}
-                    placeholder="Enter email"
-                    onChange={handleChange}
-                    className="form-control"
-                  />
-                  {errors.email && <span className="invalid">{errors.email.message}</span>}
-                </div>
-              </Col>
-              {/* <Col md="6">
-                <div className="form-group">
-                  <label className="form-label">Gender</label>
-                  <select
-                    name="gender"
-                    value={formData.createUserRequest?.gender || ""}
-                    onChange={handleChange}
-                    className="form-control"
+            <div className="mb-4">
+              <ButtonGroup style={{ maxWidth: "400px", width: "100%" }}>
+                <input
+                  type="text"
+                  placeholder="Nhập năm học..."
+                  className="form-control w-100"
+                  value={year}
+                  onChange={(e) => setYear(e.target.value)}
+                  style={{ paddingLeft: "15px", borderRadius: "5px 0 0 5px" }}
+                />
+                {isLoading.users ? (
+                  <Button disabled color="primary">
+                    <Spinner size="sm" />
+                  </Button>
+                ) : (
+                  <Button
+                    className="bg-primary"
+                    onClick={() => {
+                      if (year && year.length > 0) fetchUsers();
+                    }}
+                    style={{ borderRadius: "0 5px 5px 0" }}
                   >
-                    <option value="">Select Gender</option>
-                    <option value="male">Male</option>
-                    <option value="female">Female</option>
-                  </select>
+                    <Icon className="text-white" name="search"></Icon>
+                  </Button>
+                )}
+              </ButtonGroup>
+            </div>
+            <Form className="row gy-4" onSubmit={handleSubmit(onFormSubmit)}>
+              <Block>
+                <div style={{ height: 400, width: "100%" }}>
+                  <DataGrid
+                  
+                    checkboxSelection
+                    onRowSelectionModelChange={(newRowSelectionModel) => {
+                      setRowSelectionModel(newRowSelectionModel);
+                      setFormData(newRowSelectionModel);
+                    }}
+                    rowSelectionModel={rowSelectionModel}
+                    rows={students}
+                    columns={columns}
+                  />
                 </div>
-              </Col> */}
+              </Block>
               <Col size="12">
                 <ul className="text-end">
                   <li>
                     {isFetching.addStudent ? (
                       <Button disabled color="primary">
                         <Spinner size="sm" />
-                        <span> Adding... </span>
+                        <span> Đang lưu... </span>
                       </Button>
                     ) : (
                       <Button color="primary" size="md" type="submit">
-                        {modalType === "add" && "Add Student"}
+                        {modalType === "add" && "Thêm học sinh"}
                       </Button>
                     )}
                   </li>
