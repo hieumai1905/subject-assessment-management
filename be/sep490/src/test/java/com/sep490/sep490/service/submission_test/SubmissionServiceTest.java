@@ -14,7 +14,6 @@ import com.sep490.sep490.repository.*;
 import com.sep490.sep490.service.CommonService;
 import com.sep490.sep490.service.FirebaseStorageService;
 import com.sep490.sep490.service.RequirementService;
-import com.sep490.sep490.service.SubmissionService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -87,7 +86,7 @@ public class SubmissionServiceTest {
         milestone.setActive(true);
         milestone.setTitle("Milestone 1");
         milestone.setDueDate(new Date());
-        milestone.setTypeEvaluator(Constants.TypeAssignments.NORMAL);
+        milestone.setEvaluationType(Constants.TypeAssignments.NORMAL);
 
         submission = new Submission();
         submission.setId(1);

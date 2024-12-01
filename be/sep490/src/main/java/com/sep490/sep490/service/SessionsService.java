@@ -41,14 +41,14 @@ public class SessionsService  {
         request.validateInput(false);
         Setting semester = (Setting) settingRepository.findSettingBySettingTypeAndSettingId( "semester", request.getSemesterId());
         if(semester == null){
-            throw new RecordNotFoundException("Semester");
+            throw new RecordNotFoundException("Học kỳ");
         }
         Setting round = (Setting) settingRepository.findSettingBySettingTypeAndSettingId("round", request.getSubjectSettingId());
         if(round == null){
-            throw new RecordNotFoundException("Round");
+            throw new RecordNotFoundException("Lần đánh giá");
         }
         checkValidNumberOfSessions(semester, round, false);
-        Subject subject = subjectRepository.findById(request.getSubjectId()).orElseThrow(() -> new RecordNotFoundException("Subject"));
+        Subject subject = subjectRepository.findById(request.getSubjectId()).orElseThrow(() -> new RecordNotFoundException("Môn học"));
         Session existByName = sessionRepository.checkExistByName(request.getName(), request.getSemesterId(),
                 null, subject.getSubjectSettings().stream()
                         .filter(item -> item.getSettingType().equals(Constants.SettingType.ROUND))
@@ -56,7 +56,7 @@ public class SessionsService  {
                         .toList()
         );
         if(existByName != null){
-            throw new NameAlreadyExistsException("Session");
+            throw new NameAlreadyExistsException("Phiên đánh giá");
         }
         Session session = ConvertUtils.convert(request, Session.class);
 //        setBaseSession(request, session);
@@ -89,11 +89,11 @@ public class SessionsService  {
         request.validateInput();
         Setting semester = (Setting) settingRepository.findSettingBySettingTypeAndSettingId( "semester", request.getSemesterId());
         if(semester == null){
-            throw new RecordNotFoundException("Semester");
+            throw new RecordNotFoundException("Học kỳ");
         }
         Setting round = (Setting) settingRepository.findSettingBySettingTypeAndSettingId("round", request.getSettingId());
         if(round == null){
-            throw new RecordNotFoundException("Round");
+            throw new RecordNotFoundException("Lần đánh giá");
         }
         Pageable pageable;
         if (request.getOrderBy().equals("DESC"))
@@ -125,17 +125,17 @@ public class SessionsService  {
 
     public Object update(Integer id, SessionDTO request) {
         request.validateInput(true);
-        Session foundSession = sessionRepository.findById(id).orElseThrow(() -> new RecordNotFoundException("Session"));
+        Session foundSession = sessionRepository.findById(id).orElseThrow(() -> new RecordNotFoundException("Phiên đánh giá"));
         Setting semester = (Setting) settingRepository.findSettingBySettingTypeAndSettingId( "semester", request.getSemesterId());
         if(semester == null){
-            throw new RecordNotFoundException("Semester");
+            throw new RecordNotFoundException("Học kỳ");
         }
         Setting round = (Setting) settingRepository.findSettingBySettingTypeAndSettingId("round", request.getSubjectSettingId());
         if(round == null){
-            throw new RecordNotFoundException("Round");
+            throw new RecordNotFoundException("Lần đánh giá");
         }
         checkValidNumberOfSessions(semester, round, foundSession.getSubjectSettingId().equals(round.getId()));
-        Subject subject = subjectRepository.findById(request.getSubjectId()).orElseThrow(() -> new RecordNotFoundException("Subject"));
+        Subject subject = subjectRepository.findById(request.getSubjectId()).orElseThrow(() -> new RecordNotFoundException("Môn học"));
         Session existByName = sessionRepository.checkExistByName(request.getName(), request.getSemesterId(),
                 id, subject.getSubjectSettings().stream()
                         .filter(item -> item.getSettingType().equals(Constants.SettingType.ROUND))
@@ -143,7 +143,7 @@ public class SessionsService  {
                         .toList()
         );
         if(existByName != null){
-            throw new NameAlreadyExistsException("Session");
+            throw new NameAlreadyExistsException("Phiên đánh giá");
         }
         setBaseSession(request, foundSession);
         sessionRepository.save(foundSession);
@@ -160,13 +160,13 @@ public class SessionsService  {
         if(!isUpdate)
             numberOfSessionsCanAdd--;
         if(sessions.size() > numberOfSessionsCanAdd)
-            throw new ConflictException("Number of sessions in " + semester.getName()
-                    + " - " + round.getName() + " must be <=" + ++numberOfSessionsCanAdd + "!");
+            throw new ConflictException("Số phiên đánh giá trong " + semester.getName()
+                    + " - " + round.getName() + " phải <=" + ++numberOfSessionsCanAdd);
     }
 
     @Transactional
     public void delete(Integer id) {
-        Session foundSession = sessionRepository.findById(id).orElseThrow(() -> new RecordNotFoundException("Session"));
+        Session foundSession = sessionRepository.findById(id).orElseThrow(() -> new RecordNotFoundException("Phiên đánh giá"));
         sessionRepository.deleteBySessionId(id);
     }
 
@@ -179,11 +179,11 @@ public class SessionsService  {
         User user = commonService.getCurrentUser();
         Setting semester = (Setting) settingRepository.findSettingBySettingTypeAndSettingId( "semester", request.getSemesterId());
         if(semester == null){
-            throw new RecordNotFoundException("Semester");
+            throw new RecordNotFoundException("Học kỳ");
         }
         Setting round = (Setting) settingRepository.findSettingBySettingTypeAndSettingId("round", request.getSettingId());
         if(round == null){
-            throw new RecordNotFoundException("Round");
+            throw new RecordNotFoundException("Lần đánh giá");
         }
         List<Session> sessions = sessionRepository.findBySemesterIdAndRoundId(semester.getId(), round.getId());
         if(user.getRole().getId().equals(Constants.Role.STUDENT)){

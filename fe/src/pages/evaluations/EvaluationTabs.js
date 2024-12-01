@@ -14,7 +14,7 @@ import {
   Row,
   RSelect,
 } from "../../components/Component";
-import { Nav, NavItem, NavLink, Spinner, TabContent, TabPane } from "reactstrap";
+import { DropdownMenu, DropdownToggle, Nav, NavItem, NavLink, Spinner, TabContent, TabPane, UncontrolledDropdown } from "reactstrap";
 import classnames from "classnames";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
@@ -31,6 +31,7 @@ import { evaluationTypes } from "../../data/ConstantData";
 import Swal from "sweetalert2";
 
 export default function EvaluationTabs() {
+  const [sm, updateSm] = useState(false);
   const [activeTab, setActiveTab] = useState("3");
   const [isFirst, setIsFirst] = useState(true);
   const [needLoad, setNeedLoad] = useState(false);
@@ -42,14 +43,14 @@ export default function EvaluationTabs() {
   const toggle = (tab) => {
     if (activeTab !== tab) {
       if (activeTab !== "3") {
-        if (haveChanged && role === 'TEACHER') {
+        if (haveChanged && role === "TEACHER") {
           Swal.fire({
-            title: "Message",
-            text: `You should save the changes before navigating to another tab.`,
+            title: "Thông báo",
+            text: `Bạn nên lưu thay đổi trước khi chuyển tab`,
             icon: "warning",
             showCancelButton: true,
-            confirmButtonText: "Switch tabs",
-            cancelButtonText: "Stay here",
+            confirmButtonText: "Chuyển tab",
+            cancelButtonText: "Ở lại",
           }).then(async (result) => {
             if (result.isConfirmed) {
               setActiveTab(tab);
@@ -127,7 +128,7 @@ export default function EvaluationTabs() {
         }
       } catch (error) {
         console.error("Error fetching data:", error);
-        toast.error("Error search setting!", {
+        toast.error("Xảy ra lỗi khi tìm kiếm học kỳ", {
           position: toast.POSITION.TOP_CENTER,
         });
       } finally {
@@ -166,7 +167,7 @@ export default function EvaluationTabs() {
         }
       } catch (error) {
         console.error("Error fetching data:", error);
-        toast.error("Error search subject!", {
+        toast.error("Xảy ra lỗi khi tìm kiếm môn học", {
           position: toast.POSITION.TOP_CENTER,
         });
       } finally {
@@ -227,7 +228,7 @@ export default function EvaluationTabs() {
       }
     } catch (error) {
       console.error("Error fetching data:", error);
-      toast.error("Error search class!", {
+      toast.error("Xảy ra lỗi khi tìm kiếm lớp học", {
         position: toast.POSITION.TOP_CENTER,
       });
     } finally {
@@ -259,10 +260,10 @@ export default function EvaluationTabs() {
       console.log("milestone:", response.data.data);
       if (response.data.statusCode === 200) {
         let milestones = response.data.data.milestoneResponses;
-        milestones = milestones.filter((milestone) => milestone.typeEvaluator !== evaluationTypes[2].value);
+        milestones = milestones.filter((milestone) => milestone.evaluationType !== evaluationTypes[2].value);
         let typeEvaluators = milestones.map((item) => ({
           id: item.id,
-          typeEvaluator: item.typeEvaluator,
+          typeEvaluator: item.evaluationType,
         }));
         let mileActiveId = -1;
         milestones.forEach((milestone) => {
@@ -287,7 +288,7 @@ export default function EvaluationTabs() {
       }
     } catch (error) {
       console.error("Error fetching data:", error);
-      toast.error("Error search milestones!", {
+      toast.error("Xảy ra lỗi khi tìm kiếm cột mốc", {
         position: toast.POSITION.TOP_CENTER,
       });
     } finally {
@@ -306,7 +307,7 @@ export default function EvaluationTabs() {
       const response = await authApi.post("/teams/search", {
         pageSize: 9999,
         pageIndex: 1,
-        milestoneId: filterForm?.milestone?.value,
+        classId: filterForm?.class?.value,
       });
       console.log("teams:", response.data.data);
       if (response.data.statusCode === 200) {
@@ -331,7 +332,7 @@ export default function EvaluationTabs() {
       }
     } catch (error) {
       console.error("Error fetching data:", error);
-      toast.error("Error search teams!", { position: toast.POSITION.TOP_CENTER });
+      toast.error("Xảy ra lỗi khi tìm kiếm nhóm", { position: toast.POSITION.TOP_CENTER });
     } finally {
       setIsFetching((prev) => ({ ...prev, team: false }));
     }
@@ -358,7 +359,7 @@ export default function EvaluationTabs() {
       }
     } catch (error) {
       console.error("Error fetching data:", error);
-      toast.error("Error search evaluations!", { position: toast.POSITION.TOP_CENTER });
+      toast.error("Xảy ra lỗi khi tìm kiếm đánh giá", { position: toast.POSITION.TOP_CENTER });
     } finally {
       setIsFetching({ ...isFetching, studentEval: false });
       setIsFirst(false);
@@ -390,7 +391,7 @@ export default function EvaluationTabs() {
       }
     } catch (error) {
       console.error("Error fetching data:", error);
-      toast.error("Error search work evaluations!", { position: toast.POSITION.TOP_CENTER });
+      toast.error("Xảy ra lỗi khi tìm kiếm đánh giá yêu cầu", { position: toast.POSITION.TOP_CENTER });
     } finally {
       setIsFetching({ ...isFetching, reqEval: false });
       setIsFirst(false);
@@ -415,7 +416,7 @@ export default function EvaluationTabs() {
       }
     } catch (error) {
       console.error("Error fetching data:", error);
-      toast.error("Error search evaluations!", { position: toast.POSITION.TOP_CENTER });
+      toast.error("Xảy ra lỗi khi tìm kiếm đánh giá theo cột mốc", { position: toast.POSITION.TOP_CENTER });
     } finally {
       setIsFetching({ ...isFetching, allMileEval: false });
       setIsFirst(false);
@@ -485,18 +486,158 @@ export default function EvaluationTabs() {
 
   return (
     <>
-      <Head title="Evaluation"></Head>
+      <Head title="Đánh giá"></Head>
       <Content>
         <BlockHead size="sm">
           <BlockBetween>
             <BlockHeadContent>
-              <BlockTitle page>Ongoing Evaluations</BlockTitle>
+              <BlockTitle page>Đánh giá quá trình</BlockTitle>
               <BlockDes></BlockDes>
             </BlockHeadContent>
-            <BlockHeadContent></BlockHeadContent>
+            <BlockHeadContent>
+              <div className="toggle-wrap nk-block-tools-toggle">
+                <Button
+                  className={`btn-icon btn-trigger toggle-expand me-n1 ${sm ? "active" : ""}`}
+                  onClick={() => updateSm(!sm)}
+                >
+                  <Icon name="menu-alt-r"></Icon>
+                </Button>
+                <div className="toggle-expand-content" style={{ display: sm ? "block" : "none" }}>
+                  <ul className="nk-block-tools g-3">
+                    <li>
+                      <UncontrolledDropdown>
+                        <DropdownToggle tag="a" className="dropdown-toggle btn btn-white btn-dim btn-outline-light">
+                          <Icon name="filter-alt" className="d-none d-sm-inline"></Icon>
+                          <span>Bộ lọc</span>
+                          <Icon name="chevron-right" className="dd-indc"></Icon>
+                        </DropdownToggle>
+                        <DropdownMenu end className="filter-wg dropdown-menu-xxl" style={{ overflow: "visible" }}>
+                          <div className="dropdown-head">
+                            <span className="sub-title dropdown-title">Lọc đánh giá</span>
+                            <div className="dropdown">
+                              <a
+                                href="#more"
+                                onClick={(ev) => {
+                                  ev.preventDefault();
+                                }}
+                                className="btn btn-sm btn-icon"
+                              >
+                                <Icon name="more-h"></Icon>
+                              </a>
+                            </div>
+                          </div>
+                          <div className="dropdown-body dropdown-body-rg">
+                            <Row className="gx-6 gy-3">
+                              <Col md={6}>
+                                <div className="form-group">
+                                  <label className="overline-title overline-title-alt">Học kỳ</label>
+                                  {isFetching?.semester ? (
+                                    <div>
+                                      <Spinner />
+                                    </div>
+                                  ) : (
+                                    <RSelect
+                                      options={semesters}
+                                      value={filterForm.semester}
+                                      onChange={(e) => {
+                                        setFilterForm({ ...filterForm, semester: e });
+                                      }}
+                                      placeholder="Chọn học kỳ"
+                                    />
+                                  )}
+                                </div>
+                              </Col>
+                              <Col md={6}>
+                                <div className="form-group">
+                                  <label className="overline-title overline-title-alt">Môn học</label>
+                                  {isFetching?.subject ? (
+                                    <div>
+                                      <Spinner />
+                                    </div>
+                                  ) : (
+                                    <RSelect
+                                      options={subjects}
+                                      value={filterForm.subject}
+                                      onChange={(e) => {
+                                        setFilterForm({ ...filterForm, subject: e });
+                                      }}
+                                      placeholder="Chọn môn học"
+                                    />
+                                  )}
+                                </div>
+                              </Col>
+                              <Col md={6}>
+                                <div className="form-group">
+                                  <label className="overline-title overline-title-alt">Lớp</label>
+                                  {isFetching?.class ? (
+                                    <div>
+                                      <Spinner />
+                                    </div>
+                                  ) : (
+                                    <RSelect
+                                      options={classes}
+                                      value={filterForm.class}
+                                      onChange={(e) => {
+                                        setFilterForm({ ...filterForm, class: e });
+                                      }}
+                                      placeholder="Chọn lớp"
+                                    />
+                                  )}
+                                </div>
+                              </Col>
+                              <Col md={6}>
+                                <div className="form-group">
+                                  <label className="overline-title overline-title-alt">Mốc</label>
+                                  {isFetching?.milestone ? (
+                                    <div>
+                                      <Spinner />
+                                    </div>
+                                  ) : (
+                                    <RSelect
+                                      options={milestones}
+                                      value={filterForm.milestone}
+                                      onChange={(e) => {
+                                        setFilterForm({ ...filterForm, milestone: e });
+                                      }}
+                                      placeholder="Chọn mốc"
+                                    />
+                                  )}
+                                </div>
+                              </Col>
+                              <Col md={6}>
+                                {role !== "STUDENT" && (
+                                  <div className="form-group">
+                                    <label className="overline-title overline-title-alt">Nhóm</label>
+                                    {isFetching?.team ? (
+                                      <div>
+                                        <Spinner />
+                                      </div>
+                                    ) : (
+                                      <RSelect
+                                        options={teams}
+                                        value={filterForm.team}
+                                        onChange={(e) => {
+                                          setFilterForm({ ...filterForm, team: e });
+                                        }}
+                                        placeholder="Chọn nhóm"
+                                      />
+                                    )}
+                                  </div>
+                                )}
+                              </Col>
+                            </Row>
+                          </div>
+                          
+                        </DropdownMenu>
+                      </UncontrolledDropdown>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </BlockHeadContent>
           </BlockBetween>
         </BlockHead>
-        <Row>
+        {/* <Row>
           <Col size="2">
             <div className="form-group">
               <label className="form-label">Semester</label>
@@ -586,7 +727,7 @@ export default function EvaluationTabs() {
               </Col>
             </>
           )}
-        </Row>
+        </Row> */}
         {role !== "STUDENT" && (
           <>
             <Nav tabs>
@@ -600,7 +741,7 @@ export default function EvaluationTabs() {
                     toggle("3");
                   }}
                 >
-                  Classes
+                  Theo lớp học
                 </NavLink>
               </NavItem>
               <NavItem>
@@ -613,7 +754,7 @@ export default function EvaluationTabs() {
                     toggle("2");
                   }}
                 >
-                  Milestones
+                  Theo cột mốc
                 </NavLink>
               </NavItem>
               <NavItem>
@@ -626,7 +767,7 @@ export default function EvaluationTabs() {
                     toggle("1");
                   }}
                 >
-                  LOC
+                  Theo yêu cầu
                 </NavLink>
               </NavItem>
             </Nav>

@@ -72,30 +72,20 @@ public class StudentEvaluationService{
 //    }
 
     public Object searchStudentEval(StudentEvalSearchRequest request) {
-//        request.validateInput();
         List<EvaluationResultDTO> results = new ArrayList<>();
         if(request.getClassId() == null || request.getMilestoneId() == null || request.getTeamId() == null){
             return results;
         }
-//        List<Object[]> rawResults = customStudentEvaluationRepository.searchEval(
-//                request.getClassId(),
-//                request.getTeamId(),
-//                request.getMilestoneId());
         HashMap<String, Float> studentLocMap = new HashMap<>();
-//        List<Object[]> totalLocs = customWorkEvaluationRepository.getTotalLocByMilestone(request.getMilestoneId());
-//        for (Object[] result : totalLocs) {
-//            studentLocMap.putIfAbsent((String)result[1], (Float) result[2]);
-//        }
         Classes classes = classesRepository.findById(request.getClassId())
-                .orElseThrow(() -> new RecordNotFoundException("Class"));
+                .orElseThrow(() -> new RecordNotFoundException("Lớp học"));
         List<Milestone> milestones = classes.getMilestones();
         Milestone milestone = milestones.stream()
                 .filter(item -> item.getId().equals(request.getMilestoneId()))
                 .findFirst()
-                .orElseThrow(() -> new RecordNotFoundException("Milestone"));
-        Team team = milestones.stream().flatMap(item -> item.getTeams().stream())
-                .filter(item -> item.getId().equals(request.getTeamId()))
-                .findFirst().orElseThrow(() -> new RecordNotFoundException("Team"));
+                .orElseThrow(() -> new RecordNotFoundException("Cột mốc"));
+        Team team = classes.getTeams().stream().filter(item -> item.getId().equals(request.getTeamId()))
+                .findFirst().orElseThrow(() -> new RecordNotFoundException("Nhóm"));
         addTeamEval(team, milestone, results, null, null);
         List<StudentEvaluation> studentEvaluations = milestone.getStudentEvaluations();
         HashMap<String, EvaluationResultDTO> gradeCommentMap = new HashMap<>();
@@ -116,19 +106,7 @@ public class StudentEvaluationService{
             }
         }
         setMembersEval(team, gradeCommentMap, milestone, results, studentLocMap);
-//        Integer teamId = -1;
-//        for (Object[] result : rawResults) {
-//            EvaluationResultDTO dto = setEvaluationResultDTO(result, studentLocMap);
-//            if(dto.getTeam() != null && dto.getTeam().getId() != null
-//                    && !dto.getTeam().getId().equals(teamId) && dto.getEmail() != null){
-//                addTeamEvaluation(results, dto);
-//                teamId = dto.getTeam().getId();
-//            }
-//            results.add(dto);
-//        }
-
         return results;
-
     }
 
     private void setMembersEval(Team team, HashMap<String, EvaluationResultDTO> gradeCommentMap,
@@ -216,7 +194,7 @@ public class StudentEvaluationService{
         teamEval.getMilestone().setName(milestone.getTitle());
         teamEval.getMilestone().setWeight(milestone.getEvalWeight());
         teamEval.getMilestone().setDisplayOrder(milestone.getDisplayOrder());
-        teamEval.getMilestone().setTypeEvaluator(milestone.getTypeEvaluator());
+        teamEval.getMilestone().setTypeEvaluator(milestone.getEvaluationType());
         teamEval.getMilestone().setExpectedLoc(milestone.getExpectedLoc());
     }
 
@@ -286,15 +264,15 @@ public class StudentEvaluationService{
     @Transactional
     public Object evaluateStudent(List<StudentEvalRequest> request) {
         if(request == null || request.isEmpty())
-            return "No data to evaluate!";
+            return "Không có dữ liệu để lưu";
         List<StudentEvaluation> studentEvaluations = new ArrayList<>();
         List<TeamEvaluation> teamEvaluations = new ArrayList<>();
         for (StudentEvalRequest req : request) {
             req.validateInput(false);
             Milestone milestone = checkExistMilestone(req.getMilestoneId());
             MilestoneCriteria criteria = checkExistMilestoneCriteria(req.getCriteriaId(), milestone);
-            Team team = checkExistTeam(req.getTeamId(), milestone);
-            User user = checkExistUser(req.getEmail(), milestone);
+            Team team = checkExistTeam(req.getTeamId());
+            User user = checkExistUser(req.getEmail());
             if(user != null)
                 saveStudentEvaluation(req, milestone, criteria, user, null, null, studentEvaluations);
             if(team != null)
@@ -302,7 +280,7 @@ public class StudentEvaluationService{
         }
         studentEvaluationRepository.saveAll(studentEvaluations);
         teamEvaluationRepository.saveAll(teamEvaluations);
-        return "Evaluate successfully!";
+        return "Lưu đánh giá thành công";
     }
 
     private void saveTeamEvaluation(StudentEvalRequest req, Milestone milestone,MilestoneCriteria criteria,
@@ -444,33 +422,16 @@ public class StudentEvaluationService{
         throw new RecordNotFoundException("Criteria");
     }
 
-    private User checkExistUser(String email, Milestone milestone) {
+    private User checkExistUser(String email) {
         if(email == null)
             return null;
         return userRepository.findFirstByEmail(email);
-//        if(milestone.getTeams() != null){
-//            List<TeamMember> teamMembers = milestone.getTeams().stream()
-//                    .flatMap(team -> Optional.ofNullable(team.getTeamMembers()).stream().flatMap(Collection::stream))
-//                    .toList();
-//            for (TeamMember teamMember : teamMembers) {
-//                if(teamMember.getMember().getEmail().equals(email))
-//                    return teamMember.getMember();
-//            }
-//        }
-//        throw new RecordNotFoundException("User");
     }
 
-    private Team checkExistTeam(Integer teamId, Milestone milestone) {
+    private Team checkExistTeam(Integer teamId) {
         if(teamId == null)
             return null;
-        return teamRepository.findById(teamId).orElseThrow(() -> new RecordNotFoundException("Team"));
-//        if(milestone.getTeams() != null){
-//            for (Team team : milestone.getTeams()) {
-//                if(team.getId().equals(teamId))
-//                    return team;
-//            }
-//        }
-//        throw new RecordNotFoundException("Team");
+        return teamRepository.findById(teamId).orElseThrow(() -> new RecordNotFoundException("Nhóm"));
     }
 
     private Milestone checkExistMilestone(Integer milestoneId) {
@@ -486,7 +447,7 @@ public class StudentEvaluationService{
         }
         List<EvaluationResultDTO> results = new ArrayList<>();
         List<Milestone> milestones = classes.getMilestones().stream()
-                .filter(item -> !item.getTypeEvaluator().equals(Constants.TypeAssignments.GRAND_FINAL))
+                .filter(item -> !item.getEvaluationType().equals(Constants.TypeAssignments.GRAND_FINAL))
                 .sorted(Comparator.comparing(Milestone::getDisplayOrder))
                 .toList();
         HashMap<String, EvaluationResultDTO> gradeCommentMap = new HashMap<>();
@@ -576,7 +537,7 @@ public class StudentEvaluationService{
         dto.setName(milestone.getTitle());
         dto.setWeight(milestone.getEvalWeight());
         dto.setDisplayOrder(milestone.getDisplayOrder());
-        dto.setTypeEvaluator(milestone.getTypeEvaluator());
+        dto.setTypeEvaluator(milestone.getEvaluationType());
         dto.setExpectedLoc(milestone.getExpectedLoc());
         return dto;
     }
@@ -633,7 +594,7 @@ public class StudentEvaluationService{
         HashMap<Integer, StudentEvaluationResponse> criteriaEvalMap = new HashMap<>();
 
         if (milestone.getStudentEvaluations() != null) {
-            boolean isGrandFinal = milestone.getTypeEvaluator().equals(Constants.TypeAssignments.GRAND_FINAL);
+            boolean isGrandFinal = milestone.getEvaluationType().equals(Constants.TypeAssignments.GRAND_FINAL);
             List<StudentEvaluation> studentEvaluations = milestone.getStudentEvaluations().stream()
                     .filter(item -> item.getEvaluator() == null
                         && (!isGrandFinal || item.getStatus() == null || !item.getStatus().equals(Constants.CouncilTeamStatus.REJECT)))
@@ -792,7 +753,7 @@ public class StudentEvaluationService{
         }
         HashMap<String, Float> studentLocMap = new HashMap<>();
         Milestone milestone = team.getClasses().getMilestones().stream()
-                .filter(item -> item.getTypeEvaluator().equals(Constants.TypeAssignments.GRAND_FINAL))
+                .filter(item -> item.getEvaluationType().equals(Constants.TypeAssignments.GRAND_FINAL))
                 .findFirst().orElse(null);
         if(milestone == null)
             return "This class don't have grand final milestone";
@@ -892,7 +853,7 @@ public class StudentEvaluationService{
             throw new ConflictException("This team don't have a council team to conduct evaluations!");
         }
         Milestone milestone = fTeam.getClasses().getMilestones().stream()
-                .filter(item -> item.getTypeEvaluator().equals(Constants.TypeAssignments.GRAND_FINAL))
+                .filter(item -> item.getEvaluationType().equals(Constants.TypeAssignments.GRAND_FINAL))
                 .findFirst().orElse(null);
         if(milestone == null){
             return "This class don't have grand final milestone!";
@@ -911,8 +872,8 @@ public class StudentEvaluationService{
             if(req.getCriteriaId() != null){
                 criteria = criteriaHashMap.get(req.getCriteriaId());
             }
-            Team team = checkExistTeam(req.getTeamId(), milestone);
-            User student = checkExistUser(req.getEmail(), milestone);
+            Team team = checkExistTeam(req.getTeamId());
+            User student = checkExistUser(req.getEmail());
             if(student != null)
                 saveStudentEvaluation(req, milestone, criteria, student, evaluator, councilTeam.getId(), studentEvaluations);
             if(team != null)
@@ -947,7 +908,7 @@ public class StudentEvaluationService{
                     sessions.stream().map(Session::getId).toList()
             );
             Milestone milestone = team.getClasses().getMilestones().stream()
-                    .filter(item -> item.getTypeEvaluator().equals(Constants.TypeAssignments.GRAND_FINAL))
+                    .filter(item -> item.getEvaluationType().equals(Constants.TypeAssignments.GRAND_FINAL))
                     .findFirst().orElse(null);
             if(councilTeam == null || councilTeam.getCouncil() == null || team.getTeamMembers().isEmpty() || milestone == null){
                 return response;

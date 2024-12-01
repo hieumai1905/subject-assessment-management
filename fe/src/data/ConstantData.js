@@ -33,16 +33,12 @@ export const subjectSettingData = [
 
 export const settingTypeData = [
   {
-    value: "Quality",
-    label: "Quality",
-  },
-  {
     value: "Complexity",
-    label: "Complexity",
+    label: "Độ phức tạp",
   },
   {
     value: "Round",
-    label: "Round",
+    label: "Lần chấm",
   },
 ];
 
@@ -60,11 +56,11 @@ export const statusList = [
 export const requirementStatuses = [
   {
     value: "TO DO",
-    label: "To do",
+    label: "Chưa làm",
   },
   {
     value: "DOING",
-    label: "Doing",
+    label: "Đang làm",
   },
   // {
   //   value: "SUBMITTED",
@@ -83,27 +79,27 @@ export const requirementStatuses = [
 export const fullRequirementStatuses = [
   {
     value: "TO DO",
-    label: "To do",
+    label: "Chưa làm",
   },
   {
     value: "DOING",
-    label: "Doing",
+    label: "Đang làm",
   },
   {
     value: "SUBMITTED",
-    label: "Submitted",
+    label: "Đã nộp",
   },
   {
     value: "EVALUATED",
-    label: "Evaluated",
+    label: "Đã đánh giá",
   },
   {
     value: "WAITING FOR APPROVAL",
-    label: "Wating for approval",
+    label: "Đợi để được chấp nhận",
   },
   {
     value: "SUBMIT LATE",
-    label: "Submit Late",
+    label: "Nộp muộn",
   },
 ];
 
@@ -111,15 +107,15 @@ export const fullRequirementStatuses = [
 export const requiremntLevels = [
   {
     value: "Easy",
-    label: "Easy",
+    label: "Dễ",
   },
   {
     value: "Medium",
-    label: "Medium",
+    label: "Trung bình",
   },
   {
     value: "Hard",
-    label: "Hard",
+    label: "Khó",
   },
 ];
 
@@ -132,4 +128,11 @@ export const evaluationTypes = [
   { value: "Normal", label: "Thông thường"},
   { value: "Final", label: "Cuối kỳ"},
   { value: "Grand Final", label: "Hội đồng"},
+]
+
+export const roleArr = [
+  { value: "STUDENT", label: "Sinh viên"},
+  { value: "TEACHER", label: "Giảng viên"},
+  { value: "MANAGER", label: "Quản lý"},
+  { value: "ADMIN", label: "Quản trị viên"}
 ]

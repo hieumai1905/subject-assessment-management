@@ -27,17 +27,17 @@ public class RequirementDTO{
     private List<Integer> teamIds;
     private List<UpdateTrackingDTO> updateTrackings;
     public void validateInput(boolean isAddList){
-        ValidateUtils.checkNullOrEmpty(reqTitle, "Requirement title");
+        ValidateUtils.checkNullOrEmpty(reqTitle, "Tiêu đề");
         status = ValidateUtils.checkExistedInList(Constants.RequirementStatus.REQUIREMENT_STATUSES, status,
                 "status", Constants.RequirementStatus.REQUIREMENT_STATUSES.get(0));
-        reqTitle = ValidateUtils.checkLength(reqTitle, "Requirement title", 1, 255);
-        note = ValidateUtils.checkLength(note, "Note", 0, Constants.DefaultValueEntity.DESCRIPTION_LENGTH);
+        reqTitle = ValidateUtils.checkLength(reqTitle, "Tiêu đề", 1, 255);
+        note = ValidateUtils.checkLength(note, "Ghi chú", 0, Constants.DefaultValueEntity.DESCRIPTION_LENGTH);
         if(!isAddList){
-            ValidateUtils.checkNullOrEmpty(teamIds, "Team ids");
+            ValidateUtils.checkNullOrEmpty(teamIds, "Nhóm");
             for (Integer teamId : teamIds) {
-                ValidateUtils.checkNullOrEmpty(teamId, "Team id");
+                ValidateUtils.checkNullOrEmpty(teamId, "Nhóm");
             }
-            ValidateUtils.checkNullOrEmpty(milestoneId, "Milestone");
+            ValidateUtils.checkNullOrEmpty(milestoneId, "Cột mốc");
         }
     }
 }

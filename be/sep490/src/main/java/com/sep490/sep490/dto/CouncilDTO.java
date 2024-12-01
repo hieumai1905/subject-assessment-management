@@ -22,8 +22,8 @@ public class CouncilDTO {
     private Boolean canDelete;
 
     public void validateInput(){
-        ValidateUtils.checkNullOrEmpty(semesterId, "Semester id");
-        ValidateUtils.checkNullOrEmpty(subjectSettingId, "Round id");
-        ValidateUtils.checkNullOrEmpty(councilMembers, "Council members");
+        ValidateUtils.checkNullOrEmpty(semesterId, "Học kỳ");
+        ValidateUtils.checkNullOrEmpty(subjectSettingId, "Lần đánh giá");
+        ValidateUtils.checkNullOrEmpty(councilMembers, "Thành viên hội đồng");
     }
 }

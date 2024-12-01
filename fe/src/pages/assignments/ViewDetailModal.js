@@ -11,7 +11,7 @@ const ViewDetailModal = ({ modal, setModal, updateData }) => {
     title: "",
     evalWeight: 1,
     expectedLoc: 1,
-    typeEvaluator: null,
+    evaluationType: null,
     displayOrder: 1,
     active: "Active",
     note: "",
@@ -44,7 +44,7 @@ const ViewDetailModal = ({ modal, setModal, updateData }) => {
                 <span className="fw-bold">Trọng số:</span> {formData?.evalWeight}%
                 {/* <span className="ms-3 fw-bold">Số dòng mã dự kiến:</span> {formData?.expectedLoc} */}
                 <p>
-                  <span className="fw-bold">Loại đánh giá:</span> {formData?.typeEvaluator?.label}{" "}
+                  <span className="fw-bold">Loại đánh giá:</span> {formData?.evaluationType?.label}{" "}
                 </p>
                 <p>
                   <span className="fw-bold">Ghi chú:</span> {formData?.note}

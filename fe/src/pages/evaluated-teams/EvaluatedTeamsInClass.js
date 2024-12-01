@@ -127,7 +127,7 @@ export default function EvaluatedTeamsInClass({
       }
     });
     if (selectedCouncilTeams && selectedCouncilTeams.length === 0) {
-      toast.info("Please select at least one item!", {
+      toast.info("Vui lòng chọn ít nhất một mục", {
         position: toast.POSITION.TOP_CENTER,
       });
       return false;
@@ -196,7 +196,7 @@ export default function EvaluatedTeamsInClass({
       }
     } catch (error) {
       console.error("Error fetching data:", error);
-      toast.error("Error assign council teams!", {
+      toast.error("Xảy ra lỗi khi phân công hội đồng", {
         position: toast.POSITION.TOP_CENTER,
       });
     } finally {
@@ -225,11 +225,11 @@ export default function EvaluatedTeamsInClass({
     const worksheet = workbook.addWorksheet("Evaluated Teams");
 
     worksheet.columns = [
-      { header: "Class", key: "classCode", width: 20 },
-      { header: "Size", key: "size", width: 10 },
-      { header: "Teacher", key: "email", width: 30 },
-      { header: "Council", key: "council", width: 40 },
-      { header: "Session", key: "session", width: 20 },
+      { header: "Lớp học", key: "classCode", width: 20 },
+      { header: "Số sinh viên", key: "size", width: 10 },
+      { header: "Giảng viên", key: "email", width: 30 },
+      { header: "Hội đồng", key: "council", width: 40 },
+      { header: "Phiên đánh giá", key: "session", width: 20 },
     ];
 
     councilTeams.forEach((item, idx) => {
@@ -240,8 +240,8 @@ export default function EvaluatedTeamsInClass({
         classCode: item.classCode,
         size: item.size,
         email: item.email,
-        council: council ? council.councilName : "Not Assigned",
-        session: session ? session.name : "Not Assigned",
+        council: council ? council.councilName : "Chưa phân công",
+        session: session ? session.name : "Chưa phân công",
       });
 
       const availableCouncils = councils
@@ -254,8 +254,8 @@ export default function EvaluatedTeamsInClass({
         allowBlank: true,
         formulae: [`"${availableCouncils}"`],
         showErrorMessage: true,
-        errorTitle: "Invalid Input",
-        error: "Please select a value from the list",
+        errorTitle: "Nội dung không hợp lệ",
+        error: "Vui lòng chọn một mục có trong danh sách",
       };
 
       const availableSessions = sessions.map((s) => s.name).join(",");
@@ -265,8 +265,8 @@ export default function EvaluatedTeamsInClass({
         allowBlank: true,
         formulae: [`"${availableSessions}"`],
         showErrorMessage: true,
-        errorTitle: "Invalid Input",
-        error: "Please select a value from the list",
+        errorTitle: "Nội dung không hợp lệ",
+        error: "Vui lòng chọn một mục có trong danh sách",
       };
     });
 
@@ -278,17 +278,17 @@ export default function EvaluatedTeamsInClass({
   const handleImportData = async () => {
     try {
       if (!formData || formData.length === 0) {
-        toast.error(`No data to import!`, {
+        toast.error(`Không có dữ liệu để nhập`, {
           position: toast.POSITION.TOP_CENTER,
         });
         return;
       }
       let importData = [];
       formData.forEach((row) => {
-        let councilTeam = councilTeams.find((item) => item.classCode === row[`Class`]);
+        let councilTeam = councilTeams.find((item) => item.classCode === row[`Lớp học`]);
         if (councilTeam) {
-          let session = sessions.find((item) => item.name === row[`Session`]);
-          let council = councils.find((item) => item.councilName === row[`Council`]);
+          let session = sessions.find((item) => item.name === row[`Phiên đánh giá`]);
+          let council = councils.find((item) => item.councilName === row[`Hội đồng`]);
           importData.push({
             id: councilTeam.classId,
             sessionId: session?.id,
@@ -297,7 +297,7 @@ export default function EvaluatedTeamsInClass({
         }
       });
       if (!importData || importData.length === 0) {
-        toast.error(`No data to import!`, {
+        toast.error(`Không có dữ liệu để nhập`, {
           position: toast.POSITION.TOP_CENTER,
         });
         return;
@@ -336,7 +336,7 @@ export default function EvaluatedTeamsInClass({
       }
     } catch (error) {
       console.error("Error fetching data:", error);
-      toast.error("Error import council teams!", {
+      toast.error("Xảy ra lỗi khi nhập phân công hội đồng", {
         position: toast.POSITION.TOP_CENTER,
       });
     } finally {
@@ -363,7 +363,7 @@ export default function EvaluatedTeamsInClass({
                   }}
                   style={{ marginRight: "20px" }}
                 >
-                  <span>Assigne Session</span>
+                  <span>Phân công phiên</span>
                 </Button>
                 <Button
                   color="primary"
@@ -374,7 +374,7 @@ export default function EvaluatedTeamsInClass({
                   }}
                   style={{ marginRight: "20px" }}
                 >
-                  <span>Assigne Council</span>
+                  <span>Phân công hội đồng</span>
                 </Button>
                 <Button
                   color="primary"
@@ -382,7 +382,7 @@ export default function EvaluatedTeamsInClass({
                     setModal({ import: true });
                   }}
                 >
-                  <span>Import</span>
+                  <span>Nhập</span>
                 </Button>
               </>
             )}
@@ -400,22 +400,22 @@ export default function EvaluatedTeamsInClass({
               </div>
             </DataTableRow>
             <DataTableRow size="mb">
-              <span className="sub-text">Class</span>
+              <span className="sub-text">Lớp học</span>
             </DataTableRow>
             <DataTableRow size="sm">
-              <span className="sub-text">Size</span>
+              <span className="sub-text">Số sinh viên</span>
             </DataTableRow>
             <DataTableRow>
-              <span className="sub-text">Teacher</span>
+              <span className="sub-text">Giảng viên</span>
             </DataTableRow>
             <DataTableRow size="lg">
-              <span className="sub-text">Council</span>
+              <span className="sub-text">Hội đồng</span>
             </DataTableRow>
             <DataTableRow size="lg">
-              <span className="sub-text">Session</span>
+              <span className="sub-text">Phiên đánh giá</span>
             </DataTableRow>
             <DataTableRow className="nk-tb-col-tools text-end">
-              <span className="sub-text">Action</span>
+              <span className="sub-text"></span>
             </DataTableRow>
           </DataTableHead>
           {councilTeams && councilTeams?.length > 0
@@ -514,7 +514,7 @@ export default function EvaluatedTeamsInClass({
             />
           ) : (
             <div className="text-center">
-              <span className="text-silent">No data found</span>
+              <span className="text-silent">Không có dữ liệu</span>
             </div>
           )}
         </div>
@@ -538,9 +538,9 @@ export default function EvaluatedTeamsInClass({
           </a>
           <div className="p-3">
             <h4 className="title text-center">
-              {modal?.assCouncil && "Assign Council"}
-              {modal?.assSession && "Assign Session"}
-              {modal?.import && "Import Council Teams"}
+              {modal?.assCouncil && "Phân công hội đồng"}
+              {modal?.assSession && "Phân công phiên"}
+              {modal?.import && "Nhập phân công hội đồng"}
             </h4>
             <div className="mt-4">
               <Form className="row gy-4">
@@ -566,14 +566,14 @@ export default function EvaluatedTeamsInClass({
                         className="text-primary"
                         onClick={generateExcel}
                       >
-                        <Icon name="file-download" /> Download Template
+                        <Icon name="file-download" /> Tải file mẫu
                       </a>
                     </Col>
                   </>
                 )}
                 {modal?.import && (
                   <Col md="12">
-                    <label className="form-label">Upload Excel File</label>
+                    <label className="form-label">Nhập excel file</label>
                     <div className="input-group">
                       <div className="input-group-prepend">
                         <span className="input-group-text">
@@ -593,7 +593,7 @@ export default function EvaluatedTeamsInClass({
                 <Col md="8" className="mx-auto">
                   {modal?.assSession && (
                     <div className="form-group">
-                      <label className="form-label">Session*</label>
+                      <label className="form-label">Phiên đánh giá*</label>
                       <RSelect
                         options={sessions.map((c) => ({
                           value: c.id,
@@ -606,7 +606,7 @@ export default function EvaluatedTeamsInClass({
                   )}
                   {modal?.assCouncil && (
                     <div className="form-group">
-                      <label className="form-label">Council*</label>
+                      <label className="form-label">Hội đồng*</label>
                       <RSelect
                         options={councils
                           .filter(
@@ -634,13 +634,13 @@ export default function EvaluatedTeamsInClass({
                       className="btn-block"
                       onClick={() => {
                         if(modal?.assCouncil && !selectedCouncil?.value){
-                          toast.info('Please select an council!', {
+                          toast.info('Vui lòng chọn 1 hội đồng', {
                             position: toast.POSITION.TOP_CENTER
                           });
                           return false;
                         }
                         if(modal?.assSession && !selectedSession?.value){
-                          toast.info('Please select an session!', {
+                          toast.info('Vui lòng chọn 1 phiên đánh giá', {
                             position: toast.POSITION.TOP_CENTER
                           });
                           return false;
@@ -648,7 +648,7 @@ export default function EvaluatedTeamsInClass({
                         saveChanges(false);
                       }}
                     >
-                      {isFetching?.assgine ? <Spinner size="sm" /> : <span>Submit</span>}
+                      {isFetching?.assgine ? <Spinner size="sm" /> : <span>Lưu</span>}
                     </Button>
                   )}
                   {modal?.import && (
@@ -660,7 +660,7 @@ export default function EvaluatedTeamsInClass({
                         handleImportData();
                       }}
                     >
-                      {isFetching?.import ? <Spinner size="sm" /> : <span>Import</span>}
+                      {isFetching?.import ? <Spinner size="sm" /> : <span>Nhập</span>}
                     </Button>
                   )}
                 </Col>

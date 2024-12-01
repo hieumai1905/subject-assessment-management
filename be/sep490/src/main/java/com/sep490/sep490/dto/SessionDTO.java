@@ -31,12 +31,12 @@ public class SessionDTO {
     private Boolean canDelete;
 
     public void validateInput(boolean isUpdate){
-        ValidateUtils.checkNullOrEmpty(semesterId, "Semester id");
-        ValidateUtils.checkNullOrEmpty(subjectSettingId, "Round id");
-        ValidateUtils.checkNullOrEmpty(subjectId, "Subject id");
+        ValidateUtils.checkNullOrEmpty(semesterId, "Học kỳ");
+        ValidateUtils.checkNullOrEmpty(subjectSettingId, "Lần đánh giá");
+        ValidateUtils.checkNullOrEmpty(subjectId, "Môn học");
         if(!isUpdate){
-            ValidateUtils.checkBeforeCurrentDate( sessionDate, "Date");
+            ValidateUtils.checkBeforeCurrentDate( sessionDate, "Ngày đánh giá");
         }
-        note = ValidateUtils.checkLength(note, "Note", 0, 750);
+        note = ValidateUtils.checkLength(note, "Ghi chú", 0, 750);
     }
 }

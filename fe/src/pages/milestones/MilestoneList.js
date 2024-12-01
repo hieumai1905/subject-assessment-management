@@ -99,7 +99,7 @@ const MilestoneList = () => {
         }
       } catch (error) {
         console.error("Error fetching data:", error);
-        toast.error("Error search setting!", {
+        toast.error("Xảy ra lỗi khi tìm kiêm học kỳ", {
           position: toast.POSITION.TOP_CENTER,
         });
       } finally {
@@ -145,7 +145,7 @@ const MilestoneList = () => {
         }
       } catch (error) {
         console.error("Error fetching data:", error);
-        toast.error("Error search subject!", {
+        toast.error("Xảy ra lỗi khi tìm kiếm môn học", {
           position: toast.POSITION.TOP_CENTER,
         });
       } finally {
@@ -204,7 +204,7 @@ const MilestoneList = () => {
         }
       } catch (error) {
         console.error("Error fetching data:", error);
-        toast.error("Error search class!", {
+        toast.error("Xảy ra lỗi khi tìm kiếm lớp học", {
           position: toast.POSITION.TOP_CENTER,
         });
       } finally {
@@ -386,13 +386,13 @@ const MilestoneList = () => {
 
   return (
     <>
-      <Head title="Milestone List" />
+      <Head title="Danh sách cột mốc" />
       <Content>
         <BlockHead size="sm">
           <BlockBetween>
             <BlockHeadContent>
-              <BlockTitle page> Milestone List</BlockTitle>
-              <BlockDes className="text-soft">You have total {totalElements} milestones</BlockDes>
+              <BlockTitle page> Danh sách cột mốc</BlockTitle>
+              <BlockDes className="text-soft">Bạn có tổng cộng {totalElements} cột mốc</BlockDes>
             </BlockHeadContent>
             <BlockHeadContent></BlockHeadContent>
           </BlockBetween>
@@ -401,7 +401,7 @@ const MilestoneList = () => {
           <Row>
             <Col size="2">
               <div className="form-group">
-                <label className="form-label">Semester</label>
+                <label className="form-label">Học kỳ</label>
                 {isFetching?.semester ? (
                   <div>
                     <Spinner />
@@ -417,7 +417,7 @@ const MilestoneList = () => {
             </Col>
             <Col size="2">
               <div className="form-group">
-                <label className="form-label">Subject</label>
+                <label className="form-label">Môn học</label>
                 {isFetching?.subject ? (
                   <div>
                     <Spinner />
@@ -438,7 +438,7 @@ const MilestoneList = () => {
             </Col>
             <Col size="2">
               <div className="form-group">
-                <label className="form-label">Class</label>
+                <label className="form-label">Lớp học</label>
                 {isFetching?.class ? (
                   <div>
                     <Spinner />

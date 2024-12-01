@@ -92,7 +92,7 @@ export default function ImportTeamsForm({
   //       console.log("milestone: ", response.data.data);
   //       if (response.data.statusCode === 200) {
   //         let options = response.data.data.milestoneResponses
-  //           .filter((item) => item?.id !== milestone.id && item.typeEvaluator !== evaluationTypes[2].value)
+  //           .filter((item) => item?.id !== milestone.id && item.evaluationType !== evaluationTypes[2].value)
   //           .map((item) => ({
   //             value: item?.id,
   //             label: item?.title,

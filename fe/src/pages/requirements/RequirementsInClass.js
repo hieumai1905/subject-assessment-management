@@ -31,7 +31,7 @@ import {
   transformToOptionsWithEmail,
 } from "../../utils/Utils";
 import { ButtonGroup, DropdownItem, DropdownMenu, DropdownToggle, Spinner, UncontrolledDropdown } from "reactstrap";
-import { evaluationTypes, requirementStatuses } from "../../data/ConstantData";
+import { evaluationTypes, fullRequirementStatuses, requirementStatuses } from "../../data/ConstantData";
 import SubmitWorkModal from "../requirements/SubmitWorkModal";
 import useAuthStore from "../../store/Userstore";
 import ImportReqToClassModal from "./ImportReqToClassModal";
@@ -74,6 +74,7 @@ export default function RequirementsInClass() {
     class: null,
     milestone: null,
     team: null,
+    status: null,
   });
   const [searchForm, setSearchForm] = useState({
     type: "",
@@ -90,7 +91,7 @@ export default function RequirementsInClass() {
   const [teams, setTeams] = useState([]);
   const [data, setData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemPerPage, setItemPerPage] = useState(10);
+  const [itemPerPage, setItemPerPage] = useState(7);
   const [totalItems, setTotalItems] = useState(0);
   const [formData, setFormData] = useState({
     requirements: [],
@@ -275,7 +276,7 @@ export default function RequirementsInClass() {
       console.log("milestone:", response.data.data);
       if (response.data.statusCode === 200) {
         let rMilestones = response.data.data.milestoneResponses;
-        rMilestones = rMilestones.filter((milestone) => milestone.typeEvaluator !== evaluationTypes[2].value);
+        rMilestones = rMilestones.filter((milestone) => milestone.evaluationType !== evaluationTypes[2].value);
         let milestoneOptions = convertToOptions(rMilestones, "id", "title");
         // milestoneOptions.unshift(getAllOptions("All Milestones"));
         setMilestones(milestoneOptions);
@@ -417,12 +418,13 @@ export default function RequirementsInClass() {
     try {
       setIsFetching({ ...isFetching, requirement: true });
       const response = await authApi.post("/requirements/get-by-class", {
-        pageSize: 99999,
-        pageIndex: 1,
+        pageSize: itemPerPage,
+        pageIndex: currentPage,
         milestoneId: filterForm?.milestone?.value,
         teamId: filterForm?.team?.value,
         title: filterForm?.title,
         classId: filterForm?.class?.value,
+        status: filterForm?.status?.value,
       });
       console.log("requirements:", response.data.data);
       if (response.data.statusCode === 200) {
@@ -513,7 +515,7 @@ export default function RequirementsInClass() {
     if (!isFirst && !isFetching?.team && !isFetching?.milestone && !isFetching?.class) {
       fetchRequirements();
     }
-  }, [filterForm?.team?.value, filterForm?.milestone?.value]);
+  }, [filterForm?.team?.value, filterForm?.milestone?.value, filterForm?.title, currentPage]);
 
   const selectorCheck = (e) => {
     let newData,
@@ -619,24 +621,25 @@ export default function RequirementsInClass() {
 
   const deleteRequirements = async (ids) => {
     Swal.fire({
-      title: "Are you sure?",
-      text: `If you delete requirement, the information relate to requirement like as: evaluation, update tracking will be removed!`,
+      title: "Bạn có chắc chắn?",
+      text: `Nếu bạn xóa yêu cầu, các thông tin liên quan đến yêu cầu như: đánh giá, theo dõi cập nhật sẽ bị xóa!`,
       icon: "warning",
       showCancelButton: true,
-      confirmButtonText: "Yes, delete it!",
+      confirmButtonText: "Vâng, xóa nó!",
+      cancelButtonText: "Hủy",
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
           const response = await authApi.delete("/requirements", {
             data: ids,
           });
-          console.log("delete reqs:", response.data.data);
+          console.log("Xóa yêu cầu:", response.data.data);
           if (response.data.statusCode === 200) {
             let newData;
             newData = data.filter((item) => item.checked !== true);
             setData([...newData]);
             setTotalItems(totalItems - ids.length);
-            toast.success(`Delete requirements successfully`, {
+            toast.success(`Xóa yêu cầu thành công`, {
               position: toast.POSITION.TOP_CENTER,
             });
           } else {
@@ -645,8 +648,8 @@ export default function RequirementsInClass() {
             });
           }
         } catch (error) {
-          console.error("Error delete requirements:", error);
-          toast.error("Error delete requirements!", {
+          console.error("Lỗi xóa yêu cầu:", error);
+          toast.error("Lỗi xóa yêu cầu!", {
             position: toast.POSITION.TOP_CENTER,
           });
         }
@@ -659,9 +662,6 @@ export default function RequirementsInClass() {
         setData([...newData]);
       }
     });
-    // if (confirm("Are you sure you want to delete requirements?") === true) {
-    // } else {
-    // }
   };
 
   const updateRequirement = async (id, status, studentId, fullname) => {
@@ -685,7 +685,7 @@ export default function RequirementsInClass() {
   const onActionClick = (e, action) => {
     let checkedReqs = data.filter((item) => item.checked === true);
     if (checkedReqs.length === 0) {
-      toast.info("Please select at least one item", {
+      toast.info("Vui lòng chọn ít nhất một yêu cầu", {
         position: toast.POSITION.TOP_CENTER,
       });
       return false;
@@ -713,117 +713,198 @@ export default function RequirementsInClass() {
 
   return (
     <>
-      <Head title="Requirement List" />
+      <Head title="Danh sách yêu cầu" />
       <Content>
         <BlockHead size="sm">
           <BlockBetween>
             <BlockHeadContent>
-              <BlockTitle page> Requirement List</BlockTitle>
+              <BlockTitle page> Danh sách yêu cầu</BlockTitle>
             </BlockHeadContent>
-            <BlockHeadContent></BlockHeadContent>
+            <BlockHeadContent>
+              <div className="toggle-wrap nk-block-tools-toggle">
+                <Button
+                  className={`btn-icon btn-trigger toggle-expand me-n1 ${sm ? "active" : ""}`}
+                  onClick={() => updateSm(!sm)}
+                >
+                  <Icon name="menu-alt-r"></Icon>
+                </Button>
+                <div className="toggle-expand-content" style={{ display: sm ? "block" : "none" }}>
+                  <ul className="nk-block-tools g-3">
+                    <li>
+                      <UncontrolledDropdown>
+                        <DropdownToggle tag="a" className="dropdown-toggle btn btn-white btn-dim btn-outline-light">
+                          <Icon name="filter-alt" className="d-none d-sm-inline"></Icon>
+                          <span>Bộ lọc</span>
+                          <Icon name="chevron-right" className="dd-indc"></Icon>
+                        </DropdownToggle>
+                        <DropdownMenu end className="filter-wg dropdown-menu-xxl" style={{ overflow: "visible" }}>
+                          <div className="dropdown-head">
+                            <span className="sub-title dropdown-title">Lọc yêu cầu</span>
+                            <div className="dropdown">
+                              <a
+                                href="#more"
+                                onClick={(ev) => {
+                                  ev.preventDefault();
+                                }}
+                                className="btn btn-sm btn-icon"
+                              >
+                                <Icon name="more-h"></Icon>
+                              </a>
+                            </div>
+                          </div>
+                          <div className="dropdown-body dropdown-body-rg">
+                            <Row className="gx-6 gy-3">
+                              <Col md={6}>
+                                <div className="form-group">
+                                  <label className="overline-title overline-title-alt">Học kỳ</label>
+                                  {isFetching?.semester ? (
+                                    <div>
+                                      <Spinner />
+                                    </div>
+                                  ) : (
+                                    <RSelect
+                                      options={semesters}
+                                      value={filterForm.semester}
+                                      onChange={(e) => {
+                                        setFilterForm({ ...filterForm, semester: e });
+                                      }}
+                                      placeholder="Chọn học kỳ"
+                                    />
+                                  )}
+                                </div>
+                              </Col>
+                              <Col md={6}>
+                                <div className="form-group">
+                                  <label className="overline-title overline-title-alt">Môn học</label>
+                                  {isFetching?.subject ? (
+                                    <div>
+                                      <Spinner />
+                                    </div>
+                                  ) : (
+                                    <RSelect
+                                      options={subjects}
+                                      value={filterForm.subject}
+                                      onChange={(e) => {
+                                        setFilterForm({ ...filterForm, subject: e });
+                                      }}
+                                      placeholder="Chọn môn học"
+                                    />
+                                  )}
+                                </div>
+                              </Col>
+                              <Col md={6}>
+                                <div className="form-group">
+                                  <label className="overline-title overline-title-alt">Lớp</label>
+                                  {isFetching?.class ? (
+                                    <div>
+                                      <Spinner />
+                                    </div>
+                                  ) : (
+                                    <RSelect
+                                      options={classes}
+                                      value={filterForm.class}
+                                      onChange={(e) => {
+                                        setFilterForm({ ...filterForm, class: e });
+                                      }}
+                                      placeholder="Chọn lớp"
+                                    />
+                                  )}
+                                </div>
+                              </Col>
+                              <Col md={6}>
+                                <div className="form-group">
+                                  <label className="overline-title overline-title-alt">Mốc</label>
+                                  {isFetching?.milestone ? (
+                                    <div>
+                                      <Spinner />
+                                    </div>
+                                  ) : (
+                                    <RSelect
+                                      options={milestones}
+                                      value={filterForm.milestone}
+                                      onChange={(e) => {
+                                        setFilterForm({ ...filterForm, milestone: e });
+                                      }}
+                                      placeholder="Chọn mốc"
+                                    />
+                                  )}
+                                </div>
+                              </Col>
+                              <Col md={6}>
+                                {role !== "STUDENT" && (
+                                  <div className="form-group">
+                                    <label className="overline-title overline-title-alt">Nhóm</label>
+                                    {isFetching?.team ? (
+                                      <div>
+                                        <Spinner />
+                                      </div>
+                                    ) : (
+                                      <RSelect
+                                        options={teams}
+                                        value={filterForm.team}
+                                        onChange={(e) => {
+                                          setFilterForm({ ...filterForm, team: e });
+                                        }}
+                                        placeholder="Chọn nhóm"
+                                      />
+                                    )}
+                                  </div>
+                                )}
+                              </Col>
+                              {/* <Col md={6}>
+                                <div className="form-group">
+                                  <label className="overline-title overline-title-alt">Trạng thái</label>
+                                  <RSelect
+                                    options={fullRequirementStatuses}
+                                    value={filterForm.status}
+                                    onChange={(e) => {
+                                      setFilterForm({ ...filterForm, status: e });
+                                    }}
+                                    placeholder="Chọn trạng thái"
+                                  />
+                                </div>
+                              </Col> */}
+                            </Row>
+                          </div>
+                          {/* <div className="dropdown-foot between">
+                            <a
+                              href="#reset"
+                              onClick={(ev) => {
+                                ev.preventDefault();
+                                // setFilterFormData({
+                                //   nameOrCode: "",
+                                //   managerId: null,
+                                //   status: null,
+                                // });
+                                // setSearchSubjects({});
+                                // setSelectedManager({
+                                //   fullname: "",
+                                //   username: "",
+                                // });
+                              }}
+                              className="clickable"
+                            >
+                              Đặt lại bộ lọc
+                            </a>
+                            <button
+                              onClick={() => {
+                                // setSearchSubjects(filterFormData);
+                              }}
+                              settingType="button"
+                              className="btn btn-secondary"
+                            >
+                              Lọc
+                            </button>
+                          </div> */}
+                        </DropdownMenu>
+                      </UncontrolledDropdown>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </BlockHeadContent>
           </BlockBetween>
         </BlockHead>
-        <Block>
-          <Row>
-            <Col md={2}>
-              <div className="form-group">
-                <label className="overline-title overline-title-alt">Semester</label>
-                {isFetching?.semester ? (
-                  <div>
-                    <Spinner />
-                  </div>
-                ) : (
-                  <RSelect
-                    options={semesters}
-                    value={filterForm.semester}
-                    onChange={(e) => {
-                      setFilterForm({ ...filterForm, semester: e });
-                    }}
-                    placeholder="Any Semester"
-                  />
-                )}
-              </div>
-            </Col>
-            <Col md={2}>
-              <div className="form-group">
-                <label className="overline-title overline-title-alt">Subject</label>
-                {isFetching?.subject ? (
-                  <div>
-                    <Spinner />
-                  </div>
-                ) : (
-                  <RSelect
-                    options={subjects}
-                    value={filterForm.subject}
-                    onChange={(e) => {
-                      setFilterForm({ ...filterForm, subject: e });
-                    }}
-                    placeholder="Any subject"
-                  />
-                )}
-              </div>
-            </Col>
-            <Col md={3}>
-              <div className="form-group">
-                <label className="overline-title overline-title-alt">Class</label>
-                {isFetching?.class ? (
-                  <div>
-                    <Spinner />
-                  </div>
-                ) : (
-                  <RSelect
-                    options={classes}
-                    value={filterForm.class}
-                    onChange={(e) => {
-                      setFilterForm({ ...filterForm, class: e });
-                    }}
-                    placeholder="Any class"
-                  />
-                )}
-              </div>
-            </Col>
-            <Col md={3}>
-              <div className="form-group">
-                <label className="overline-title overline-title-alt">Milestone</label>
-                {isFetching?.milestone ? (
-                  <div>
-                    <Spinner />
-                  </div>
-                ) : (
-                  <RSelect
-                    options={milestones}
-                    value={filterForm.milestone}
-                    onChange={(e) => {
-                      setFilterForm({ ...filterForm, milestone: e });
-                    }}
-                    placeholder="Any milestone"
-                  />
-                )}
-              </div>
-            </Col>
-            <Col md={2}>
-              {role !== "STUDENT" && (
-                <div className="form-group">
-                  <label className="overline-title overline-title-alt">Team</label>
-                  {isFetching?.team ? (
-                    <div>
-                      <Spinner />
-                    </div>
-                  ) : (
-                    <RSelect
-                      options={teams}
-                      value={filterForm.team}
-                      onChange={(e) => {
-                        setFilterForm({ ...filterForm, team: e });
-                      }}
-                      placeholder="Any Team"
-                    />
-                  )}
-                </div>
-              )}
-            </Col>
-          </Row>
-        </Block>
         <Block>
           {isFetching?.requirement ? (
             <div className="d-flex justify-content-center">
@@ -837,7 +918,7 @@ export default function RequirementsInClass() {
                     <ButtonGroup className="w-100">
                       <input
                         type="text"
-                        placeholder="search by title..."
+                        placeholder="Tìm kiếm theo tiêu đề..."
                         className="form-control w-100"
                         value={searchText}
                         onChange={(e) => setSearchText(e.target.value)}
@@ -870,7 +951,7 @@ export default function RequirementsInClass() {
                           onActionClick(e, "edit");
                         }}
                       >
-                        Bulk Edit
+                        Sửa hàng loạt
                       </Button>
                       <Button
                         color="light"
@@ -880,7 +961,7 @@ export default function RequirementsInClass() {
                           onActionClick(e, "delete");
                         }}
                       >
-                        Bulk Delete
+                        Xóa hàng loạt
                       </Button>
                       <Button
                         color="primary"
@@ -890,16 +971,16 @@ export default function RequirementsInClass() {
                           if (checkedItems.length > 0) {
                             setModal({ ...modal, moveReq: true });
                           } else {
-                            toast.info("Please select at least one requirement!", {
+                            toast.info("Vui lòng chọn ít nhất một yêu cầu!", {
                               position: toast.POSITION.TOP_CENTER,
                             });
                           }
                         }}
                       >
-                        Assign
+                        Chuyển yêu cầu
                       </Button>
                       <Button color="primary" onClick={() => setModal({ ...modal, import: true })}>
-                        Import
+                        Nhập yêu cầu
                       </Button>
                       <Button color="primary" className="btn-icon ms-3" onClick={() => setModal({ add: true })}>
                         <Icon name="plus"></Icon>
@@ -922,25 +1003,25 @@ export default function RequirementsInClass() {
                     </div>
                   </DataTableRow>
                   <DataTableRow>
-                    <span className="sub-text">Title</span>
+                    <span className="sub-text">Tiêu đề</span>
                   </DataTableRow>
                   <DataTableRow>
-                    <span className="sub-text">Complexity</span>
+                    <span className="sub-text">Độ phức tạp</span>
                   </DataTableRow>
                   <DataTableRow>
-                    <span className="sub-text">Milestone</span>
+                    <span className="sub-text">Mốc</span>
                   </DataTableRow>
                   <DataTableRow>
-                    <span className="sub-text">Team</span>
+                    <span className="sub-text">Nhóm</span>
                   </DataTableRow>
                   <DataTableRow>
-                    <span className="sub-text">Student</span>
+                    <span className="sub-text">Học sinh</span>
                   </DataTableRow>
                   <DataTableRow>
-                    <span className="sub-text">Status</span>
+                    <span className="sub-text">Trạng thái</span>
                   </DataTableRow>
                   <DataTableRow className="nk-tb-col-tools text-end">
-                    <span className="sub-text">Actions</span>
+                    <span className="sub-text">Hành động</span>
                   </DataTableRow>
                 </DataTableHead>
                 {data.length > 0
@@ -975,12 +1056,14 @@ export default function RequirementsInClass() {
                           </DataTableRow>
                           <DataTableRow>
                             <span style={{ cursor: "pointer" }}>
-                              {isNullOrEmpty(item?.studentFullname) ? "No one" : item?.studentFullname}
+                              {isNullOrEmpty(item?.studentFullname) ? "Chưa có" : item?.studentFullname}
                             </span>
                           </DataTableRow>
                           <DataTableRow>
                             <span style={{ cursor: "pointer" }}>
-                              {isNullOrEmpty(item?.status) ? "TO DO" : item.status}
+                              {isNullOrEmpty(item?.status)
+                                ? "Chưa làm"
+                                : fullRequirementStatuses.find((s) => s.value === item.status)?.label}
                             </span>
                           </DataTableRow>
                           <DataTableRow className="nk-tb-col-tools text-end">
@@ -995,7 +1078,7 @@ export default function RequirementsInClass() {
                                   </DropdownToggle>
                                   <DropdownMenu end>
                                     <ul className="link-list-opt no-bdr">
-                                      {(canTick(item) ||
+                                      {/* {(canTick(item) ||
                                         canModifyMilestone(user, role, teacherClass[`${filterForm?.class?.value}`])) &&
                                         item.status !== "EVALUATED" && (
                                           <li onClick={() => onEditClick(item.id, item.teamId)}>
@@ -1007,10 +1090,10 @@ export default function RequirementsInClass() {
                                               }}
                                             >
                                               <Icon name="edit"></Icon>
-                                              <span>Edit</span>
+                                              <span>Chỉnh sửa</span>
                                             </DropdownItem>
                                           </li>
-                                        )}
+                                        )} */}
                                       {(canTick(item) ||
                                         canModifyMilestone(user, role, teacherClass[`${filterForm?.class?.value}`])) &&
                                         item.status !== "EVALUATED" && (
@@ -1028,14 +1111,13 @@ export default function RequirementsInClass() {
                                               }}
                                             >
                                               <Icon name="trash"></Icon>
-                                              <span>Delete</span>
+                                              <span>Xóa</span>
                                             </DropdownItem>
                                           </li>
                                         )}
                                       <li
                                         onClick={() => {
-                                          // item.checked = true;
-                                          // deleteRequirements([item.id]);
+                                          navigate(`/requirement-details?reqId=${item.id}`);
                                         }}
                                       >
                                         <DropdownItem
@@ -1043,13 +1125,10 @@ export default function RequirementsInClass() {
                                           href="#delete"
                                           onClick={(ev) => {
                                             ev.preventDefault();
-                                            // setModal({ detail: true });
-                                            // setId(item.id);
-                                            navigate(`/requirement-details?reqId=${item.id}`);
                                           }}
                                         >
                                           <Icon name="info"></Icon>
-                                          <span>Detail</span>
+                                          <span>Chi tiết</span>
                                         </DropdownItem>
                                       </li>
                                     </ul>
@@ -1057,15 +1136,6 @@ export default function RequirementsInClass() {
                                 </UncontrolledDropdown>
                               </li>
                             </ul>
-                            {/* <Button
-                            color="info"
-                            onClick={() => {
-                              setModal({ detail: true });
-                              setId(item.id);
-                            }}
-                          >
-                            Detail
-                          </Button> */}
                           </DataTableRow>
                         </DataTableItem>
                       );
@@ -1074,40 +1144,39 @@ export default function RequirementsInClass() {
               </DataTableBody>
               <div className="card-inner">
                 {data.length > 0 ? (
-                  <></>
+                  <PaginationComponent
+                    itemPerPage={itemPerPage}
+                    totalItems={totalItems}
+                    paginate={paginate}
+                    currentPage={currentPage}
+                  />
                 ) : (
                   <div className="text-center">
-                    <span className="text-silent">No data found</span>
+                    <span className="text-silent">Không có dữ liệu</span>
                   </div>
                 )}
               </div>
             </DataTable>
           )}
         </Block>
-        {/* <ImportReqToClassModal
-          modal={modal?.import}
-          setModal={setModal}
-          data={data}
-          setData={setData}
-          milestones={milestones.filter((item) => item.value !== null)}
-          //   teamOptions={teams.filter(item => item.value !== null)}
-        /> */}
-        {modal?.add && <FormModal
-          modal={modal.add}
-          modalType="add"
-          formData={formData}
-          setFormData={setFormData}
-          closeModal={closeModal}
-          complexities={complexities}
-          teams={teams}
-          role={role}
-          milestone={{
-            id: filterForm?.milestone?.value,
-          }}
-          setData={setData}
-          setTotalItems={setTotalItems}
-          currentTeam={filterForm?.team}
-        />}
+        {modal?.add && (
+          <FormModal
+            modal={modal.add}
+            modalType="add"
+            formData={formData}
+            setFormData={setFormData}
+            closeModal={closeModal}
+            complexities={complexities}
+            teams={teams}
+            role={role}
+            milestone={{
+              id: filterForm?.milestone?.value,
+            }}
+            setData={setData}
+            setTotalItems={setTotalItems}
+            currentTeam={filterForm?.team}
+          />
+        )}
         {modal?.import && (
           <ImportRequirementsForm
             modal={modal.import}
@@ -1141,6 +1210,7 @@ export default function RequirementsInClass() {
             }}
             role={role}
             user={user}
+            classId={filterForm?.class?.value}
           />
         )}
         {modal?.edit && (
@@ -1171,33 +1241,3 @@ export default function RequirementsInClass() {
     </>
   );
 }
-
-const getFileNameFromURL = (url) => {
-  return url.split("/").pop().split("?")[0];
-};
-
-const renderSubmission = (item, isUpdate) => {
-  let note = isNullOrEmpty(item.note) ? "" : " - " + item.note;
-  if (item.submitType === "file") {
-    const fileName = getFileNameFromURL(item.submission);
-    return (
-      <>
-        <a href={item.submission} download={item.submission}>
-          Download {shortenString(fileName, 150)}
-        </a>
-        {isUpdate && <span>{note}</span>}
-      </>
-    );
-  } else if (item.submitType === "link") {
-    return (
-      <>
-        <a href={item.submission} target="_blank" rel="noopener noreferrer">
-          {shortenString(item.submission, 150)}
-        </a>
-        {isUpdate && <span>{note}</span>}
-      </>
-    );
-  } else {
-    return <span>No submission</span>;
-  }
-};

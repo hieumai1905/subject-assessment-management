@@ -44,6 +44,11 @@ public interface CouncilTeamRepository extends BaseRepository<CouncilTeam, Integ
             "and ((:sessionId is null and ct.session is null) or ct.session.id = :sessionId) " +
             "and ((:councilId is null and ct.council is null) or ct.council.id = :councilId)")
     List<CouncilTeam> findInOtherTeam(Integer teamId, Integer councilId, Integer sessionId);
+
+    @Query("select ct from CouncilTeam ct where ct.teamId is not null and ct.teamId = :teamId " +
+            "and (ct.session is null or ct.session.id in (:sessionIds)) " +
+            "and (ct.council is null or ct.council.id in (:councilIds))")
+    CouncilTeam findByTeam(Integer teamId, List<Integer> councilIds, List<Integer> sessionIds);
     @Query("select ct from CouncilTeam ct where ct.classId = :classId and ct.teamId is null " +
             "   and (ct.council.id in (:councilIds) or ct.session.id in (:sessionIds))")
     CouncilTeam findByClassIdAndCouncilAndSession(Integer classId, List<Integer> councilIds, List<Integer> sessionIds);

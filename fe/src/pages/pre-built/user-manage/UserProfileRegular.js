@@ -19,6 +19,7 @@ import UserProfileAside from "./UserProfileAside";
 import useAuthStore from "../../../store/Userstore";
 import { toast, ToastContainer } from "react-toastify";
 import authApi from "../../../utils/ApiAuth";
+import { roleArr } from "../../../data/ConstantData";
 
 const UserProfileRegularPage = () => {
   const [sm, updateSm] = useState(false);
@@ -185,7 +186,7 @@ const UserProfileRegularPage = () => {
 
   return (
     <React.Fragment>
-      <Head title="User List - Profile"></Head>
+      <Head title="Thông tin cá nhân"></Head>
       <Content>
         <Card className="card-bordered">
           <div className="card-aside-wrap">
@@ -201,7 +202,7 @@ const UserProfileRegularPage = () => {
               <BlockHead size="lg">
                 <BlockBetween>
                   <BlockHeadContent>
-                    <BlockTitle tag="h4">Personal Information</BlockTitle>
+                    <BlockTitle tag="h4">Thông tin cá nhân</BlockTitle>
                     <BlockDes></BlockDes>
                   </BlockHeadContent>
                   <BlockHeadContent className="align-self-start d-lg-none">
@@ -218,17 +219,17 @@ const UserProfileRegularPage = () => {
               <Block>
                 <div className="nk-data data-list">
                   <div className="data-head">
-                    <h6 className="overline-title">Basics</h6>
+                    <h6 className="overline-title"></h6>
                   </div>
-                  <div className="data-item">
+                  {/* <div className="data-item">
                     <div className="data-col">
                       <span className="data-label">User Name</span>
                       <span className="data-value">{formData.username}</span>
                     </div>
-                  </div>
+                  </div> */}
                   <div className="data-item">
                     <div className="data-col">
-                      <span className="data-label">Full Name</span>
+                      <span className="data-label">Họ và tên</span>
                       <span className="data-value">{formData.fullname}</span>
                     </div>
                   </div>
@@ -240,26 +241,26 @@ const UserProfileRegularPage = () => {
                   </div>
                   <div className="data-item">
                     <div className="data-col">
-                      <span className="data-label">Phone Number</span>
+                      <span className="data-label">Số điện thoại</span>
                       <span className="data-value text-soft">{formData.mobile}</span>
                     </div>
                   </div>
 
                   <div className="data-item">
                     <div className="data-col">
-                      <span className="data-label">Role</span>
-                      <span className="data-value text-soft">{userRole}</span>
+                      <span className="data-label">Vai trò</span>
+                      <span className="data-value text-soft">{roleArr.find(r => r.value === userRole)?.label}</span>
                     </div>
                   </div>
                 </div>
               </Block>
 
-              <Block className="d-flex justify-content-end">
+              {/* <Block className="d-flex justify-content-end">
                 <Button color="primary" onClick={() => setModal(true)}>
                   <Icon name="edit" className="me-2"></Icon>
-                  Update Profile
+                  Cập nhật
                 </Button>
-              </Block>
+              </Block> */}
 
               <Modal isOpen={modal} className="modal-dialog-centered" size="lg" toggle={() => setModal(false)}>
                 <a
@@ -274,7 +275,7 @@ const UserProfileRegularPage = () => {
                 </a>
                 <ModalBody>
                   <div className="p-2">
-                    <h5 className="title">Update Profile</h5>
+                    <h5 className="title">Cập nhật thông tin</h5>
                     <ul className="nk-nav nav nav-tabs">
                       <li className="nav-item">
                         <a
@@ -285,10 +286,10 @@ const UserProfileRegularPage = () => {
                           }}
                           href="#personal"
                         >
-                          Personal
+                          Cá nhân
                         </a>
                       </li>
-                      <li className="nav-item">
+                      {/* <li className="nav-item">
                         <a
                           className={`nav-link ${modalTab === "2" && "active"}`}
                           onClick={(ev) => {
@@ -297,9 +298,9 @@ const UserProfileRegularPage = () => {
                           }}
                           href="#avatar"
                         >
-                          Change Avatar
+                          
                         </a>
-                      </li>
+                      </li> */}
                     </ul>
                     <div className="tab-content">
                       <div className={`tab-pane ${modalTab === "1" ? "active" : ""}`} id="personal">

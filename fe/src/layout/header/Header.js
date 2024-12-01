@@ -189,11 +189,11 @@ const Header = ({ fixed, className, ...props }) => {
             ) : (
               <div>
                 <button className="btn btn-primary me-3" onClick={navigateToLogin}>
-                  Sign In
+                  Đăng nhập
                 </button>
-                <button className="btn btn-success" onClick={navigateToRegister}>
+                {/* <button className="btn btn-success" onClick={navigateToRegister}>
                   Register
-                </button>
+                </button> */}
               </div>
             )}
           </div>

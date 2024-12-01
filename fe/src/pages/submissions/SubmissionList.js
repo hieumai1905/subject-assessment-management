@@ -123,7 +123,7 @@ export default function SubmissionList() {
       }
     } catch (error) {
       console.error("Error fetching data:", error);
-      toast.error("Error search setting!", { position: toast.POSITION.TOP_CENTER });
+      toast.error("Xảy ra lỗi khi tìm kiếm học kỳ", { position: toast.POSITION.TOP_CENTER });
     } finally {
       setIsFetching((prev) => ({ ...prev, semester: false }));
     }
@@ -156,7 +156,7 @@ export default function SubmissionList() {
       }
     } catch (error) {
       console.error("Error fetching data:", error);
-      toast.error("Error search subject!", { position: toast.POSITION.TOP_CENTER });
+      toast.error("Xảy ra lỗi khi tìm kiếm môn học", { position: toast.POSITION.TOP_CENTER });
     } finally {
       setIsFetching((prev) => ({ ...prev, subject: false }));
     }
@@ -194,7 +194,7 @@ export default function SubmissionList() {
       }
     } catch (error) {
       console.error("Error fetching data:", error);
-      toast.error("Error search class!", { position: toast.POSITION.TOP_CENTER });
+      toast.error("Xảy ra lỗi khi tìm kiếm lớp học", { position: toast.POSITION.TOP_CENTER });
     } finally {
       setIsFetching((prev) => ({ ...prev, class: false }));
     }
@@ -215,7 +215,7 @@ export default function SubmissionList() {
       console.log("milestone:", response.data.data);
       if (response.data.statusCode === 200) {
         let rMilestones = response.data.data.milestoneResponses;
-        // rMilestones = rMilestones.filter(milestone => milestone.typeEvaluator !== evaluationTypes[2].value);
+        // rMilestones = rMilestones.filter(milestone => milestone.evaluationType !== evaluationTypes[2].value);
         const milestoneOptions = convertToOptions(rMilestones, "id", "title");
         setMilestones(milestoneOptions);
         if (response.data.data.totalElements > 0) {
@@ -227,7 +227,7 @@ export default function SubmissionList() {
           rMilestones.forEach((item) => {
             nPermission = {
               ...nPermission,
-              [`m-${item?.id}`]: item?.active || item.typeEvaluator === evaluationTypes[2].value,
+              [`m-${item?.id}`]: item?.active || item.evaluationType === evaluationTypes[2].value,
             };
           });
           setPermission({
@@ -251,7 +251,7 @@ export default function SubmissionList() {
       }
     } catch (error) {
       console.error("Error fetching data:", error);
-      toast.error("Error search milestone!", { position: toast.POSITION.TOP_CENTER });
+      toast.error("Xảy ra lỗi khi tìm kiếm cột mốc", { position: toast.POSITION.TOP_CENTER });
     } finally {
       setIsFetching((prev) => ({ ...prev, milestone: false }));
     }
@@ -269,15 +269,15 @@ export default function SubmissionList() {
       const response = await authApi.post("/teams/search", {
         pageSize: 9999,
         pageIndex: 1,
-        milestoneId: filterForm?.milestone?.value,
+        classId: filterForm?.class?.value,
       });
       console.log("teams:", response.data.data);
       if (response.data.statusCode === 200) {
         let rTeams = response.data.data.teamDTOs;
         let teamOptions = convertToOptions(rTeams, "id", "teamName");
         teamOptions = teamOptions?.filter((team) => team.label !== "Wish List");
-        if(role !== 'STUDENT'){
-          teamOptions.unshift(getAllOptions('All Teams'));
+        if (role !== "STUDENT") {
+          teamOptions.unshift(getAllOptions("All Teams"));
         }
         if (teamOptions.length > 0) {
           let nTeamMembers = {},
@@ -332,7 +332,7 @@ export default function SubmissionList() {
       }
     } catch (error) {
       console.error("Error fetching data:", error);
-      toast.error("Error search teams!", { position: toast.POSITION.TOP_CENTER });
+      toast.error("Xảy ra lỗi khi tìm kiếm nhóm", { position: toast.POSITION.TOP_CENTER });
     } finally {
       setIsFetching((prev) => ({ ...prev, team: false }));
     }
@@ -372,7 +372,7 @@ export default function SubmissionList() {
       }
     } catch (error) {
       console.error("Error fetching data:", error);
-      toast.error("Error search submissions!", { position: toast.POSITION.TOP_CENTER });
+      toast.error("Xảy ra lỗi khi tìm kiếm bài nộp", { position: toast.POSITION.TOP_CENTER });
     } finally {
       setIsFetching({ ...isFetching, requirement: false });
     }
@@ -445,12 +445,12 @@ export default function SubmissionList() {
 
   return (
     <>
-      <Head title="Submission List" />
+      <Head title="Danh sách bài nộp" />
       <Content>
         <BlockHead size="sm">
           <BlockBetween>
             <BlockHeadContent>
-              <BlockTitle page> Submission List</BlockTitle>
+              <BlockTitle page> Danh sách bài nộp</BlockTitle>
               {/* <BlockDes className="text-soft">You have total 0 submissions</BlockDes> */}
             </BlockHeadContent>
             <BlockHeadContent></BlockHeadContent>
@@ -460,7 +460,7 @@ export default function SubmissionList() {
           <Row>
             <Col md={2}>
               <div className="form-group">
-                <label className="overline-title overline-title-alt">Semester</label>
+                <label className="overline-title overline-title-alt">Học kỳ</label>
                 {isFetching?.semester ? (
                   <div>
                     <Spinner />
@@ -472,14 +472,14 @@ export default function SubmissionList() {
                     onChange={(e) => {
                       setFilterForm({ ...filterForm, semester: e });
                     }}
-                    placeholder="Any Semester"
+                    placeholder="Chọn học kỳ"
                   />
                 )}
               </div>
             </Col>
             <Col md={2}>
               <div className="form-group">
-                <label className="overline-title overline-title-alt">Subject</label>
+                <label className="overline-title overline-title-alt">Môn học</label>
                 {isFetching?.subject ? (
                   <div>
                     <Spinner />
@@ -491,14 +491,14 @@ export default function SubmissionList() {
                     onChange={(e) => {
                       setFilterForm({ ...filterForm, subject: e });
                     }}
-                    placeholder="Any subject"
+                    placeholder="Chọn môn học"
                   />
                 )}
               </div>
             </Col>
             <Col md={3}>
               <div className="form-group">
-                <label className="overline-title overline-title-alt">Class</label>
+                <label className="overline-title overline-title-alt">Lớp</label>
                 {isFetching?.class ? (
                   <div>
                     <Spinner />
@@ -510,14 +510,14 @@ export default function SubmissionList() {
                     onChange={(e) => {
                       setFilterForm({ ...filterForm, class: e });
                     }}
-                    placeholder="Any class"
+                    placeholder="Chọn lớp"
                   />
                 )}
               </div>
             </Col>
             <Col md={3}>
               <div className="form-group">
-                <label className="overline-title overline-title-alt">Milestone</label>
+                <label className="overline-title overline-title-alt">Cột mốc</label>
                 {isFetching?.milestone ? (
                   <div>
                     <Spinner />
@@ -529,15 +529,15 @@ export default function SubmissionList() {
                     onChange={(e) => {
                       setFilterForm({ ...filterForm, milestone: e });
                     }}
-                    placeholder="Any milestone"
+                    placeholder="Chọn cột mốc"
                   />
                 )}
               </div>
             </Col>
-            {role != 'STUDENT' && (
+            {role != "STUDENT" && (
               <Col md={2}>
                 <div className="form-group">
-                  <label className="overline-title overline-title-alt">Team</label>
+                  <label className="overline-title overline-title-alt">Nhóm</label>
                   {isFetching?.team ? (
                     <div>
                       <Spinner />
@@ -549,7 +549,7 @@ export default function SubmissionList() {
                       onChange={(e) => {
                         setFilterForm({ ...filterForm, team: e });
                       }}
-                      placeholder="Any Team"
+                      placeholder="Chọn nhóm"
                     />
                   )}
                 </div>
@@ -567,92 +567,28 @@ export default function SubmissionList() {
               <div className="card-inner position-relative card-tools-toggle">
                 <div className="card-title-group">
                   <div className="card-tools">
-                    {role === "STUDENT" && (
-                      <div className="form-inline flex-nowrap gx-3">
-                        {/* <div className="form-wrap">
-                        <RSelect
-                          options={[
-                            { value: "Submit file", label: "Submit file" },
-                            { value: "Submit link", label: "Submit link" },
-                          ]}
-                          className="w-130px"
-                          placeholder="Bulk Action"
-                          onChange={(e) => onActionText(e)}
-                        />
-                      </div> */}
-                        {/* <div className="btn-wrap">
-                          <span className="d-none d-md-block">
-                            <Button
-                              // disabled={actionText !== "" ? false : true}
-                              color="light"
-                              outline
-                              className="btn-dim me-2"
-                              onClick={(e) => onActionClick(e, "Submit file")}
-                            >
-                              Submit File
-                            </Button>
-                            <Button
-                              // disabled={actionText !== "" ? false : true}
-                              color="light"
-                              outline
-                              className="btn-dim"
-                              onClick={(e) => onActionClick(e, "Submit link")}
-                            >
-                              Submit Link
-                            </Button>
-                          </span>
-                          <span className="d-md-none">
-                            <Button
-                              color="light"
-                              outline
-                              disabled={actionText !== "" ? false : true}
-                              className="btn-dim  btn-icon"
-                              onClick={(e) => onActionClick(e)}
-                            >
-                              <Icon name="arrow-right"></Icon>
-                            </Button>
-                          </span>
-                        </div> */}
-                      </div>
-                    )}
+                    {role === "STUDENT" && <div className="form-inline flex-nowrap gx-3"></div>}
                   </div>
                   <div className="card-tools me-n1">
                     <ul className="btn-toolbar gx-1">
                       <li>
-                        {/* <ButtonGroup style={{ width: "300px" }}>
-                          <input
-                            type="text"
-                            placeholder="search by title..."
-                            className="form-control w-100"
-                            value={onSearchText}
-                            onChange={(e) => setSearchText(e.target.value)}
-                          />
-                          <Button
-                            className="bg-gray"
-                            onClick={() => {
-                              setFilterForm({ ...filterForm, title: onSearchText });
-                            }}
-                          >
-                            <Icon className="text-white" name="search"></Icon>
-                          </Button>
-                        </ButtonGroup> */}
                         {(!data || data.length === 0) && canSubmit && (
                           <Button
                             color="primary"
-                            onClick={() =>{
-                              if(!filterForm?.milestone?.value || !filterForm.team.value){
-                                toast.info('No milestone or team found!', {
-                                  position: toast.POSITION.TOP_CENTER
+                            onClick={() => {
+                              if (!filterForm?.milestone?.value || !filterForm.team.value) {
+                                toast.info("Không tìm thấy cột mốc hoặc nhóm nào!", {
+                                  position: toast.POSITION.TOP_CENTER,
                                 });
                                 return;
                               }
                               navigate(
                                 `/submissions/submit-detail?mId=${filterForm?.milestone?.value}&tId=${filterForm?.team?.value}`
-                              )
+                              );
                             }}
                           >
                             <Icon name="plus"></Icon>
-                            New Submit
+                            Nộp bài
                           </Button>
                         )}
                       </li>
@@ -672,94 +608,6 @@ export default function SubmissionList() {
                                   <Icon name="arrow-left"></Icon>
                                 </Button>
                               </li>
-                              {/* <li>
-                              <UncontrolledDropdown>
-                                <DropdownToggle tag="a" className="btn btn-trigger btn-icon dropdown-toggle">
-                                  <div className="dot dot-primary"></div>
-                                  <Icon name="filter-alt"></Icon>
-                                </DropdownToggle>
-                                <DropdownMenu
-                                  end
-                                  className="filter-wg dropdown-menu-xl"
-                                  style={{ overflow: "visible" }}
-                                >
-                                  <div className="dropdown-body dropdown-body-rg">
-                                    <Row className="gx-6 gy-3">
-                                      <Col size="12">
-                                        <div className="form-group">
-                                          <label className="overline-title overline-title-alt">Milestone</label>
-                                          <RSelect
-                                            options={milestones}
-                                            value={filterForm.milestone}
-                                            onChange={(e) => {
-                                              setFilterForm({ ...filterForm, milestone: e });
-                                            }}
-                                            placeholder="Any milestone"
-                                          />
-                                        </div>
-                                      </Col>
-                                      <Col size="12">
-                                        <div className="form-group">
-                                          <label className="overline-title overline-title-alt">Team</label>
-                                          <RSelect
-                                            options={teams}
-                                            value={filterForm.team}
-                                            onChange={(e) => {
-                                              setFilterForm({ ...filterForm, team: e });
-                                            }}
-                                            placeholder="Any Team"
-                                          />
-                                        </div>
-                                      </Col>
-                                      <Col size="12">
-                                        <Row>
-                                          <Col size="6">
-                                            <a
-                                              href="#reset"
-                                              onClick={(ev) => {
-                                                ev.preventDefault();
-                                                const resetForm = {
-                                                  title: "",
-                                                  type: "",
-                                                  semester: null,
-                                                  subject: null,
-                                                  class: null,
-                                                  milestone: null,
-                                                  team: null,
-                                                };
-                                                setFilterForm(resetForm);
-                                                setSearchForm(resetForm);
-                                              }}
-                                              className="clickable"
-                                            >
-                                              Reset Filter
-                                            </a>
-                                          </Col>
-                                          <Col size="6">
-                                            <div className="form-group text-end">
-                                              <Button
-                                                color="secondary"
-                                                onClick={() => {
-                                                  setSearchForm({
-                                                    ...filterForm,
-                                                    type: filterForm.type,
-                                                    milestone: filterForm.milestone,
-                                                    team: filterForm.team,
-                                                  });
-                                                  setCurrentPage(1);
-                                                }}
-                                              >
-                                                Filter
-                                              </Button>
-                                            </div>
-                                          </Col>
-                                        </Row>
-                                      </Col>
-                                    </Row>
-                                  </div>
-                                </DropdownMenu>
-                              </UncontrolledDropdown>
-                            </li> */}
                             </ul>
                           </div>
                         </div>
@@ -771,25 +619,25 @@ export default function SubmissionList() {
               <DataTableBody compact>
                 <DataTableHead>
                   <DataTableRow>
-                    <span className="sub-text">Milestone</span>
+                    <span className="sub-text">Cột mốc</span>
                   </DataTableRow>
                   <DataTableRow size="sm">
-                    <span className="sub-text">Team</span>
+                    <span className="sub-text">Nhóm</span>
                   </DataTableRow>
                   <DataTableRow>
-                    <span className="sub-text">Submission</span>
+                    <span className="sub-text">Nộp bài</span>
                   </DataTableRow>
                   <DataTableRow>
-                    <span className="sub-text">Submit At</span>
+                    <span className="sub-text">Thời gian nộp</span>
                   </DataTableRow>
                   <DataTableRow>
-                    <span className="sub-text">Submit By</span>
+                    <span className="sub-text">Người nộp</span>
                   </DataTableRow>
+                  {/* <DataTableRow>
+                    <span className="sub-text">Trạng thái</span>
+                  </DataTableRow> */}
                   <DataTableRow>
-                    <span className="sub-text">Status</span>
-                  </DataTableRow>
-                  <DataTableRow>
-                    <span className="sub-text">Action</span>
+                    <span className="sub-text">Hành động</span>
                   </DataTableRow>
                 </DataTableHead>
                 {data && data.length > 0
@@ -806,7 +654,7 @@ export default function SubmissionList() {
                             <p>
                               {!isNullOrEmpty(item.submitFile) && (
                                 <p>
-                                  File:{" "}
+                                  Tệp:{" "}
                                   <a href={item.submitFile} download={getFileNameFromURL(item.submitFile)}>
                                     {shortenString(getFileNameFromURL(item.submitFile), 50)}
                                   </a>
@@ -816,7 +664,7 @@ export default function SubmissionList() {
                             <p>
                               {!isNullOrEmpty(item.submitLink) && (
                                 <p>
-                                  Link:{" "}
+                                  Liên kết:{" "}
                                   <a href={item.submitLink} target="_blank">
                                     {shortenString(item.submitLink, 50)}
                                   </a>
@@ -830,19 +678,18 @@ export default function SubmissionList() {
                           <DataTableRow>
                             <span style={{ cursor: "pointer" }}>{item.updateBy}</span>
                           </DataTableRow>
-                          <DataTableRow>{item.status}</DataTableRow>
+                          {/* <DataTableRow>{item.status}</DataTableRow> */}
                           <DataTableRow>
                             <Button
                               color="primary"
                               style={{ cursor: "pointer" }}
                               onClick={() => {
-                                // setModal({ edit: true });
                                 navigate(
                                   `/submissions/submit-detail?mId=${filterForm?.milestone?.value}&tId=${item?.teamId}`
                                 );
                               }}
                             >
-                              {canSubmit ? "Update" : "View"}
+                              {canSubmit ? "Cập nhật" : "Xem"}
                             </Button>
                           </DataTableRow>
                         </DataTableItem>
@@ -853,7 +700,7 @@ export default function SubmissionList() {
               <div className="card-inner">
                 {data.length === 0 && (
                   <div className="text-center">
-                    <span className="text-silent">No data found</span>
+                    <span className="text-silent">Không tìm thấy dữ liệu</span>
                   </div>
                 )}
               </div>

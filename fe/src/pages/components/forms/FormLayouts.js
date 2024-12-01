@@ -348,7 +348,7 @@ const FormLayoutsPage = ({ ...props }) => {
                 <Col lg="7">
                   <div className="form-group">
                     <div className="form-control-wrap">
-                      <input type="text" id="site-name" className="form-control" defaultValue="SWP Evaluation System" />
+                      <input type="text" id="site-name" className="form-control" defaultValue="Evaluation System" />
                     </div>
                   </div>
                 </Col>

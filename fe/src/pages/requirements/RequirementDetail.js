@@ -13,6 +13,7 @@ import GroupIcon from "@mui/icons-material/Group";
 import useAuthStore from "../../store/Userstore";
 import Swal from "sweetalert2";
 import { TextareaAutosize } from "@mui/material";
+import { fullRequirementStatuses } from "../../data/ConstantData";
 
 function useQuery() {
   return new URLSearchParams(useLocation().search);
@@ -47,7 +48,7 @@ export default function RequirementDetail() {
           });
         }
       } catch {
-        toast.error("Error while getting requirement!", {
+        toast.error("Xảy ra lỗi khi tìm kiếm yêu cầu", {
           position: toast.POSITION.TOP_CENTER,
         });
       } finally {
@@ -114,7 +115,7 @@ export default function RequirementDetail() {
 
   const handleSave = async () => {
     if (isNullOrEmpty(requirement?.reqTitle)) {
-      toast.error(`Requirement title is required!`, {
+      toast.error(`Tiêu đề là bắt buộc`, {
         position: toast.POSITION.TOP_CENTER,
       });
       return false;
@@ -128,7 +129,7 @@ export default function RequirementDetail() {
       });
       console.log("edit reqs: ", response.data.data);
       if (response.data.statusCode === 200) {
-        toast.success(`Update requirement successfully!`, {
+        toast.success(`Cập nhật yêu cầu thành công`, {
           position: toast.POSITION.TOP_CENTER,
         });
       } else {
@@ -138,7 +139,7 @@ export default function RequirementDetail() {
       }
     } catch (error) {
       console.error("Error fetching data:", error);
-      toast.error("Error update requirement!", {
+      toast.error("Xảy ra lỗi khi cập nhật yêu cầu", {
         position: toast.POSITION.TOP_CENTER,
       });
     } finally {
@@ -149,7 +150,7 @@ export default function RequirementDetail() {
   const onUpdate = async (index, action) => {
     let updateTrackings = [...requirement?.updateTrackings];
     if (isNullOrEmpty(updateTrackings[index]?.note) || updateTrackings[index]?.note.trim() === "") {
-      toast.error(`Detail is required!`, {
+      toast.error(`Thông tin chi tiết là bắt buộc`, {
         position: toast.POSITION.TOP_CENTER,
       });
       return false;
@@ -162,7 +163,7 @@ export default function RequirementDetail() {
       });
       console.log("edit trackings: ", response.data.data);
       if (response.data.statusCode === 200) {
-        toast.success(`${action} tracking successfully!`, {
+        toast.success(`Cập nhật theo dõi thành công`, {
           position: toast.POSITION.TOP_CENTER,
         });
         updateTrackings[index] = response.data.data;
@@ -177,7 +178,7 @@ export default function RequirementDetail() {
       }
     } catch (error) {
       console.error("Error fetching data:", error);
-      toast.error(`Error ${action} tracking!`, {
+      toast.error(`Xảy ra lỗi khi cập nhật theo dõi`, {
         position: toast.POSITION.TOP_CENTER,
       });
     } finally {
@@ -187,11 +188,12 @@ export default function RequirementDetail() {
 
   const onDelete = async (index) => {
     Swal.fire({
-      title: "Are you sure?",
-      text: `Are you sure to delete this tracking!`,
+      title: "Bạn có chắc chắn?",
+      text: `Bạn có chắc chắn xóa thông tin theo dõi này`,
       icon: "warning",
       showCancelButton: true,
-      confirmButtonText: "Yes, delete it!",
+      confirmButtonText: "Đồng ý xóa",
+      cancelButtonText: "Hủy"
     }).then(async (result) => {
       if (result.isConfirmed) {
         let updateTrackings = [...requirement?.updateTrackings];
@@ -204,7 +206,7 @@ export default function RequirementDetail() {
           });
           console.log("delete trackings: ", response.data.data);
           if (response.data.statusCode === 200) {
-            toast.success(`Delete tracking successfully!`, {
+            toast.success(`Xóa thông tin theo dõi thành công`, {
               position: toast.POSITION.TOP_CENTER,
             });
             updateTrackings.splice(index, 1);
@@ -219,7 +221,7 @@ export default function RequirementDetail() {
           }
         } catch (error) {
           console.error("Error fetching data:", error);
-          toast.error("Error delete tracking!", {
+          toast.error("Xảy ra lỗi khi xóa thông tin theo dõi", {
             position: toast.POSITION.TOP_CENTER,
           });
         } finally {
@@ -231,7 +233,7 @@ export default function RequirementDetail() {
 
   return (
     <>
-      <Head title="Requirement Detail" />
+      <Head title="Chi tiết yêu cầu" />
       <Content>
         <BlockHead size="sm" className="border-bottom pb-3 mb-3">
           <div className="row">
@@ -239,7 +241,7 @@ export default function RequirementDetail() {
               {/* <BlockHeadContent> */}
               <FormGroup>
                 <Label for="reqTitle" className="">
-                  Requirement Title
+                  Tiêu đề
                 </Label>
                 <Input
                   id="reqTitle"
@@ -258,11 +260,11 @@ export default function RequirementDetail() {
                 {isFetching?.updateReq ? (
                   <Button disabled color="primary" className="ms-3 mt-5">
                     <Spinner size="sm" />
-                    <span> Saving... </span>
+                    <span> Đang lưu... </span>
                   </Button>
                 ) : (
                   <Button color="primary" onClick={handleSave} className="ms-3 mt-5">
-                    <Icon name="save" className="me-2" /> Save
+                    <Icon name="save" className="me-2" /> Lưu
                   </Button>
                 )}
               </div>
@@ -272,15 +274,15 @@ export default function RequirementDetail() {
           <BlockHeadContent>
             <BlockDes className="d-flex align-items-center" style={{ fontSize: "14px" }}>
               <Icon name="bell" className="text-primary mx-3" />
-              <span>{isNullOrEmpty(requirement?.status) ? "To Do" : requirement?.status}</span>
+              <span>{isNullOrEmpty(requirement?.status) ? "Chưa làm" : fullRequirementStatuses.find(s => s.value === requirement?.status)?.label}</span>
               <Icon name="sort-line" className="text-info mx-3" />
               <span>{isNullOrEmpty(requirement?.complexityName) ? "N/A" : requirement?.complexityName}</span>
               {
                 <>
                   <Icon name="user" className="text-primary mx-3" />
-                  {isNullOrEmpty(requirement?.studentFullname) ? "" : requirement?.studentFullname}{" "}
+                  {isNullOrEmpty(requirement?.studentFullname) ? "" : requirement?.studentFullname}{" - "}
                   <span>
-                    {isNullOrEmpty(requirement?.teamTeamName) ? "N/A" : requirement?.teamTeamName} in{" "}
+                    {isNullOrEmpty(requirement?.teamTeamName) ? "N/A" : requirement?.teamTeamName} trong{" "}
                     {isNullOrEmpty(requirement?.milestoneTitle) ? "N/A" : requirement?.milestoneTitle}
                   </span>
                 </>
@@ -289,7 +291,7 @@ export default function RequirementDetail() {
 
             <FormGroup className="mt-1 pt-3">
               <Label for="note" className="">
-                Note
+                Ghi chú
               </Label>
               <Input
                 id="note"
@@ -306,10 +308,10 @@ export default function RequirementDetail() {
         {requirement && requirement?.status === "EVALUATED" && (
           <Block>
             <div className="d-flex justify-content-between align-items-center mb-3">
-              <h5 className="mb-0">Update Trackings</h5>
+              <h5 className="mb-0">Cập nhật theo dõi</h5>
               {canEdit?.updateTrackings && (
                 <Button color="primary" onClick={() => handleAddNewClick()}>
-                  <Icon name="plus" /> Add new
+                  <Icon name="plus" /> Thêm mới
                 </Button>
               )}
             </div>
@@ -317,9 +319,9 @@ export default function RequirementDetail() {
             <Table responsive className="table-striped">
               <thead className="thead-dark">
                 <tr>
-                  <th>Last Update</th>
-                  <th style={{ width: "70%" }}>Detail</th>
-                  <th style={{ textAlign: "right" }}>Actions</th>
+                  <th>Cập nhật cuối</th>
+                  <th style={{ width: "70%" }}>Chi tiết cập nhật</th>
+                  <th style={{ textAlign: "right" }}>Hành động</th>
                 </tr>
               </thead>
               <tbody>
@@ -341,7 +343,7 @@ export default function RequirementDetail() {
                           }}
                         /> */}
                         <TextareaAutosize
-                          placeholder="Type in here…"
+                          placeholder="Nhập thông tin chi tiết"
                           value={tracking?.note}
                           disabled={requirement?.studentId !== user?.id}
                           style={{ width: "100%" }}
@@ -361,21 +363,21 @@ export default function RequirementDetail() {
                               {isFetching[`u-${index}`] ? (
                                 <Button disabled color="warning" size="sm">
                                   <Spinner size="sm" />
-                                  <span> Updating... </span>
+                                  <span> Đang lưu... </span>
                                 </Button>
                               ) : (
                                 <Button color="warning" size="sm" onClick={() => onUpdate(index, "Update")}>
-                                  Update
+                                  Cập nhật
                                 </Button>
                               )}
                               {isFetching[`d-${index}`] ? (
                                 <Button disabled color="danger" size="sm">
                                   <Spinner size="sm" />
-                                  <span> Deleting... </span>
+                                  <span> Đang xóa... </span>
                                 </Button>
                               ) : (
                                 <Button color="danger" size="sm" onClick={() => onDelete(index)}>
-                                  Delete
+                                  Xóa
                                 </Button>
                               )}
                             </>
@@ -385,11 +387,11 @@ export default function RequirementDetail() {
                               {isFetching[`u-${index}`] ? (
                                 <Button disabled color="primary" size="sm">
                                   <Spinner size="sm" />
-                                  <span> Adding... </span>
+                                  <span> Đang thêm... </span>
                                 </Button>
                               ) : (
                                 <Button color="primary" size="sm" onClick={() => onUpdate(index, "Add")}>
-                                  Add
+                                  Thêm
                                 </Button>
                               )}
                               <Button
@@ -397,11 +399,12 @@ export default function RequirementDetail() {
                                 size="sm"
                                 onClick={() => {
                                   Swal.fire({
-                                    title: "Are you sure?",
-                                    text: `Are you sure to delete this tracking!`,
+                                    title: "Bạn có chắc chắn?",
+                                    text: `Bạn có chắc chắn muốn xóa thông tin này?`,
                                     icon: "warning",
                                     showCancelButton: true,
-                                    confirmButtonText: "Yes, delete it!",
+                                    confirmButtonText: "Đồng ý xóa",
+                                    cancelButtonText: "Hủy"
                                   }).then(async (result) => {
                                     if (result.isConfirmed) {
                                       let updateTrackings = [...requirement?.updateTrackings];
@@ -414,7 +417,7 @@ export default function RequirementDetail() {
                                   });
                                 }}
                               >
-                                Delete
+                                Xóa
                               </Button>
                             </>
                           )}

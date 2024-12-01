@@ -12,42 +12,42 @@ const getLinkForRole = (link, roles) => {
 const menu = [
   {
     icon: "dashlite",
-    text: "Dashboard",
+    text: "Thống kê",
     link: getLinkForRole("/", ["ADMIN", "MANAGER"]),
     roles: ["ADMIN", "MANAGER"],
   },
   {
     icon: "list-index",
-    text: "My Classes",
+    text: "Lớp học của tôi",
     link: "/my-classes",
     roles: ["TEACHER", "STUDENT"],
   },
   {
     icon: "reload",
-    text: "Ongoing Evaluation",
+    text: "Đánh giá quá trình",
     subMenu: [
       {
-        text: "Requirements",
+        text: "Danh sách yêu cầu",
         link: "/requirements",
         roles: ["ADMIN", "MANAGER", "TEACHER", "STUDENT"],
       },
       {
-        text: "Class Submissions",
+        text: "Danh sách bài nộp",
         link: "/submissions",
         roles: ["ADMIN", "MANAGER", "TEACHER", "STUDENT"],
       },
       {
-        text: "Ongoing Evaluations",
+        text: "Đánh giá quá trình",
         link: "/ongoing-evaluations",
         roles: ["ADMIN", "MANAGER", "TEACHER", "STUDENT"],
       },
       {
-        text: "Class List",
+        text: "Quản lý lớp học",
         link: "/class-list",
         roles: ["ADMIN", "MANAGER"],
       },
       {
-        text: "Milestones",
+        text: "Danh sách cột mốc",
         link: "/milestone-list",
         roles: ["ADMIN", "MANAGER", "TEACHER", "STUDENT"],
       },
@@ -75,30 +75,30 @@ const menu = [
 
   {
     icon: "presentation",
-    text: "Final Presentation",
+    text: "Đánh giá hội đồng",
     subMenu: [
       {
-        text: "Evaluating Sessions",
+        text: "Phiên đánh giá",
         link: "/evaluating-sessions",
         roles: ["ADMIN", "MANAGER", "TEACHER", "STUDENT"],
       },
       {
-        text: "Evaluating Councils",
+        text: "Hội đồng đánh giá",
         link: "/evaluating-councils",
         roles: ["ADMIN", "MANAGER", "TEACHER", "STUDENT"],
       },
       {
-        text: "Evaluation Details",
+        text: "Chi tiết đánh giá",
         link: "/evaluation-details",
         roles: ["ADMIN", "MANAGER", "TEACHER"],
       },
       {
-        text: "Evaluated Teams",
+        text: "Phân công hội đồng",
         link: "/evaluated-teams",
         roles: ["ADMIN", "MANAGER"],
       },
       {
-        text: "Final Results",
+        text: "Kết quả đánh giá",
         link: "/final-results",
         roles: ["ADMIN", "MANAGER", "TEACHER"],
       },

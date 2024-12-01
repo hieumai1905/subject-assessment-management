@@ -74,7 +74,7 @@ const MyClassPage = () => {
         }
       } catch (error) {
         console.error("Error fetching data:", error);
-        toast.error("Error search setting!", {
+        toast.error("Lỗi tìm kiếm học kỳ!", {
           position: toast.POSITION.TOP_CENTER,
         });
       } finally {
@@ -111,7 +111,7 @@ const MyClassPage = () => {
         }
       } catch (error) {
         console.error("Error fetching data:", error);
-        toast.error("Error search subject!", {
+        toast.error("Lỗi tìm kiếm môn học!", {
           position: toast.POSITION.TOP_CENTER,
         });
       } finally {
@@ -143,7 +143,7 @@ const MyClassPage = () => {
         }
       } catch (error) {
         console.error("Error fetching data:", error);
-        toast.error("Error search class!", {
+        toast.error("Lỗi tìm kiếm lớp học!", {
           position: toast.POSITION.TOP_CENTER,
         });
       } finally {
@@ -156,13 +156,13 @@ const MyClassPage = () => {
   return (
     <>
       <ToastContainer />
-      <Head title="My Class"></Head>
+      <Head title="Lớp học của tôi"></Head>
       <Content>
         <BlockHead size="lg">
           <Row className="mt-5">
             <Col size="2">
               <div className="form-group">
-                <label className="form-label">Semester</label>
+                <label className="form-label">Học kỳ</label>
                 {isFetching?.semester ? (
                   <div>
                     <Spinner />
@@ -178,7 +178,7 @@ const MyClassPage = () => {
             </Col>
             <Col size="2">
               <div className="form-group">
-                <label className="form-label">Subject</label>
+                <label className="form-label">Môn học</label>
                 {isFetching?.subject ? (
                   <div>
                     <Spinner />
@@ -221,15 +221,10 @@ const MyClassPage = () => {
                           </a>
                           <div className="text-end">
                             <a href={`/my-classes/get-by-id/${item.id}`} className="text-primary">
-                              Details
+                              Chi tiết
                             </a>
                           </div>
                         </div>
-                        {/* <div className="project-details">
-                          {item?.description?.length > 90
-                            ? item?.description?.substring(0, 89) + "... "
-                            : item?.description}
-                        </div> */}
                         <div className="project-progress">
                           <div className="project-progress-details">
                             <div className="project-progress-task">
@@ -252,7 +247,7 @@ const MyClassPage = () => {
                           <a
                             href={`/milestone-list?seId=${filterForm?.semester?.value}&sId=${filterForm?.subject?.value}&cId=${item.id}`}
                           >
-                            Go to class milestones <Icon name="arrow-long-right"></Icon>
+                            Đi tới mốc lớp học <Icon name="arrow-long-right"></Icon>
                           </a>
                         </div>
                       </ProjectCard>
@@ -262,7 +257,7 @@ const MyClassPage = () => {
               ) : (
                 <div className="d-flex justify-content-center ">
                   <Icon style={{ fontSize: "30px" }} name="inbox">
-                    No data found!
+                    Không tìm thấy dữ liệu!
                   </Icon>
                 </div>
               )}

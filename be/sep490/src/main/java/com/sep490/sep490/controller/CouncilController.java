@@ -44,7 +44,7 @@ public class CouncilController {
     @DeleteMapping("/delete/{id}")
     public HttpResponse<?> delete(@PathVariable("id") Integer id) {
         councilService.delete(id);
-        return HttpResponse.ok("Delete council successfully!");
+        return HttpResponse.ok("Xóa hội đồng thành công");
     }
 
 }

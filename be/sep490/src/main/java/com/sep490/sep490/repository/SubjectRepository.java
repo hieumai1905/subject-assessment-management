@@ -41,10 +41,8 @@ public interface SubjectRepository extends BaseRepository<Subject, Integer>{
                                     Pageable pageable);*/
 
     @Query("SELECT u FROM User u " +
-            "LEFT JOIN u.subjects s " +
-            "WHERE ((:subjectId IS NOT NULL AND s.id = :subjectId AND :type = 'added') " +
-            "OR (:subjectId IS NOT NULL AND s.id IS NULL AND :type = 'not_added' AND u.role.id = 3)) " +
-            "AND (:keyWord IS NULL OR u.fullname LIKE %:keyWord% OR u.username LIKE %:keyWord%)")
+            "WHERE (:subjectId IS NOT NULL AND :subjectId in (select s.id from u.subjects s) AND :type = 'added') " +
+            "AND (:keyWord IS NULL OR lower(u.fullname) LIKE %:keyWord% OR lower(u.email) LIKE %:keyWord%)")
     Page<User> searchSubjectTeacher(@Param("keyWord") String keyWord,
                                     @Param("subjectId") Integer subjectId,
                                     @Param("type") String type,

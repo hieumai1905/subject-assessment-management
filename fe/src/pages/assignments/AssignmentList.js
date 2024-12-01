@@ -124,7 +124,7 @@ export const AssignmentList = ({ subject }) => {
       grandFinal = 0, totalWeight = 0;
    
     const updatedAssignmentsForm = assignments.map((assignment) => {
-      totalWeight += assignment?.active ? assignment.evalWeight : 0;
+      totalWeight += assignment?.active ? Number(assignment.evalWeight) : 0;
       if (assignment.evaluationType === evaluationTypes[0].value) normal++;
       else if (assignment.evaluationType === evaluationTypes[1].value) final++;
       else if (assignment.evaluationType === evaluationTypes[2].value) grandFinal++;

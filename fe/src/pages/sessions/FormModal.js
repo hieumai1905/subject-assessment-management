@@ -52,17 +52,17 @@ const FormModal = ({
           <Icon name="cross-sm"></Icon>
         </a>
         <div className="p-2">
-          <h5 className="title">Session Detail</h5>
+          <h5 className="title">{modalType === "add" ? "Thêm mới" : "Chi tiết"}</h5>
           <div className="mt-4">
             <Form className="row gy-4" onSubmit={handleSubmit(onSubmit)}>
               <Col md="6">
                 <div className="form-group">
-                  <label className="form-label">Session</label>
+                  <label className="form-label">Phiên đánh giá</label>
                   <input
                     readOnly={true}
                     type="text"
                     value={formData.name}
-                    placeholder="Enter name"
+                    placeholder="Nhập tên"
                     className="form-control"
                   />
                 </div>
@@ -74,9 +74,9 @@ const FormModal = ({
                   </div>
                 ) : (
                   <div className="form-group">
-                    <label className="form-label">Round*</label>
+                    <label className="form-label">Lần đánh giá*</label>
                     <RSelect
-                      {...register("round", { required: "This field is required" })}
+                      {...register("round", { required: "Trường này là bắt buộc" })}
                       options={rounds}
                       value={formData.round || filterForm?.round}
                       onChange={(e) => setFormData({ ...formData, round: e })}
@@ -87,13 +87,13 @@ const FormModal = ({
               </Col>
               <Col md="6">
                 <div className="form-group">
-                  <label className="form-label">Date (mm/dd/yyyy)*</label>
+                  <label className="form-label">Ngày (mm/dd/yyyy)*</label>
                   <input
                     disabled={!canEdit}
                     type="date"
-                    {...register("sessionDate", { required: "This field is required" })}
+                    {...register("sessionDate", { required: "Trường này là bắt buộc" })}
                     value={formData?.sessionDate}
-                    placeholder="Enter date"
+                    placeholder="Nhập ngày"
                     onChange={(e) => {
                       setFormData({
                         ...formData,
@@ -108,7 +108,7 @@ const FormModal = ({
               </Col>
               <Col md="6">
                 <div className="form-group">
-                  <label className="form-label">AM/PM</label>
+                  <label className="form-label">Sáng/Chiều</label>
                   <br />
                   <ul className="custom-control-group">
                     <li>
@@ -133,7 +133,7 @@ const FormModal = ({
                           }}
                         />
                         <label className="custom-control-label" htmlFor="btnRadioControl1">
-                          AM
+                          Sáng
                         </label>
                       </div>
                     </li>
@@ -159,7 +159,7 @@ const FormModal = ({
                           }}
                         />
                         <label className="custom-control-label" htmlFor="btnRadioControl5">
-                          PM
+                          Chiều
                         </label>
                       </div>
                     </li>
@@ -168,11 +168,11 @@ const FormModal = ({
               </Col>
               <Col size="12">
                 <div className="form-group">
-                  <label className="form-label">Note</label>
+                  <label className="form-label">Ghi chú</label>
                   <textarea
                     disabled={!canEdit}
                     value={formData.note}
-                    placeholder="Your note"
+                    placeholder="Nhập ghi chú"
                     onChange={(e) => setFormData({ ...formData, note: e.target.value })}
                     className="form-control-xl form-control no-resize"
                   />
@@ -185,11 +185,11 @@ const FormModal = ({
                       {isFetching ? (
                         <Button disabled color="primary">
                           <Spinner size="sm" />
-                          <span> Submitting... </span>
+                          <span> Đang gửi... </span>
                         </Button>
                       ) : (
                         <Button color="primary" size="md" type="submit">
-                          Submit
+                          Gửi
                         </Button>
                       )}
                     </li>

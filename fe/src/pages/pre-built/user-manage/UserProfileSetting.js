@@ -106,14 +106,14 @@ const UserProfileSettingPage = () => {
                     <div className="card-inner">
                       <div className="between-center flex-wrap g-3">
                         <div className="nk-block-text">
-                          <h6>Change Password</h6>
-                          <p>Set a unique password to protect your account.</p>
+                          <h6>Đổi mật khẩu</h6>
+                          <p>Tạo một mật khẩu duy nhất để bảo vệ tài khoản của bạn</p>
                         </div>
                         <div className="nk-block-actions flex-shrink-sm-0">
                           <ul className="align-center flex-wrap flex-sm-nowrap gx-3 gy-2">
                             <li className="order-md-last">
                               <Button color="primary" onClick={toggleModal}>
-                                Change Password
+                                Đổi mật khẩu
                               </Button>
                             </li>
                             {/* <li>

@@ -8,7 +8,6 @@ import com.sep490.sep490.common.utils.Constants;
 import com.sep490.sep490.common.utils.ConvertUtils;
 import com.sep490.sep490.common.utils.ValidateUtils;
 import com.sep490.sep490.dto.RequirementDTO;
-import com.sep490.sep490.dto.SubmissionDTO;
 import com.sep490.sep490.dto.UpdateTrackingDTO;
 import com.sep490.sep490.dto.requirement.request.*;
 import com.sep490.sep490.dto.requirement.response.SearchRequirementResponse;
@@ -29,7 +28,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -43,6 +41,7 @@ public class RequirementService{
     private final SettingRepository settingRepository;
     private final CommonService commonService;
     private final FirebaseStorageService firebaseStorageService;
+    private final ImgurService imgurService;
     private final ClassesRepository classesRepository;
     private final TeamEvaluationRepository teamEvaluationRepository;
     private final SubmissionRepository submissionRepository;
@@ -133,11 +132,11 @@ public class RequirementService{
         List<Requirement> requirements = new ArrayList<>();
         for (Integer requirementId : request.getRequirementIds()) {
             Requirement requirement = requirementRepository.findById(requirementId)
-                    .orElseThrow(() -> new RecordNotFoundException("Requirement"));
+                    .orElseThrow(() -> new RecordNotFoundException("Yêu cầu"));
             if(requirement.getStudent() != null
                     && user.getRole().getId().equals(Constants.Role.STUDENT)
                     && !requirement.getStudent().getId().equals(user.getId()))
-                throw new ConflictException("You can't modify another member's requirements!");
+                throw new ConflictException("Bạn không thể thay đổi yêu cầu của người khác");
             setUpdateRequirement(requirement, request, complexity);
             requirements.add(requirement);
         }
@@ -187,7 +186,7 @@ public class RequirementService{
                 Requirement existedByTitle = requirementRepository
                         .checkExistedByTitle(requirement.getId(), requirement.getTeam().getId(), request.getReqTitle());
                 if(existedByTitle != null)
-                    throw new NameAlreadyExistsException(request.getReqTitle() + " in " + requirement.getTeam().getTeamName());
+                    throw new NameAlreadyExistsException(request.getReqTitle() + " trong " + requirement.getTeam().getTeamName());
             }
             requirement.setReqTitle(request.getReqTitle());
         }
@@ -218,7 +217,7 @@ public class RequirementService{
                         return;
                     }
                 }
-                throw new ConflictException(String.format("The student with id %d is not in the team %s",
+                throw new ConflictException(String.format("Học sinh có id %d không tồn tại trong %s",
                         request.getStudentId(), requirement.getTeam().getTeamName()));
             }
         }
@@ -229,20 +228,20 @@ public class RequirementService{
             return null;
         Setting complexity = (Setting)settingRepository.findSettingBySettingTypeAndSettingId("complexity", complexityId);
         if(complexity == null)
-            throw new RecordNotFoundException("Complexity");
+            throw new RecordNotFoundException("Độ phức tạp");
         return complexity;
     }
 
     private Milestone checkExistMilestone(Integer milestoneId) {
         return milestoneRepository.findById(milestoneId).orElseThrow(
-                () -> new RecordNotFoundException("Milestone")
+                () -> new RecordNotFoundException("Cột mốc")
         );
     }
 
     private List<Team> checkExistTeams(List<Integer> teamIds, Milestone milestone) {
         List<Team> teams = new ArrayList<>();
         for (Integer teamId : teamIds) {
-            Team team = (teamRepository.findById(teamId).orElseThrow(() -> new RecordNotFoundException("Team")));
+            Team team = (teamRepository.findById(teamId).orElseThrow(() -> new RecordNotFoundException("Nhóm")));
 //            if(!team.getMilestone().getId().equals(milestone.getId()))
 //                throw new ConflictException(String.format("The %s doesn't exist in %s",
 //                        team.getTeamName(), milestone.getTitle()));
@@ -319,16 +318,16 @@ public class RequirementService{
         User currentUser = commonService.getCurrentUser();
         Team foundTeamByLeaderId = teamRepository.findByLeaderAndTeamId(currentUser.getId(), request.getTeamId());
         if (foundTeamByLeaderId == null){
-            throw new ConflictException("Only leader can submit!");
+            throw new ConflictException("Chỉ có nhóm trưởng được nộp bài");
         }
-        Milestone milestone = milestoneRepository.findById(request.getMilestoneId()).orElseThrow(() -> new RecordNotFoundException("Milestone"));
-        if (!milestone.getActive() && !milestone.getTypeEvaluator().equals(Constants.TypeAssignments.GRAND_FINAL)){
-            throw new ConflictException("Milestone " + milestone.getTitle() + " has been locked!");
+        Milestone milestone = milestoneRepository.findById(request.getMilestoneId()).orElseThrow(() -> new RecordNotFoundException("Cột mốc"));
+        if (!milestone.getActive() && !milestone.getEvaluationType().equals(Constants.TypeAssignments.GRAND_FINAL)){
+            throw new ConflictException("Cột mốc " + milestone.getTitle() + " đang bị khóa");
         }
         String submitFile = "";
         if(file != null) {
-            submitFile = firebaseStorageService.uploadFile(file);
-            ValidateUtils.checkLength(submitFile, "File name", 0, 750);
+            submitFile = imgurService.uploadImageToImgur(file);
+            ValidateUtils.checkLength(submitFile, "Tên tệp", 0, 750);
         }
         List<Requirement> requirements = new ArrayList<>();
         boolean isExistSubmit = false;
@@ -367,7 +366,7 @@ public class RequirementService{
 //        }
         for (int i = 0; i < request.getRequirementIds().size(); i++) {
             Requirement requirement = requirementRepository.findById(request.getRequirementIds().get(i))
-                    .orElseThrow(() -> new RecordNotFoundException("Requirement"));
+                    .orElseThrow(() -> new RecordNotFoundException("Yêu cầu"));
             if(!requirement.getStatus().equals(Constants.RequirementStatus.REQUIREMENT_STATUSES.get(3))){
                 requirement.setStatus(isLate ? "SUBMIT LATE" : Constants.RequirementStatus.REQUIREMENT_STATUSES.get(2));
             }
@@ -389,14 +388,14 @@ public class RequirementService{
             }
         }
         requirementRepository.saveAll(requirements);
-        return "Submit successfully!";
+        return "Nộp bài thành công";
     }
 
     private void submitWorkForGrandFinal(Submission submission, Milestone milestone, Team team, boolean isLate) {
         List<Requirement> cloneRequirementList = requirementRepository.findAllBySubmissionId(submission.getId());
 
         milestone.getClasses().getMilestones().stream()
-                .filter(item -> item.getTypeEvaluator().equals(Constants.TypeAssignments.FINAL))
+                .filter(item -> item.getEvaluationType().equals(Constants.TypeAssignments.FINAL))
                 .flatMap(item -> item.getRequirements().stream())
                 .forEach(req -> {
                     if (req.getTeam() != null && team.getId().equals(req.getTeam().getId())
@@ -433,11 +432,11 @@ public class RequirementService{
             boolean isAlreadySubmitFile = submission.getSubmitFile() != null && !submission.getSubmitFile().equals("");
             if(!isAlreadySubmitFile
                     && ((request.getLink() == null || request.getLink().equals("")) && submitFile.equals(""))){
-                throw new ApiInputException("You need to submit file or link!");
+                throw new ApiInputException("Bạn phải nộp đường dẫn hoặc tệp bài làm");
             }
         }else{
             if((request.getLink() == null || request.getLink().equals("")) && submitFile.equals("")){
-                throw new ApiInputException("You need to submit file or link!");
+                throw new ApiInputException("Bạn phải nộp đường dẫn hoặc tệp bài làm");
             }
         }
     }
@@ -445,7 +444,7 @@ public class RequirementService{
     public Object getByClass(SearchReqByClass request) {
         request.validateInput();
         Classes classes = classesRepository.findById(request.getClassId())
-                .orElseThrow(() -> new RecordNotFoundException("Class"));
+                .orElseThrow(() -> new RecordNotFoundException("Lớp học"));
         List<Integer> milestoneIds = classes.getMilestones().stream()
                 .map(Milestone::getId)
                 .filter(id -> request.getMilestoneId() == null || id.equals(request.getMilestoneId()))
@@ -492,9 +491,9 @@ public class RequirementService{
         List<Integer> deleteRequirementIds = new ArrayList<>();
         for (Integer reqId : request.getRequirementIds()) {
             Requirement requirement = requirementRepository.findById(reqId)
-                    .orElseThrow(() -> new RecordNotFoundException("Requirement"));
+                    .orElseThrow(() -> new RecordNotFoundException("Yêu cầu"));
             if(requirement.getStatus().equals(Constants.RequirementStatus.REQUIREMENT_STATUSES.get(3))){
-                throw new ConflictException("Can not move evaluated requirement!");
+                throw new ConflictException("Không thể chuyển yêu cầu đã đánh giá");
             }
             if(!requirement.getMilestone().getId().equals(milestone.getId())){
                 // Check xem tồn tại req này trong mile khác chưa?
@@ -513,7 +512,7 @@ public class RequirementService{
                             .checkExistedByTitleAndMileId(milestone.getId(), team.getId(),
                                     newRequirement.getReqTitle().toLowerCase());
                     if(existedByTitle != null)
-                        throw new NameAlreadyExistsException(newRequirement.getReqTitle() + " in " + team.getTeamName());
+                        throw new NameAlreadyExistsException(newRequirement.getReqTitle() + " trong " + team.getTeamName());
                     requirements.add(newRequirement);
                 }
             }
@@ -544,16 +543,16 @@ public class RequirementService{
 
     @Transactional
     public Object importRequirementsToClass(AddRequirementList request) {
-        ValidateUtils.checkNullOrEmpty(request.getRequirementDTOs(), "Requirements");
+        ValidateUtils.checkNullOrEmpty(request.getRequirementDTOs(), "Yêu cầu");
         List<Requirement> requirements = new ArrayList<>();
         for (RequirementDTO reqDTO : request.getRequirementDTOs()) {
             reqDTO.validateInput(true);
-            ValidateUtils.checkNullOrEmpty(reqDTO.getMilestoneId(), "Milestone id");
+            ValidateUtils.checkNullOrEmpty(reqDTO.getMilestoneId(), "Cột mốc");
             Milestone milestone = checkExistMilestone(reqDTO.getMilestoneId());
             Requirement existedByTitle = requirementRepository
                     .checkExistedByTitleInMilestone(milestone.getId(), reqDTO.getReqTitle().toLowerCase());
             if(existedByTitle != null){
-                throw new NameAlreadyExistsException(reqDTO.getReqTitle() + " in " + milestone.getTitle());
+                throw new NameAlreadyExistsException(reqDTO.getReqTitle() + " trong " + milestone.getTitle());
             }
             Requirement requirement = new Requirement();
             requirement.setMilestone(milestone);
@@ -584,13 +583,13 @@ public class RequirementService{
     }
 
     public Object get(Integer id) {
-        Requirement requirement = requirementRepository.findById(id).orElseThrow(() -> new RecordNotFoundException("Requirement"));
+        Requirement requirement = requirementRepository.findById(id).orElseThrow(() -> new RecordNotFoundException("Yêu cầu"));
         User user = commonService.getCurrentUser();
         if(user.getRole().getId().equals(Constants.Role.STUDENT) && requirement.getTeam() != null
                 && requirement.getTeam().getTeamMembers() != null){
             TeamMember teamMember = requirement.getTeam().getTeamMembers().stream()
                     .filter(item -> item.getMember().getId().equals(user.getId()))
-                    .findFirst().orElseThrow(() -> new ConflictException("The requirement is not existed in your team!"));
+                    .findFirst().orElseThrow(() -> new ConflictException("Yêu cầu không tồn tại trong nhóm của bạn"));
         }
         RequirementDTO requirementDTO = ConvertUtils.convert(requirement, RequirementDTO.class);
         if(requirementDTO != null && requirementDTO.getUpdateTrackings() != null){
@@ -610,7 +609,7 @@ public class RequirementService{
         }
         User user = commonService.getCurrentUser();
         getCurrentTeamId(request, user);
-        Milestone milestone = milestoneRepository.findById(request.getMilestoneId()).orElseThrow(() -> new RecordNotFoundException("Milestone"));
+        Milestone milestone = milestoneRepository.findById(request.getMilestoneId()).orElseThrow(() -> new RecordNotFoundException("Cột mốc"));
 //        if(milestone.getTypeEvaluator().equals(Constants.TypeAssignments.GRAND_FINAL)){
 //            milestone = milestone.getClasses().getMilestones().stream()
 //                    .filter(item -> item.getTypeEvaluator().equals(Constants.TypeAssignments.FINAL))
@@ -634,26 +633,26 @@ public class RequirementService{
 
     @Transactional
     public Object updateTracking(Integer reqId, UpdateTrackingDTO request) {
-        Requirement requirement = requirementRepository.findById(reqId).orElseThrow(() -> new RecordNotFoundException("Requirement"));
+        Requirement requirement = requirementRepository.findById(reqId).orElseThrow(() -> new RecordNotFoundException("Yêu cầu"));
         User currentUser = commonService.getCurrentUser();
         if(!currentUser.getRole().getId().equals(Constants.Role.STUDENT)){
-            throw new ConflictException("Only student can submit update tracking!");
+            throw new ConflictException("Chỉ có học sinh có thể cập nhật");
         }
         if(requirement.getStudent() != null && !requirement.getStudent().getId().equals(currentUser.getId())){
-            throw new ConflictException("You can't submit update tracking of other student!");
+            throw new ConflictException("Bạn không thể cập nhật yêu cầu của người khác");
         }
        UpdateTracking updateTracking;
         if(request.getId() == null){
             updateTracking = new UpdateTracking();
         } else{
-            updateTracking = updateTrackingRepository.findById(request.getId()).orElseThrow(() -> new RecordNotFoundException("Update tracking"));
+            updateTracking = updateTrackingRepository.findById(request.getId()).orElseThrow(() -> new RecordNotFoundException("Cập nhật thay đổi"));
             if(request.getAction() != null && request.getAction().equals("delete")){
                 updateTrackingRepository.deleteByUpdateId(request.getId());
-                return "Delete successfully";
+                return "Xóa thành công";
             }
         }
-        ValidateUtils.checkNullOrEmpty(request.getNote(), "Detail");
-        String note = ValidateUtils.checkLength(request.getNote(), "Detail", 1, 750);
+        ValidateUtils.checkNullOrEmpty(request.getNote(), "Chi tiết");
+        String note = ValidateUtils.checkLength(request.getNote(), "Chi tiết", 1, 750);
         updateTracking.setStudent(currentUser);
         updateTracking.setRequirement(requirement);
         updateTracking.setNote(note);

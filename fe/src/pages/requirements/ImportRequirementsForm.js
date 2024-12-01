@@ -37,7 +37,7 @@ export default function ImportRequirementsForm({
   complexities,
   modal,
   currentTeam,
-  role
+  role,
 }) {
   useEffect(() => {
     reset(formData);
@@ -55,10 +55,10 @@ export default function ImportRequirementsForm({
   const [sTeams, setSTeams] = useState(teams || []);
 
   useEffect(() => {
-    if(currentTeam && teams && role === 'STUDENT'){
-      if(currentTeam?.value){
+    if (currentTeam && teams && role === "STUDENT") {
+      if (currentTeam?.value) {
         setSTeams(teams?.filter((item) => item.value === currentTeam?.value));
-      } else{
+      } else {
         setSTeams([]);
       }
     }
@@ -177,7 +177,7 @@ export default function ImportRequirementsForm({
       }
     } catch (error) {
       console.error("Error download template:", error);
-      toast.error("Error download template!", {
+      toast.error("Xảy ra lỗi khi tải mẫu", {
         position: toast.POSITION.TOP_CENTER,
       });
     }
@@ -190,13 +190,13 @@ export default function ImportRequirementsForm({
   const onSubmit = async (sData) => {
     console.log("import:", formData);
     if (formData.data === null) {
-      toast.info("Please upload file to import!", {
+      toast.info("Vui lòng tải lên tệp để nhập!", {
         position: toast.POSITION.TOP_CENTER,
       });
       return false;
     }
     if (formData.teams === null) {
-      toast.info("Please select at least one team to import!", {
+      toast.info("Vui lòng chọn ít nhất một đội nhóm để nhập!", {
         position: toast.POSITION.TOP_CENTER,
       });
       return false;
@@ -205,7 +205,7 @@ export default function ImportRequirementsForm({
       setIsFetching(true);
       let teamIds = formData.teams.map((t) => t.value);
       let requirementDTOs = formData.data.map((item) => ({
-        reqTitle: item['Title'],
+        reqTitle: item["Title"],
         complexityId: findComplexityByName(item[`Complexity`])?.value,
         note: item[`Note`],
       }));
@@ -216,15 +216,15 @@ export default function ImportRequirementsForm({
       });
       console.log("import reqs: ", response.data.data);
       if (response.data.statusCode === 200) {
-        let newData = data.filter((r) => !teamIds.includes(r.teamId) || r.status === 'EVALUATED');
-        console.log('bew', newData, data);
-        
+        let newData = data.filter((r) => !teamIds.includes(r.teamId) || r.status === "EVALUATED");
+        console.log("bew", newData, data);
+
         setData([...response.data.data, ...newData]);
         if (setTotalItems) {
           setTotalItems(response.data.data.length + newData.length);
         }
         closeModal();
-        toast.success(`Import requirements successfully!`, {
+        toast.success(`Nhập yêu cầu thành công!`, {
           position: toast.POSITION.TOP_CENTER,
         });
       } else {
@@ -236,7 +236,7 @@ export default function ImportRequirementsForm({
       setIsFetching(false);
     } catch (error) {
       console.error("Error fetching data:", error);
-      toast.error("Error import requirements!", {
+      toast.error("Lỗi khi nhập yêu cầu!", {
         position: toast.POSITION.TOP_CENTER,
       });
       setIsFetching(false);
@@ -259,8 +259,8 @@ export default function ImportRequirementsForm({
           <Icon name="cross-sm"></Icon>
         </a>
         <div className="p-2">
-          <h5 className="title">Import Requirements</h5>
-          <p className="text-danger">If you import a new set of requirements, the old set will be deleted.</p>
+          <h5 className="title">Nhập Yêu Cầu</h5>
+          <p className="text-danger">Nếu bạn nhập một bộ yêu cầu mới, bộ yêu cầu cũ sẽ bị xóa.</p>
           <div className="mt-4">
             <Row className="m-2 p-2">
               <Col sm="12" className="mb-2 text-end">
@@ -271,7 +271,7 @@ export default function ImportRequirementsForm({
                       style={{ cursor: "pointer", fontSize: "16px", textDecoration: "underline" }}
                       className="text-primary"
                     >
-                      <Icon name="file-download" /> Download Template
+                      <Icon name="file-download" /> Tải Mẫu
                     </a>
                   </DropdownToggle>
                   <DropdownMenu end>
@@ -295,7 +295,7 @@ export default function ImportRequirementsForm({
                 </UncontrolledDropdown>
               </Col>
               <Col sm="12">
-                <label className="form-label">Upload Excel File*</label>
+                <label className="form-label">Tải Lên Tệp Excel*</label>
                 <div className="input-group">
                   <div className="input-group-prepend">
                     <span className="input-group-text">
@@ -313,7 +313,7 @@ export default function ImportRequirementsForm({
               </Col>
               <Col md="12">
                 <div className="form-group mt-4">
-                  <label className="form-label">Teams*</label>
+                  <label className="form-label">Đội Nhóm*</label>
                   <RSelect
                     options={sTeams}
                     value={formData.teams}
@@ -330,11 +330,11 @@ export default function ImportRequirementsForm({
                     {isFetching ? (
                       <Button disabled color="primary">
                         <Spinner size="sm" />
-                        <span> Saving... </span>
+                        <span> Đang lưu... </span>
                       </Button>
                     ) : (
                       <Button color="primary" size="md" type="button" onClick={() => onSubmit()}>
-                        Import
+                        Nhập
                       </Button>
                     )}
                   </li>

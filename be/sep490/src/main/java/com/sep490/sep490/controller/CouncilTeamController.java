@@ -30,6 +30,12 @@ public class CouncilTeamController {
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'MANAGER')")
+    @GetMapping("/auto-assign")
+    public HttpResponse<?> autoAssign(@RequestParam Integer semesterId, @RequestParam Integer roundId) {
+        return HttpResponse.ok(councilTeamService.autoAssign(semesterId, roundId));
+    }
+
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'MANAGER')")
     @PostMapping("/import")
     public HttpResponse<?> importCouncilTeams(@RequestBody ImportCouncilTeamsRequest request) {
         return HttpResponse.ok(councilTeamService.importCouncilTeams(request));

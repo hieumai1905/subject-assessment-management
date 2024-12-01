@@ -381,20 +381,20 @@ public class UserService implements BaseService<User, Integer> {
         log.info("Request to login");
         User foundUser = userRepository.findByUsername(request.getUsername());
         if (foundUser == null){
-            throw new UnauthorizedException("Username or password is incorrect!");
+            throw new UnauthorizedException("Tài khoản hoặc mật khẩu không chính xác");
         }
         Hibernate.initialize(foundUser.getRole());
         if (foundUser.getStatus().equals(Constants.UserStatus.UNDEFINED)){
-            throw new UnauthorizedException("Your account has not been verified!");
+            throw new UnauthorizedException("Tài khoản của bạn chưa được xác nhận");
         }
         if (!foundUser.getActive()){
-            throw new UnauthorizedException("Your account has been locked!");
+            throw new UnauthorizedException("Tài khoản của bạn đã bị khóa");
         }
         UserDetails userDetails = jwtUserDetailsService.loadUserByUsername(foundUser.getUsername());
         String passRequest = request.getPassword();
 
         if (!passwordEncoder.matches(passRequest, foundUser.getPassword())) {
-            throw new UnauthorizedException("Username or password is incorrect!");
+            throw new UnauthorizedException("Tài khoản hoặc mật khẩu không chính xác");
         }
 
         LoginResponse response = new LoginResponse();

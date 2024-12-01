@@ -93,10 +93,10 @@ const User = () => {
         <div className="dropdown-inner">
           <LinkList>
             <LinkItem link="/user-profile" icon="user-alt" onClick={toggle}>
-              View Profile
+              Thông tin cá nhân
             </LinkItem>
             <LinkItem link="/user-profile-setting" icon="setting-alt" onClick={toggle}>
-              Account Setting
+              Đổi mật khẩu
             </LinkItem>
 
             <li>
@@ -111,12 +111,12 @@ const User = () => {
                 {theme.skin === "dark" ? (
                   <>
                     <em className="icon ni ni-sun"></em>
-                    <span>Light Mode</span>
+                    <span>Chế độ sáng</span>
                   </>
                 ) : (
                   <>
                     <em className="icon ni ni-moon"></em>
-                    <span>Dark Mode</span>
+                    <span>Chế độ tối</span>
                   </>
                 )}
               </a>
@@ -127,7 +127,7 @@ const User = () => {
           <LinkList>
             <a href="/auth-login">
               <Icon name="signout"></Icon>
-              <span>Sign Out</span>
+              <span>Đăng xuất</span>
             </a>
           </LinkList>
         </div>
