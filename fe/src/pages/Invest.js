@@ -32,7 +32,7 @@ const InvestHomePage = () => {
         <BlockHead size="sm">
           <BlockBetween>
             <BlockHeadContent>
-              <BlockTitle page>SWP Evaluation System</BlockTitle>
+              <BlockTitle page>Hệ thống đánh giá</BlockTitle>
               <BlockDes className="text-soft">
                 <p>Welcome to SES</p>
               </BlockDes>

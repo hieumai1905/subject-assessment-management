@@ -22,7 +22,7 @@ public class MilestoneDTO {
     private Integer assignmentId;
     private Integer teacherId;
     private String assignmentTitle;
-    private String typeEvaluator;
+    private String evaluationType;
 
     public void validateInput(){
         ValidateUtils.checkNullOrEmpty(startDate, "Start date");

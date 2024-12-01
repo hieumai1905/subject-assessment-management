@@ -8,7 +8,6 @@ import com.sep490.sep490.dto.*;
 import com.sep490.sep490.dto.evaluation.request.EvaluateReqForGrandFinal;
 import com.sep490.sep490.dto.evaluation.request.SearchEvalForGrandFinal;
 import com.sep490.sep490.dto.evaluation.response.GradeEvaluator;
-import com.sep490.sep490.dto.studentEvaluation.request.StudentEvalRequest;
 import com.sep490.sep490.dto.studentEvaluation.request.StudentEvalSearchRequest;
 import com.sep490.sep490.dto.work_evaluation.WorkEvaluationDTO;
 import com.sep490.sep490.dto.work_evaluation.request.EvaluateRequirementRequest;
@@ -81,7 +80,7 @@ public class WorkEvaluationService {
         Classes classes = classesRepository.findById(request.getClassId()).orElseThrow(() -> new RecordNotFoundException("Class"));
         Milestone milestone = milestoneRepository.findById(request.getMilestoneId())
                 .orElseThrow(() -> new RecordNotFoundException("Milestone"));
-        boolean isFinalEval = milestone.getTypeEvaluator().equals(Constants.TypeAssignments.FINAL);
+        boolean isFinalEval = milestone.getEvaluationType().equals(Constants.TypeAssignments.FINAL);
 
         List<SettingDTO> complexities = new ArrayList<>();
         List<SettingDTO> qualities = new ArrayList<>();
@@ -149,7 +148,7 @@ public class WorkEvaluationService {
             workEvalResponse.setUpdateTrackings(updateTrackingDTOs);
         }
         List<WorkEvaluation> workEvaluations = requirement.getWorkEvaluations().stream()
-                .filter(item -> !milestone.getTypeEvaluator().equals(Constants.TypeAssignments.NORMAL)
+                .filter(item -> !milestone.getEvaluationType().equals(Constants.TypeAssignments.NORMAL)
                         || item.getMilestone().getId().equals(milestone.getId()))
                 .toList();
         if(workEvaluations.size() > 0){
@@ -187,7 +186,7 @@ public class WorkEvaluationService {
                     if (item.getEvaluator() == null
                             && item.getMilestone().getId().equals(milestone.getId())) {
 
-                        if(milestone.getTypeEvaluator().equals(Constants.TypeAssignments.NORMAL)){
+                        if(milestone.getEvaluationType().equals(Constants.TypeAssignments.NORMAL)){
                             workEvalResponse.setRequirementEval(
                                     ConvertUtils.convert(item, WorkEvaluationDTO.class)
                             );
@@ -557,7 +556,7 @@ public class WorkEvaluationService {
         }
         Classes classes = team.getClasses();
         Milestone milestone = team.getClasses().getMilestones().stream()
-                .filter(item -> item.getTypeEvaluator().equals(Constants.TypeAssignments.GRAND_FINAL))
+                .filter(item -> item.getEvaluationType().equals(Constants.TypeAssignments.GRAND_FINAL))
                 .findFirst().orElse(null);
         if(milestone == null){
             return "This class don't have grand final milestone!";
@@ -761,7 +760,7 @@ public class WorkEvaluationService {
         List<WorkEvaluation> workEvaluations = new ArrayList<>();
         List<Requirement> requirements = new ArrayList<>();
         Milestone milestone = team.getClasses().getMilestones().stream()
-                .filter(item -> item.getTypeEvaluator().equals(Constants.TypeAssignments.GRAND_FINAL))
+                .filter(item -> item.getEvaluationType().equals(Constants.TypeAssignments.GRAND_FINAL))
                 .findFirst().orElse(null);
         if(milestone == null){
             return "This class don't have grand final milestone!";

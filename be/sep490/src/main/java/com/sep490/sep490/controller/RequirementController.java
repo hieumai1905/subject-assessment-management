@@ -64,7 +64,7 @@ public class RequirementController {
     @DeleteMapping
     public HttpResponse<?> deleteAllByIds(@RequestBody List<Integer> ids) {
         requirementService.deleteByIds(ids);
-        return HttpResponse.ok("Delete requirements successfully!");
+        return HttpResponse.ok("Xóa yêu cầu thành công");
     }
 
     @PostMapping("/get-by-class")

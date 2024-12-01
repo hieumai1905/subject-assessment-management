@@ -240,28 +240,11 @@ public class TeamService implements BaseService<Milestone, Integer>{
     public Object getTeamsProgressionByMilestone(Integer milestoneId) {
         log.info("Get teams progression by milestone: " + milestoneId);
         var milestone = milestoneRepository.findById(milestoneId).orElseThrow(
-                () -> new RecordNotFoundException("Milestone")
+                () -> new RecordNotFoundException("Cột mốc")
         );
-        if((milestone.getTeams() == null || milestone.getTeams().size() == 0) && milestone.getClasses().getMilestones().size() > 1){
-            List<Milestone> milestones = milestone.getClasses().getMilestones();
-            int lastMilestoneId = milestones.get(0).getId(), index = -1;
-            for (int i = 1; i < milestones.size(); i++) {
-                if(milestone.getId().equals(milestones.get(i).getId())){
-                    index = i-1;
-                    break;
-                }
-            }
-            while (index >= 0){
-                if(milestones.get(index).getTeams() != null && milestones.get(index).getTeams().size() > 0){
-                    milestone = milestones.get(index);
-                    break;
-                }
-                index--;
-            }
-        }
         List<ProgressOfTeam> progressOfTeams = new ArrayList<>();
-        if(milestone.getTeams() != null){
-            for (Team team : milestone.getTeams()) {
+        if(milestone.getClasses().getTeams() != null){
+            for (Team team : milestone.getClasses().getTeams()) {
                 ProgressOfTeam progressOfTeam = new ProgressOfTeam();
                 progressOfTeam.setId(team.getId());
                 progressOfTeam.setTeamName(team.getTeamName());
@@ -286,10 +269,10 @@ public class TeamService implements BaseService<Milestone, Integer>{
                     int totalReqs = requirements.size();
                     float progressToDo = Math.round((float) toDo / totalReqs * 100.0);
                     float progressDoing = Math.round((float) doing / totalReqs * 100.0);
-                    float progressWaiting = Math.round((float) waiting / totalReqs * 100.0);
+//                    float progressWaiting = Math.round((float) waiting / totalReqs * 100.0);
                     float progressSubmitted = Math.round((float) submitted / totalReqs * 100.0);
                     float progressEvaluated = Math.round((float) evaluated / totalReqs * 100.0);
-                    progressOfTeam.setCompletionProgress(List.of(progressWaiting, progressToDo, progressDoing,
+                    progressOfTeam.setCompletionProgress(List.of(progressToDo, progressDoing,
                             progressSubmitted, progressEvaluated));
                 }
                 progressOfTeams.add(progressOfTeam);

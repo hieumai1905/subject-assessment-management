@@ -403,7 +403,7 @@ export const getAllOptions = (label) => {
   };
 };
 
-export const generateTemplate = async (sampleData, complexities, qualities, typeEvaluator) => {
+export const generateTemplate = async (sampleData, complexities, qualities, evaluationType) => {
   const workbook = new excelJs.Workbook();
   const ws = workbook.addWorksheet("Requirement Evaluation");
   const totalRows = sampleData.length + 1;
@@ -427,7 +427,7 @@ export const generateTemplate = async (sampleData, complexities, qualities, type
     });
   }
   let headers = ["ID", "Title", "Team", "In charge", "Complexity", "Quality", "LOC", "Comment"];
-  if (typeEvaluator === "Final") {
+  if (evaluationType === "Final") {
     headers.push(...["Update complexity", "Update quality", "Update LOC", "Update comment"]);
   }
   ws.addRow(headers);
@@ -443,7 +443,7 @@ export const generateTemplate = async (sampleData, complexities, qualities, type
     allowBlank: false,
     formulae: [`"${options3.join(",")}"`],
   });
-  if (typeEvaluator === "Final") {
+  if (evaluationType === "Final") {
     ws.dataValidations.add(`I2:I${totalRows}`, {
       type: "list",
       allowBlank: false,
@@ -484,7 +484,7 @@ export const generateTemplate = async (sampleData, complexities, qualities, type
     row.getCell(5).value = complexities?.find((item) => item.id === data?.requirementEval?.complexityId)?.name || "";
     row.getCell(6).value = qualities?.find((item) => item.id === data?.requirementEval?.qualityId)?.name || "";
     row.getCell(8).value = data?.requirementEval?.comment;
-    if (typeEvaluator === "Final") {
+    if (evaluationType === "Final") {
       row.getCell(9).value =
         complexities?.find((item) => item.id === data?.updateRequirementEval?.complexityId)?.name || "";
       row.getCell(10).value = qualities?.find((item) => item.id === data?.updateRequirementEval?.qualityId)?.name || "";
@@ -529,7 +529,7 @@ export const generateTemplate = async (sampleData, complexities, qualities, type
       formula: `=IFERROR(ROUND(${locFormula} * ${weightFormula}, 0), "")`,
       result: `${data?.requirementEval?.grade}`,
     };
-    if (typeEvaluator === "Final") {
+    if (evaluationType === "Final") {
       row.getCell(11).value = {
         formula: `=IFERROR(ROUND(${locFormula2} * ${weightFormula2}, 0), "")`,
         result: `${data?.updateRequirementEval?.grade}`,

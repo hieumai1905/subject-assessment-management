@@ -11,18 +11,11 @@ import com.sep490.sep490.dto.councilTeam.request.ImportCouncilTeamsRequest;
 import com.sep490.sep490.dto.councilTeam.request.SearchCouncilTeamRequest;
 import com.sep490.sep490.dto.councilTeam.request.UpdateCouncilTeamsRequest;
 import com.sep490.sep490.dto.councilTeam.response.SearchCouncilTeamResponse;
-import com.sep490.sep490.dto.councils.request.SearchCouncilRequest;
-import com.sep490.sep490.dto.councils.response.SearchCouncilResponse;
-import com.sep490.sep490.dto.team.request.SearchTeamRequest;
-import com.sep490.sep490.dto.team.response.SearchTeamResponse;
 import com.sep490.sep490.entity.*;
 import com.sep490.sep490.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -51,12 +44,12 @@ public class CouncilTeamService {
         }
         Setting semester = (Setting) settingRepository.findSettingBySettingTypeAndSettingId( "semester", request.getSemesterId());
         if(semester == null){
-            throw new RecordNotFoundException("Semester");
+            throw new RecordNotFoundException("Học kỳ");
         }
-        Subject subject = subjectRepository.findById(request.getSubjectId()).orElseThrow(() -> new RecordNotFoundException("Subject"));
+        Subject subject = subjectRepository.findById(request.getSubjectId()).orElseThrow(() -> new RecordNotFoundException("Môn học"));
         Setting round = (Setting) settingRepository.findSettingBySettingTypeAndSettingId("round", request.getRoundId());
         if(round == null){
-            throw new RecordNotFoundException("Round");
+            throw new RecordNotFoundException("Lần đánh giá");
         }
         List<Classes> classes = classesRepository.findBySemesterIdAndSubjectId(semester.getId(), subject.getId());
         classes = classes.stream().filter(item -> request.getClassId() == null
@@ -232,7 +225,7 @@ public class CouncilTeamService {
         List<Integer> councilIds = councils.stream().map(Council::getId).toList();
         List<Integer> sessionIds = sessions.stream().map(Session::getId).toList();
         if(councilId == null && sessionId == null)
-            return "Please select session or council";
+            return "Vui lòng chọn phiên đánh giá hoặc hội đồng";
         HashMap<Integer, String> messageMap = new HashMap<>();
 
         if(request.getIsAssignedForClass()){
@@ -262,7 +255,7 @@ public class CouncilTeamService {
                         councilTeam.getSession().getId()
                     );
                     if(councilTeamList != null && councilTeamList.size() > 0){
-                        throw new ConflictException(getCouncilName(councilTeam.getCouncil()) +  " is only assigned for one class in "
+                        throw new ConflictException(getCouncilName(councilTeam.getCouncil()) +  " chỉ có thể đánh giá một lớp trong "
                                 + councilTeam.getSession().getName());
                     }
                 }
@@ -280,7 +273,7 @@ public class CouncilTeamService {
                         teamList.add(team);
                     } else {
                         messageMap.putIfAbsent(classId, team.getClasses().getClassCode()
-                                + " has more than 6 teams. Please assign a different council for remaining team!");
+                                + " có nhiều hơn 6 nhóm. Vui lòng phân công đánh giá cho hội đồng khác dành cho các nhóm còn lại");
                     }
                 }
             }
@@ -326,16 +319,16 @@ public class CouncilTeamService {
             }
         }
 
-        return "Assigned successfully!";
+        return "Phân công hội đồng thành công";
     }
 
     private void checkTeacherIsInCouncil(Classes c, Integer councilId) {
         if(councilId != null){
-            Council council = councilRepository.findById(councilId).orElseThrow(() -> new RecordNotFoundException("Council"));
+            Council council = councilRepository.findById(councilId).orElseThrow(() -> new RecordNotFoundException("Hội đồng"));
             if(c.getTeacher() != null && council.getCouncilMembers() != null){
                 for (CouncilMember cm : council.getCouncilMembers()) {
                     if(cm.getMember().getId().equals(c.getTeacher().getId())){
-                        throw new ConflictException("The member in council must not be the teacher in class!");
+                        throw new ConflictException("Thành viên trong hội đồng không được trùng với giáo viên của lớp");
                     }
                 }
             }
@@ -344,7 +337,7 @@ public class CouncilTeamService {
 
     private void checkValidSession(Session session) {
         if(session != null){
-            ValidateUtils.checkBeforeCurrentDate(session.getSessionDate(), "Session");
+            ValidateUtils.checkBeforeCurrentDate(session.getSessionDate(), "Phiên đánh giá");
         }
     }
 
@@ -353,7 +346,7 @@ public class CouncilTeamService {
             List<CouncilTeam> councilTeamList = councilTeamRepository
                     .findInOtherTeam(teamId, council.getId(), session.getId());
             if(councilTeamList != null && councilTeamList.size() == 6){
-                throw new ConflictException(getCouncilName(council) + " only can assigned to evaluate 6 teams in " + session.getName() + "!");
+                throw new ConflictException(getCouncilName(council) + " chỉ có thể phân công 6 nhóm trong phiên " + session.getName());
             }
         } else if (session != null){
             List<CouncilTeam> councilTeamList = councilTeamRepository
@@ -365,7 +358,7 @@ public class CouncilTeamService {
                         numberOfTeams++;
                         if(numberOfTeams > 6){
                             throw new ConflictException(getCouncilName(ct.getCouncil())
-                                    + " only can assigned to evaluate 6 teams in " + session.getName() + "!");
+                                    + " chỉ có thể phân công 6 nhóm trong phiên " + session.getName());
                         }
                     }
                 }
@@ -380,7 +373,7 @@ public class CouncilTeamService {
                         numberOfTeams++;
                         if(numberOfTeams > 6){
                             throw new ConflictException(getCouncilName(ct.getCouncil())
-                                    + " only can assigned to evaluate 6 teams in " + ct.getSession().getName() + "!");
+                                    + " chỉ có thể phân công 6 nhóm trong phiên " + ct.getSession().getName());
                         }
                     }
                 }
@@ -393,7 +386,7 @@ public class CouncilTeamService {
             List<CouncilTeam> councilTeamList = councilTeamRepository
                     .getNumberOfCouncilTeams(session.getId(), council.getId(), classes.getId());
             if(councilTeamList != null && councilTeamList.size() > 0){
-                throw new ConflictException(getCouncilName(council) + " has already evaluated another class in " + session.getName() + "!");
+                throw new ConflictException(getCouncilName(council) + " đã được phân công đánh giá lớp khác trong phiên " + session.getName());
             }
         } else if(session != null){
             List<CouncilTeam> councilTeamList = councilTeamRepository
@@ -401,7 +394,7 @@ public class CouncilTeamService {
             if(councilTeam != null && councilTeam.getCouncil() != null && councilTeamList != null && councilTeamList.size() > 0){
                 for (CouncilTeam ct : councilTeamList) {
                     if(ct.getCouncil() != null && ct.getCouncil().getId().equals(councilTeam.getCouncil().getId())){
-                        throw new ConflictException(getCouncilName(ct.getCouncil()) + " has already evaluated another class in " + session.getName() + "!");
+                        throw new ConflictException(getCouncilName(ct.getCouncil()) + " đã được phân công đánh giá lớp khác trong phiên " + session.getName());
                     }
                 }
             }
@@ -411,8 +404,8 @@ public class CouncilTeamService {
             if(councilTeam != null && councilTeam.getSession() != null && councilTeamList != null && councilTeamList.size() > 0){
                 for (CouncilTeam ct : councilTeamList) {
                     if(ct.getSession() != null && ct.getSession().getId().equals(councilTeam.getSession().getId())){
-                        throw new ConflictException(getCouncilName(council) +  " has already evaluated another class in " +
-                                ct.getSession().getName() + "!");
+                        throw new ConflictException(getCouncilName(council) +  " đã được phân công đánh giá lớp khác trong phiên " +
+                                ct.getSession().getName());
                     }
                 }
             }
@@ -446,44 +439,22 @@ public class CouncilTeamService {
 
     private void getLastTeams(List<Classes> classes, List<Team> teams) {
         for (Classes c : classes) {
-            Milestone milestone = c.getMilestones().stream()
-                    .filter(item -> item.getTypeEvaluator().equals(Constants.TypeAssignments.GRAND_FINAL))
-                    .findFirst().orElse(null);
-            if(milestone != null){
-                List<Milestone> milestones = milestone.getClasses().getMilestones().stream()
-                        .sorted(Comparator.comparing(Milestone::getDisplayOrder))
-                        .toList();
-                if(milestones.size() > 1){
-                    int lastMilestoneId = milestones.get(0).getId(), index = -1;
-                    for (int i = 1; i < milestones.size(); i++) {
-                        if(milestone.getId().equals(milestones.get(i).getId())){
-                            index = i-1;
-                            break;
-                        }
-                    }
-                    while (index >= 0){
-                        if(milestones.get(index).getTeams() != null && milestones.get(index).getTeams().size() > 0){
-                            lastMilestoneId = milestones.get(index).getId();
-                            break;
-                        }
-                        index--;
-                    }
-                    teams.addAll(teamRepository.findByMilestoneId(lastMilestoneId));
-                }
+            if(c.getTeams() != null && c.getTeams().size() > 0) {
+                teams.addAll(c.getTeams());
             }
         }
     }
 
     private Council checkExistedCouncil(Integer councilId) {
         if(councilId != null){
-            return councilRepository.findById(councilId).orElseThrow(() -> new RecordNotFoundException("Council"));
+            return councilRepository.findById(councilId).orElseThrow(() -> new RecordNotFoundException("Hội đồng"));
         }
         return null;
     }
 
     private Session checkExistedSession(Integer sessionId) {
         if(sessionId != null){
-            return sessionRepository.findById(sessionId).orElseThrow(() -> new RecordNotFoundException("Session"));
+            return sessionRepository.findById(sessionId).orElseThrow(() -> new RecordNotFoundException("Phiên đánh giá"));
         }
         return null;
     }
@@ -491,9 +462,9 @@ public class CouncilTeamService {
     public Object searchClasses(Integer semesterId, Integer subjectId) {
         Setting semester = (Setting) settingRepository.findSettingBySettingTypeAndSettingId( "semester", semesterId);
         if(semester == null){
-            throw new RecordNotFoundException("Semester");
+            throw new RecordNotFoundException("Học kỳ");
         }
-        Subject subject = subjectRepository.findById(subjectId).orElseThrow(() -> new RecordNotFoundException("Subject"));
+        Subject subject = subjectRepository.findById(subjectId).orElseThrow(() -> new RecordNotFoundException("Môn học"));
         List<Classes> classes = classesRepository.findBySemesterIdAndSubjectId(semester.getId(), subject.getId());
         List<BaseDTO> responses = new ArrayList<>();
         for (Classes sClass : classes) {
@@ -508,9 +479,9 @@ public class CouncilTeamService {
             return responses;
         Setting semester = (Setting) settingRepository.findSettingBySettingTypeAndSettingId( "semester", semesterId);
         if(semester == null){
-            throw new RecordNotFoundException("Semester");
+            throw new RecordNotFoundException("Học kỳ");
         }
-        Subject subject = subjectRepository.findById(subjectId).orElseThrow(() -> new RecordNotFoundException("Subject"));
+        Subject subject = subjectRepository.findById(subjectId).orElseThrow(() -> new RecordNotFoundException("Môn học"));
         List<Classes> classes = classesRepository.findBySemesterIdAndSubjectId(semester.getId(), subjectId);
         classes = classes.stream().filter(item -> classId == null || item.getId().equals(classId)).toList();
         List<Team> teams = new ArrayList<>();
@@ -532,7 +503,7 @@ public class CouncilTeamService {
         List<Integer> sessionIds = sessions.stream().map(Session::getId).toList();
         if(request.getIsAssignedForClass()){
             for (ImportCouncilTeam req : request.getImportedTeams()) {
-                Classes c = classesRepository.findById(req.getId()).orElseThrow(() -> new RecordNotFoundException("Class"));
+                Classes c = classesRepository.findById(req.getId()).orElseThrow(() -> new RecordNotFoundException("Lớp học"));
                 Session session = checkExistedSession(req.getSessionId());
                 checkValidSession(session);
                 Council council = checkExistedCouncil(req.getCouncilId());
@@ -570,7 +541,7 @@ public class CouncilTeamService {
                             teamList.add(team);
                         } else {
                             messageMap.putIfAbsent(classId, team.getClasses().getClassCode()
-                                    + " has more than 6 teams. Please assign a different council for remaining team!");
+                                    + " có nhiều hơn 6 nhóm. Vui lòng phân công đánh giá cho hội đồng khác dành cho các nhóm còn lại");
                         }
                     }
                 }
@@ -604,7 +575,7 @@ public class CouncilTeamService {
                 Integer sessionId = session != null ? session.getId() : null;
                 if(councilId == null && sessionId == null)
                     continue;
-                Team team = teamRepository.findById(req.getId()).orElseThrow(() -> new RecordNotFoundException("Team"));
+                Team team = teamRepository.findById(req.getId()).orElseThrow(() -> new RecordNotFoundException("Nhóm"));
                 CouncilTeam councilTeam = councilTeamRepository.findByTeamIdSessionIdAndCouncilId(
                         team.getId(), sessionIds, councilIds
                 );
@@ -623,6 +594,118 @@ public class CouncilTeamService {
                 councilTeamRepository.save(councilTeam);
             }
         }
-        return "Import council teams successfully!";
+        return "Nhập phân công hội đồng đánh giá thành công";
+    }
+
+    @Transactional
+    public Object autoAssign(Integer semesterId, Integer roundId) {
+        ValidateUtils.checkNullOrEmpty(semesterId, "Học kỳ");
+        ValidateUtils.checkNullOrEmpty(roundId, "Lần đánh giá");
+        Setting semester = (Setting) settingRepository.findSettingBySettingTypeAndSettingId( "semester", semesterId);
+        if(semester == null){
+            throw new RecordNotFoundException("Học kỳ");
+        }
+        Setting round = (Setting) settingRepository.findSettingBySettingTypeAndSettingId("round", roundId);
+        if(round == null){
+            throw new RecordNotFoundException("Lần đánh giá");
+        }
+        Subject subject = round.getSubject();
+        List<Classes> classes = classesRepository.findBySemesterIdAndSubjectId(semesterId, subject.getId());
+        List<Team> teams = classes.stream().flatMap(item -> item.getTeams().stream()).toList();
+        List<Integer> teamIds = teams.stream().map(Team::getId).toList();
+        List<Council> sCouncils = councilRepository.findBySemesterIdAndRoundId(roundId, semesterId);
+        List<Session> sessions = sessionRepository.findBySemesterIdAndRoundId(semesterId, roundId);
+        List<Integer> councilIds = sCouncils.stream().map(Council::getId).toList();
+        List<Integer> sessionIds = sessions.stream().map(Session::getId).toList();
+        List<CouncilTeam> councils = councilTeamRepository.search(
+                councilIds, sessionIds,
+                classes.stream().map(Classes::getId).toList(),
+                teamIds, false
+        );
+
+        Map<Pair<Integer, Integer>, Long> assignmentCount = new HashMap<>();
+
+        // Khởi tạo assignmentCount với các cặp hội đồng và phiên chấm hiện có trong councils
+        for (CouncilTeam council : councils) {
+            if(council.getCouncil() != null && council.getSession() != null){
+                Pair<Integer, Integer> key = Pair.of(council.getCouncil().getId(), council.getSession().getId());
+                assignmentCount.put(key, assignmentCount.getOrDefault(key, 0L) + 1);
+            }
+        }
+
+        // Danh sách các nhóm cần phân công
+        List<Team> unassignedTeams = new ArrayList<>();
+
+        for (Team team : teams) {
+            boolean isAssigned = councils.stream()
+                    .anyMatch(council -> council.getTeamId().equals(team.getId())
+                            && council.getCouncil() != null
+                            && council.getSession() != null);
+
+            if (!isAssigned) {
+                unassignedTeams.add(team);
+            }
+        }
+
+        // Phân công các nhóm chưa được phân công đầy đủ
+        for (Team team : unassignedTeams) {
+            boolean assigned = false;
+
+            for (Council council : sCouncils) {
+                for (Session session : sessions) {
+                    Pair<Integer, Integer> key = Pair.of(council.getId(), session.getId());
+                    long count = assignmentCount.getOrDefault(key, 0L);
+
+                    if (count < 6) {
+                        CouncilTeam councilTeam = councilTeamRepository.findByTeam(team.getId(), councilIds, sessionIds);
+                        if(councilTeam == null)
+                            councilTeam = new CouncilTeam();
+                        councilTeam.setTeamId(team.getId());
+                        councilTeam.setClassId(team.getClasses().getId());
+                        councilTeam.setCouncil(council);
+                        councilTeam.setSession(session);
+                        councilTeamRepository.save(councilTeam);
+                        // Cập nhật bộ đếm
+                        assignmentCount.put(key, count + 1);
+                        assigned = true;
+                        break;
+                    }
+                }
+                if (assigned) break;
+            }
+        }
+
+        SearchCouncilTeamRequest request = new SearchCouncilTeamRequest();
+        request.setSemesterId(semesterId);
+        request.setSubjectId(subject.getId());
+        request.setIsSearchClass(false);
+        request.setPageSize(10);
+        request.setRoundId(roundId);
+        return search(request);
+    }
+
+    private HashMap<String, Integer> getCouncilSessionMap(List<Council> sCouncils, List<Session> sessions, List<CouncilTeam> councilTeams) {
+        HashMap<String, Integer> councilSessionMap = new HashMap<>();
+        for (Council council : sCouncils) {
+            for (Session session : sessions) {
+                StringBuilder key = new StringBuilder("c");
+                key.append(council.getId()).append(",s").append(session.getId());
+                councilSessionMap.putIfAbsent(key.toString(), 6);
+            }
+        }
+        for (CouncilTeam councilTeam : councilTeams) {
+            if(councilTeam.getCouncil() != null && councilTeam.getSession() != null){
+                StringBuilder key = new StringBuilder("c");
+                key.append(councilTeam.getCouncil().getId()).append(",s").append(councilTeam.getSession().getId());
+                Integer num = councilSessionMap.get(key.toString());
+                if(num != null && num > 1){
+                    councilSessionMap.put(key.toString(), --num);
+                }else if(num == 1){
+                    councilSessionMap.remove(key.toString());
+                }
+            }
+        }
+
+        return councilSessionMap;
     }
 }

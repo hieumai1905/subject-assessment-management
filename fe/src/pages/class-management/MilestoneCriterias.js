@@ -284,7 +284,7 @@ export default function MilestoneCriterias({ classes }) {
         console.log("milestones:", response.data.data);
         if (response.data.statusCode === 200) {
           let rMilestone = response.data.data.milestoneResponses;
-          rMilestone = rMilestone.filter((item) => item.typeEvaluator !== evaluationTypes[2].value);
+          rMilestone = rMilestone.filter((item) => item.evaluationType !== evaluationTypes[2].value);
 
           setMilestones(convertToOptions(rMilestone, "id", "title"));
           if (rMilestone.length > 0) {

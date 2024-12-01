@@ -38,7 +38,7 @@ const MilestonesAccordion = ({ milestones, setMilestones, teacherId, onEditClick
         });
       }
     } catch {
-      toast.error("Error while getting teams progression!", {
+      toast.error("Xảy ra lỗi tìm tìm kiếm tiến độ nhóm", {
         position: toast.POSITION.TOP_CENTER,
       });
     }
@@ -55,11 +55,12 @@ const MilestonesAccordion = ({ milestones, setMilestones, teacherId, onEditClick
 
   const onChangeStatusClick = async (milestone) => {
     Swal.fire({
-      title: "Are you sure?",
-      text: `Are you sure to ${milestone?.active ? "close" : "open"} ${milestone?.title}?`,
+      title: "Bạn có chắc chắn?",
+      text: `Bạn có chắc chắn muốn ${milestone?.active ? "đóng" : "mở"} ${milestone?.title}?`,
       icon: "warning",
       showCancelButton: true,
-      confirmButtonText: `Yes, ${milestone?.active ? "close" : "open"} it!`,
+      confirmButtonText: `Vâng, ${milestone?.active ? "đóng" : "mở"} nó`,
+      cancelButtonText: 'Hủy'
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
@@ -67,7 +68,7 @@ const MilestonesAccordion = ({ milestones, setMilestones, teacherId, onEditClick
             `/milestone/change-status?id=${milestone?.id}&active=${!milestone?.active}`
           );
           if (response.data.statusCode === 200) {
-            toast.success(`${milestone?.active ? "Close" : "Open"} ${milestone?.title} successfully!`, {
+            toast.success(`${milestone?.active ? "Đóng" : "Mở"} ${milestone?.title} thành công`, {
               position: toast.POSITION.TOP_CENTER,
             });
             let updatedMilestone = [...milestones];
@@ -83,7 +84,7 @@ const MilestonesAccordion = ({ milestones, setMilestones, teacherId, onEditClick
           }
         } catch (error) {
           console.error(`Error ${milestone?.active ? "Close" : "Open"} ${milestone?.title} :`, error);
-          toast.error(`Error ${milestone?.active ? "Closing" : "Opening"} ${milestone?.title}!`, {
+          toast.error(`Xảy ra lỗi khi ${milestone?.active ? "đóng" : "mở"} ${milestone?.title}!`, {
             position: toast.POSITION.TOP_CENTER,
           });
         }
@@ -103,13 +104,13 @@ const MilestonesAccordion = ({ milestones, setMilestones, teacherId, onEditClick
                   <h3 className="text-dark">{milestone?.title}</h3>
                 </div>
                 <div className="col-md-6 text-end">
-                  <Link
+                  {/* <Link
                     to={`/milestone-list/milestone-details/` + milestone?.id}
                     className="text-primary me-3 d-inline-flex align-items-center"
                   >
                     <Icon name="eye" className="me-1" />
-                    View Details
-                  </Link>
+                    Chi tiết
+                  </Link> */}
                   {canModifyMilestone(user, role, teacherId) && (
                     <Button
                       color="link"
@@ -117,7 +118,7 @@ const MilestonesAccordion = ({ milestones, setMilestones, teacherId, onEditClick
                       onClick={() => onChangeStatusClick(milestone)}
                     >
                       <Icon name={`${milestone?.active ? "lock-alt" : "unlock"}`} className="me-1" />
-                      {milestone?.active ? "Close" : "Open"}
+                      {milestone?.active ? "Đóng" : "Mở"}
                     </Button>
                   )}
                 </div>
@@ -125,7 +126,7 @@ const MilestonesAccordion = ({ milestones, setMilestones, teacherId, onEditClick
               <div className="text-muted mb-3">
                 <span className="ms-1">
                   <Badge className="badge-dot" color={milestone?.active ? "success" : "danger"}>
-                    {milestone?.active ? "Open" : "Close"}
+                    {milestone?.active ? "Mở" : "Đóng"}
                   </Badge>
                 </span>
               </div>
@@ -135,12 +136,12 @@ const MilestonesAccordion = ({ milestones, setMilestones, teacherId, onEditClick
             </div>
             <Collapse className="accordion-body" isOpen={isOpen === milestone?.id ? true : false}>
               <div className="accordion-inner p-3">
-                <h5 className="mb-3">Progress Requirements of Teams:</h5>
+                <h5 className="mb-3">Tiến độ hoàn thành của các nhóm:</h5>
                 {teamsProgression.map((te, index) => (
                   <div key={te.teamName} className={`row mb-4 ${index % 2 === 0 ? "bg-light" : ""}`}>
                     <div className="col-md-2 font-weight-bold">{te.teamName}</div>
                     <div className="col-md-10">
-                      {["Waiting for approval", "To do", "Doing", "Submitted", "Evaluated"].map((stage, index) => (
+                      {["Chưa làm", "Đang làm", "Đã nộp", "Đã đánh giá"].map((stage, index) => (
                         <div className="row mb-2 align-items-center" key={stage}>
                           <div className="col-md-3 d-flex align-items-center">
                             <Icon name={getStageIcon(stage)} className="me-2 text-info" />
@@ -169,7 +170,7 @@ const MilestonesAccordion = ({ milestones, setMilestones, teacherId, onEditClick
       ) : (
         <div className="d-flex justify-content-center align-items-center my-5">
           <Icon style={{ fontSize: "30px" }} name="inbox">
-            No data found!
+            Không có dữ liệu
           </Icon>
         </div>
       )}
@@ -181,13 +182,13 @@ const getStageIcon = (stage) => {
   switch (stage) {
     case "Waiting for approval":
       return "clock"; // icon for Waiting for approval
-    case "To do":
+    case "Chưa làm":
       return "list"; // icon for To do
-    case "Doing":
+    case "Đang làm":
       return "book"; // ensure this is the icon for Doing
-    case "Submitted":
+    case "Đã nộp":
       return "check-circle"; // icon for Submitted
-    case "Evaluated":
+    case "Đã đánh giá":
       return "star"; // icon for Evaluated
     default:
       return "circle"; // default icon

@@ -37,11 +37,11 @@ public class CouncilService {
         request.validateInput();
         Setting semester = (Setting) settingRepository.findSettingBySettingTypeAndSettingId( "semester", request.getSemesterId());
         if(semester == null){
-            throw new RecordNotFoundException("Semester");
+            throw new RecordNotFoundException("Học kỳ");
         }
         Setting round = (Setting) settingRepository.findSettingBySettingTypeAndSettingId("round", request.getSubjectSettingId());
         if(round == null){
-            throw new RecordNotFoundException("Round");
+            throw new RecordNotFoundException("Lần đánh giá");
         }
         Council council = new Council();
         setBaseCouncil(request, council);
@@ -95,7 +95,7 @@ public class CouncilService {
         List<CouncilMember> councilMemberList = new ArrayList<>();
         for (CouncilMemberDTO mem : request.getCouncilMembers()) {
             CouncilMember councilMember = new CouncilMember();
-            User user = userRepository.findById(mem.getId()).orElseThrow(() -> new RecordNotFoundException("Teacher"));
+            User user = userRepository.findById(mem.getId()).orElseThrow(() -> new RecordNotFoundException("Giảng viên"));
             councilMember.setCouncil(council);
             councilMember.setMember(user);
             councilMemberList.add(councilMember);
@@ -107,11 +107,11 @@ public class CouncilService {
         request.validateInput();
         Setting semester = (Setting) settingRepository.findSettingBySettingTypeAndSettingId( "semester", request.getSemesterId());
         if(semester == null){
-            throw new RecordNotFoundException("Semester");
+            throw new RecordNotFoundException("Học kỳ");
         }
         Setting round = (Setting) settingRepository.findSettingBySettingTypeAndSettingId("round", request.getSettingId());
         if(round == null){
-            throw new RecordNotFoundException("Round");
+            throw new RecordNotFoundException("Lần đánh giá");
         }
         Pageable pageable;
         if (request.getOrderBy().equals("DESC"))
@@ -165,14 +165,14 @@ public class CouncilService {
     @Transactional
     public Object update(Integer id, CouncilDTO request) {
         request.validateInput();
-        Council foundCouncil = councilRepository.findById(id).orElseThrow(() -> new RecordNotFoundException("Council"));
+        Council foundCouncil = councilRepository.findById(id).orElseThrow(() -> new RecordNotFoundException("Hội đồng"));
         Setting semester = (Setting) settingRepository.findSettingBySettingTypeAndSettingId( "semester", request.getSemesterId());
         if(semester == null){
-            throw new RecordNotFoundException("Semester");
+            throw new RecordNotFoundException("Học kỳ");
         }
         Setting round = (Setting) settingRepository.findSettingBySettingTypeAndSettingId("round", request.getSubjectSettingId());
         if(round == null){
-            throw new RecordNotFoundException("Round");
+            throw new RecordNotFoundException("Lần đánh giá");
         }
         councilRepository.removeMemberById(id);
         setBaseCouncil(request, foundCouncil);
@@ -181,7 +181,7 @@ public class CouncilService {
     }
     @Transactional
     public void delete(Integer id) {
-        Council foundCouncil = councilRepository.findById(id).orElseThrow(() -> new RecordNotFoundException("Council"));
+        Council foundCouncil = councilRepository.findById(id).orElseThrow(() -> new RecordNotFoundException("Hội đồng"));
         councilRepository.deleteMemberById(id);
         councilRepository.deleteByCouncilId(id);
     }

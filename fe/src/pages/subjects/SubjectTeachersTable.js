@@ -23,7 +23,7 @@ import { toast, ToastContainer } from "react-toastify";
 import authApi from "../../utils/ApiAuth";
 import { transformToOptions } from "../../utils/Utils";
 import Swal from "sweetalert2";
-import { Spinner } from "reactstrap";
+import { ButtonGroup, Spinner } from "reactstrap";
 import AddSubjectTeachersModal from "./AddSubjectTeachersModal";
 import useAuthStore from "../../store/Userstore";
 import { canModify } from "../../utils/CheckPermissions";
@@ -33,7 +33,7 @@ export default function SubjectTeachersTable({ subject }) {
   const [data, setData] = useState([]);
   const [users, setUsers] = useState([]);
   const [onSearch, setonSearch] = useState(true);
-  const [onSearchText, setSearchText] = useState("");
+  const [searchText, setSearchText] = useState("");
   const toggle = () => setonSearch(!onSearch);
   const [isFetching, setIsFetching] = useState({
     allTeachers: true,
@@ -48,6 +48,8 @@ export default function SubjectTeachersTable({ subject }) {
   const [formData, setFormData] = useState([]);
   const [reload, setReload] = useState(false);
   const { role } = useAuthStore((state) => state);
+  const [selected, setSelected] = useState([]);
+  const [filterText, setFilterText] = useState("");
 
   const fetchExistedTeachers = async () => {
     try {
@@ -56,6 +58,7 @@ export default function SubjectTeachersTable({ subject }) {
         pageSize: 9999,
         subjectId: subject?.id,
         type: "added",
+        keyWord: filterText
       });
       console.log("Giáo viên đã chọn: ", response.data.data);
       if (response.data.statusCode === 200) {
@@ -109,13 +112,11 @@ export default function SubjectTeachersTable({ subject }) {
 
   useEffect(() => {
     fetchExistedTeachers();
-  }, []);
+  }, [filterText]);
   useEffect(() => {
     fetchUsers();
   }, [isFetching.existedTeachers, reload]);
 
-  const [selected, setSelected] = useState([]);
-  const [filterText, setFilterText] = useState("");
 
   const onSelectChange = (e, id) => {
     let newData = data;
@@ -179,7 +180,7 @@ export default function SubjectTeachersTable({ subject }) {
       });
       console.log("Cập nhật giáo viên: ", response.data.data);
       if (response.data.statusCode === 200) {
-        toast.success(`${action == "add" ? 'Thêm' : 'Xóa'} giáo viên môn học thành công!`, {
+        toast.success(`${action == "add" ? "Thêm" : "Xóa"} giáo viên môn học thành công!`, {
           position: toast.POSITION.TOP_CENTER,
         });
         if (action === "delete") {
@@ -233,7 +234,25 @@ export default function SubjectTeachersTable({ subject }) {
               <div className="card-inner position-relative card-tools-toggle">
                 <div className="card-title-group">
                   <div className="card-tools">
-                    <div className="form-inline flex-nowrap gx-3"></div>
+                    <div className="form-inline flex-nowrap gx-3">
+                      <ButtonGroup className="w-100">
+                        <input
+                          type="text"
+                          placeholder="Nhập từ khóa"
+                          className="form-control w-100"
+                          value={searchText}
+                          onChange={(e) => setSearchText(e.target.value)}
+                        />
+                        <Button
+                          className="bg-gray"
+                          onClick={() => {
+                            setFilterText(searchText);
+                          }}
+                        >
+                          <Icon className="text-white" name="search"></Icon>
+                        </Button>
+                      </ButtonGroup>
+                    </div>
                   </div>
                   <div className="card-tools me-n1">
                     <ul className="btn-toolbar gx-1">

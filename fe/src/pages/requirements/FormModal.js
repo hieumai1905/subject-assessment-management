@@ -62,7 +62,7 @@ const FormModal = ({
         setData((prev) => [...response.data.data, ...prev]);
         setTotalItems((prev) => prev + response.data.data.length);
         closeModal();
-        toast.success(`Add requirements successfully!`, {
+        toast.success(`Thêm yêu cầu thành công`, {
           position: toast.POSITION.TOP_CENTER,
         });
       } else {
@@ -73,7 +73,7 @@ const FormModal = ({
       setIsFetching(false);
     } catch (error) {
       console.error("Error fetching data:", error);
-      toast.error("Error create requirements!", {
+      toast.error("Xảy ra lỗi khi thêm yêu cầu", {
         position: toast.POSITION.TOP_CENTER,
       });
       setIsFetching(false);
@@ -102,7 +102,7 @@ const FormModal = ({
         });
         setData(updatedData);
         closeModal();
-        toast.success(`Update requirements successfully!`, {
+        toast.success(`Cập nhật yêu cầu thành công`, {
           position: toast.POSITION.TOP_CENTER,
         });
       } else {
@@ -113,7 +113,7 @@ const FormModal = ({
       setIsFetching(false);
     } catch (error) {
       console.error("Error fetching data:", error);
-      toast.error("Error update requirements!", {
+      toast.error("Xảy ra lỗi khi cập nhật yêu cầu", {
         position: toast.POSITION.TOP_CENTER,
       });
       setIsFetching(false);
@@ -121,7 +121,7 @@ const FormModal = ({
   };
 
   useEffect(() => {
-    if(currentTeam && teams && role === 'STUDENT'){
+    if (currentTeam && teams && role === "STUDENT") {
       setSTeams(teams?.filter((item) => item.value === currentTeam?.value));
     }
   }, [currentTeam, teams, role]);
@@ -143,46 +143,33 @@ const FormModal = ({
         </a>
         <div className="p-2">
           <h5 className="title">
-            {modalType === "add" && "Add Requirement"} {modalType === "edit" && "Update Requirement"}
-            {modalType === "import" && "Import Requirements"}
+            {modalType === "add" && "Thêm Yêu Cầu"}
+            {modalType === "edit" && "Cập Nhật Yêu Cầu"}
+            {modalType === "import" && "Nhập Yêu Cầu"}
           </h5>
           <div className="mt-4">
             <Form className="row gy-4" onSubmit={handleSubmit(onSubmit)}>
-              {modalType === "edit" && (
-                <span className="text-info">You only have to enter the field you want to edit</span>
-              )}
-              <Col md="12">
-                {modalType === "add" && (
+              {modalType === "edit" && <span className="text-info">Bạn chỉ cần nhập các trường muốn chỉnh sửa</span>}
+              {modalType === "add" && (
+                <Col md="12">
                   <div className="form-group">
-                    <label className="form-label">Title*</label>
+                    <label className="form-label">Tiêu Đề*</label>
                     <input
                       type="text"
-                      {...register("reqTitle", { required: "This field is required" })}
+                      {...register("reqTitle", { required: "Trường này là bắt buộc" })}
                       value={formData.reqTitle}
-                      placeholder="Enter title"
+                      placeholder="Nhập tiêu đề"
                       onChange={(e) => setFormData({ ...formData, reqTitle: e.target.value })}
                       className="form-control"
                     />
                     {errors.reqTitle && <span className="invalid">{errors.reqTitle.message}</span>}
                   </div>
-                )}
-                {modalType === "edit" && (
-                  <div className="form-group">
-                    <label className="form-label">Title</label>
-                    <input
-                      type="text"
-                      value={formData.reqTitle}
-                      placeholder="Enter title"
-                      onChange={(e) => setFormData({ ...formData, reqTitle: e.target.value })}
-                      className="form-control"
-                    />
-                  </div>
-                )}
-              </Col>
+                </Col>
+              )}
               {modalType === "edit" && members.length > 0 && (
                 <Col md="12">
                   <div className="form-group">
-                    <label className="form-label">Student</label>
+                    <label className="form-label">Học Sinh</label>
                     <RSelect
                       options={members}
                       value={formData.student}
@@ -193,7 +180,7 @@ const FormModal = ({
               )}
               <Col md="6">
                 <div className="form-group">
-                  <label className="form-label">Complexity</label>
+                  <label className="form-label">Độ Phức Tạp</label>
                   <RSelect
                     options={complexities}
                     value={formData.complexity}
@@ -204,9 +191,9 @@ const FormModal = ({
               {modalType === "add" && (
                 <Col md="12">
                   <div className="form-group">
-                    <label className="form-label">Teams*</label>
+                    <label className="form-label">Đội Nhóm*</label>
                     <RSelect
-                      {...register("teams", { required: "This field is required" })}
+                      {...register("teams", { required: "Trường này là bắt buộc" })}
                       options={sTeams}
                       isMulti
                       value={formData.teams}
@@ -219,7 +206,7 @@ const FormModal = ({
               {modalType === "edit" && (
                 <Col md="6">
                   <div className="form-group">
-                    <label className="form-label">Status</label>
+                    <label className="form-label">Trạng Thái</label>
                     <RSelect
                       options={requirementStatuses}
                       value={formData.status}
@@ -230,10 +217,10 @@ const FormModal = ({
               )}
               <Col size="12">
                 <div className="form-group">
-                  <label className="form-label">Note</label>
+                  <label className="form-label">Ghi Chú</label>
                   <textarea
                     value={formData.note}
-                    placeholder="Your note"
+                    placeholder="Nhập ghi chú"
                     onChange={(e) => setFormData({ ...formData, note: e.target.value })}
                     className="form-control-xl form-control no-resize"
                   />
@@ -245,7 +232,7 @@ const FormModal = ({
                     {isFetching ? (
                       <Button disabled color="primary">
                         <Spinner size="sm" />
-                        <span> Saving... </span>
+                        <span> Đang Lưu... </span>
                       </Button>
                     ) : (
                       <>
@@ -275,10 +262,11 @@ const FormModal = ({
                             }
                           }}
                         >
-                          Reset
+                          Đặt Lại
                         </Button>
                         <Button color="primary" size="md" type="submit">
-                          {modalType === "add" && "Add Requirement"} {modalType === "edit" && "Update Requirement"}
+                          {modalType === "add" && "Thêm Yêu Cầu"}
+                          {modalType === "edit" && "Cập Nhật Yêu Cầu"}
                         </Button>
                       </>
                     )}

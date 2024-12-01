@@ -98,7 +98,7 @@ export default function CouncilList() {
         }
       } catch (error) {
         console.error("Error fetching data:", error);
-        toast.error("Error search setting!", {
+        toast.error("Xảy ra lỗi khi tìm kiếm học kỳ", {
           position: toast.POSITION.TOP_CENTER,
         });
       } finally {
@@ -136,7 +136,7 @@ export default function CouncilList() {
         }
       } catch (error) {
         console.error("Error fetching data:", error);
-        toast.error("Error search subject!", {
+        toast.error("Xảy ra lỗi khi tìm kiếm môn học", {
           position: toast.POSITION.TOP_CENTER,
         });
       } finally {
@@ -189,7 +189,7 @@ export default function CouncilList() {
       }
     } catch (error) {
       console.error("Error fetching data:", error);
-      toast.error("Error search round!", {
+      toast.error("Xảy ra lỗi khi tìm kiếm lần chấm", {
         position: toast.POSITION.TOP_CENTER,
       });
     } finally {
@@ -226,7 +226,7 @@ export default function CouncilList() {
       }
     } catch (error) {
       console.error("Error fetching data:", error);
-      toast.error("Error search councils!", {
+      toast.error("Xảy ra lỗi khi tìm kiếm hội đồng", {
         position: toast.POSITION.TOP_CENTER,
       });
     } finally {
@@ -392,17 +392,18 @@ export default function CouncilList() {
 
   const onDeleteClick = (id, teamName) => {
     Swal.fire({
-      title: "Are you sure?",
-      text: `Are you sure to delete council: ${teamName}?`,
+      title: "Bạn chắc chắn",
+      text: `Bạn có chắc chắn muốn xóa hội đồng ${teamName}?`,
       icon: "warning",
       showCancelButton: true,
-      confirmButtonText: "Yes, delete it!",
+      confirmButtonText: "Đồng ý xóa",
+      cancelButtonText: "Hủy"
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
           const response = await authApi.delete(`/councils/delete/${id}`);
           if (response.data.statusCode === 200) {
-            toast.success("Delete council successfully!", {
+            toast.success("Xóa hội đồng thành công", {
               position: toast.POSITION.TOP_CENTER,
             });
             setCouncils((prev) => {
@@ -425,7 +426,7 @@ export default function CouncilList() {
           }
         } catch (error) {
           console.error("Error deleting council:", error);
-          toast.error("Error deleting council!", {
+          toast.error("Xảy ra lỗi khi xoá hội đồng", {
             position: toast.POSITION.TOP_CENTER,
           });
         }
@@ -437,169 +438,17 @@ export default function CouncilList() {
     return councils.find((team) => team.councilName === name);
   };
 
-  const moveToOtherTeam = async (newTeamId, oldTeamId, memberId) => {
-    try {
-      const response = await authApi.put("/team-members", {
-        newTeamId,
-        oldTeamId,
-        memberId,
-      });
-      if (response.data.statusCode === 200) {
-        setTeams((prev) => {
-          let updatedTeams = [...prev];
-          const oldTeamIndex = updatedTeams.findIndex((item) => isEqual(item.id, oldTeamId));
-          let member = {};
-          if (oldTeamIndex !== -1) {
-            member = updatedTeams[oldTeamIndex].members.find((item) => item.id === memberId);
-            updatedTeams[oldTeamIndex].members = updatedTeams[oldTeamIndex].members.filter(
-              (item) => item.id !== memberId
-            );
-          }
-          const newTeamIndex = updatedTeams.findIndex((item) => item.id === newTeamId);
-          if (newTeamIndex !== -1) {
-            updatedTeams[newTeamIndex].members = [...updatedTeams[newTeamIndex].members, member];
-          } else {
-            const wishList = findTeamByName("Wish List");
-            if (wishList) {
-              wishList.members.push(member);
-            } else {
-              updatedTeams.unshift({ teamName: "Wish List", members: [member] });
-            }
-          }
-          if (
-            oldTeamId === null &&
-            updatedTeams[0].teamName === "Wish List" &&
-            (!updatedTeams[0].members || updatedTeams[0].members.length === 0)
-          ) {
-            updatedTeams = updatedTeams.filter((item) => item.teamName !== "Wish List");
-          }
-          return updatedTeams;
-        });
-        toast.success("Move member successfully!", {
-          position: toast.POSITION.TOP_CENTER,
-        });
-      } else {
-        toast.error(response.data.data, {
-          position: toast.POSITION.TOP_CENTER,
-        });
-      }
-    } catch (error) {
-      console.error("Error moving member:", error);
-      toast.error("Error moving member!", {
-        position: toast.POSITION.TOP_CENTER,
-      });
-    }
-  };
-
-  const updateTeamLeader = async (teamId, leaderId) => {
-    try {
-      const response = await authApi.put(`/teams/update-team-leader?teamId=${teamId}&leaderId=${leaderId}`);
-      if (response.data.statusCode === 200) {
-        setTeams((prev) => {
-          const updatedTeams = [...prev];
-          const teamIndex = updatedTeams.findIndex((item) => item.id === teamId);
-          if (teamIndex !== -1) {
-            updatedTeams[teamIndex].leaderId = leaderId;
-          }
-          return updatedTeams;
-        });
-        toast.success("Update team leader successfully!", {
-          position: toast.POSITION.TOP_CENTER,
-        });
-      } else {
-        toast.error(response.data.data, {
-          position: toast.POSITION.TOP_CENTER,
-        });
-      }
-    } catch (error) {
-      console.error("Error updating team leader:", error);
-      toast.error("Error updating team leader!", {
-        position: toast.POSITION.TOP_CENTER,
-      });
-    }
-  };
-
-  const closeUpdateTeams = async () => {
-    if (!milestone?.id) return;
-    Swal.fire({
-      title: "Are you sure?",
-      text: `If you close the team update option, you won't be able to update any information about the team or its members.`,
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonText: `Yes, close it!`,
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        try {
-          const response = await authApi.put(`/teams/close-update/${milestone?.id}`);
-          if (response.data.statusCode === 200) {
-            toast.success(`Close update teams successfully!`, {
-              position: toast.POSITION.TOP_CENTER,
-            });
-            let updatedTeams = [...teams];
-            updatedTeams.map((item) => {
-              item.active = true;
-              return item;
-            });
-            setTeams(updatedTeams);
-          } else {
-            toast.error(response.data.data, {
-              position: toast.POSITION.TOP_CENTER,
-            });
-          }
-        } catch (error) {
-          console.error(`Error close teams :`, error);
-          toast.error(`Error closing teams!`, {
-            position: toast.POSITION.TOP_CENTER,
-          });
-        }
-      }
-    });
-  };
-
-  const resetTeams = async () => {
-    if (!milestone?.id) return;
-    Swal.fire({
-      title: "Are you sure?",
-      text: `If you reset the teams at this milestone, the system will use the teams from the previous milestone.`,
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonText: `Yes, reset it!`,
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        try {
-          const response = await authApi.put(`/teams/reset-teams/${milestone?.id}`);
-          console.log("reset teams:", response.data.data);
-          if (response.data.statusCode === 200) {
-            toast.success(`Reset teams successfully!`, {
-              position: toast.POSITION.TOP_CENTER,
-            });
-            setReset(!reset);
-          } else {
-            toast.error(response.data.data, {
-              position: toast.POSITION.TOP_CENTER,
-            });
-          }
-        } catch (error) {
-          console.error(`Error reset teams :`, error);
-          toast.error(`Error reset teams!`, {
-            position: toast.POSITION.TOP_CENTER,
-          });
-        }
-      }
-    });
-  };
-
   return (
     <>
-      <Head title="Council List" />
+      <Head title="Danh sách hội đồng" />
       <Content>
         <div className="team-list container">
-          <BlockTitle page>Council List</BlockTitle>
-          <BlockDes>You have total {councils.length} councils</BlockDes>
+          <BlockTitle page>Danh sách hội đồng</BlockTitle>
+          <BlockDes>Bạn có tổng cộng {councils.length} hội đồng</BlockDes>
           <div className="d-flex justify-content-between align-items-end w-100 mb-3 mt-4">
             <div className="d-flex align-items-end" style={{ gap: "20px" }}>
               <div className="form-group mb-0" style={{ minWidth: "150px" }}>
-                <label className="form-label">Semester</label>
+                <label className="form-label">Học kỳ</label>
                 {isFetching?.semester ? (
                   <div>
                     <Spinner />
@@ -614,7 +463,7 @@ export default function CouncilList() {
                 )}
               </div>
               <div className="form-group mb-0" style={{ minWidth: "150px" }}>
-                <label className="form-label">Subject</label>
+                <label className="form-label">Môn học</label>
                 {isFetching?.subject ? (
                   <div>
                     <Spinner />
@@ -629,7 +478,7 @@ export default function CouncilList() {
                 )}
               </div>
               <div className="form-group mb-0" style={{ minWidth: "150px" }}>
-                <label className="form-label">Round</label>
+                <label className="form-label">Lần chấm</label>
                 {isFetching?.round ? (
                   <div>
                     <Spinner />
@@ -647,7 +496,7 @@ export default function CouncilList() {
                 <ButtonGroup className="w-100">
                   <input
                     type="text"
-                    placeholder="search by title..."
+                    placeholder="nhập từ khóa..."
                     className="form-control w-100"
                     value={searchText}
                     onChange={(e) => setSearchText(e.target.value)}
@@ -680,7 +529,7 @@ export default function CouncilList() {
               {!councils || councils.length === 0 ? (
                 <div className="d-flex justify-content-center align-items-center my-5">
                   <Icon style={{ fontSize: "30px" }} name="inbox">
-                    No data found!
+                    Không có dữ liệu
                   </Icon>
                 </div>
               ) : (
@@ -700,7 +549,7 @@ export default function CouncilList() {
                             <Icon name="users" className="me-2" /> {/* Team icon */}
                             <div>
                               <h5 className="mb-1 text-dark">
-                                {councils[0].councilName} ({councils[0].councilMembers.length} teachers)
+                                Danh sách chờ ({councils[0].councilMembers.length} giảng viên)
                               </h5>
                               <p className="text-muted">{councils[0].topicName}</p>
                             </div>
@@ -716,7 +565,7 @@ export default function CouncilList() {
                                 }}
                               >
                                 <Icon name="plus" className="me-1"></Icon>
-                                <span>Create Council</span>
+                                <span>Thêm mới</span>
                               </Button>
                             )}
                           </div>
@@ -764,7 +613,7 @@ export default function CouncilList() {
                               <Icon name="users" className="me-2" />
                               <div>
                                 <h5 className="mb-1 text-dark">
-                                  {team.councilName} ({team.councilMembers.length} teachers)
+                                  {team.councilName} ({team.councilMembers.length} giảng viên)
                                 </h5>
                               </div>
                             </div>
@@ -837,7 +686,7 @@ export default function CouncilList() {
                             <Icon name="users" className="me-2" /> {/* Team icon */}
                             <div>
                               <h5 className="mb-1 text-dark">
-                                {team.councilName} ({team.councilMembers.length} teachers)
+                                {team.councilName} ({team.councilMembers.length} giảng viên)
                               </h5>
                             </div>
                           </div>

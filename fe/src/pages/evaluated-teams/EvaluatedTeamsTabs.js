@@ -5,6 +5,7 @@ import {
   Block,
   BlockBetween,
   BlockDes,
+  BlockHead,
   BlockHeadContent,
   BlockTitle,
   Button,
@@ -29,6 +30,9 @@ import {
   Col,
   Spinner,
   ButtonGroup,
+  UncontrolledDropdown,
+  DropdownToggle,
+  DropdownMenu,
 } from "reactstrap";
 import classnames from "classnames";
 import { useNavigate, useParams } from "react-router-dom";
@@ -67,6 +71,7 @@ export default function EvaluatedTeamsTabs() {
     }
   };
 
+  const [sm, updateSm] = useState(false);
   const { role } = useAuthStore((state) => state);
   const { user } = useAuthStore((state) => state);
   const [isFetching, setIsFetching] = useState({
@@ -139,7 +144,7 @@ export default function EvaluatedTeamsTabs() {
         }
       } catch (error) {
         console.error("Error fetching data:", error);
-        toast.error("Error search setting!", {
+        toast.error("Xảy ra lỗi khi tìm kiếm học kỳ", {
           position: toast.POSITION.TOP_CENTER,
         });
       } finally {
@@ -177,7 +182,7 @@ export default function EvaluatedTeamsTabs() {
         }
       } catch (error) {
         console.error("Error fetching data:", error);
-        toast.error("Error search subject!", {
+        toast.error("Xảy ra lỗi khi tìm kiếm môn học", {
           position: toast.POSITION.TOP_CENTER,
         });
       } finally {
@@ -228,7 +233,7 @@ export default function EvaluatedTeamsTabs() {
       }
     } catch (error) {
       console.error("Error fetching data:", error);
-      toast.error("Error search round!", {
+      toast.error("Xảy ra lỗi khi tìm kiếm lần chấm", {
         position: toast.POSITION.TOP_CENTER,
       });
     } finally {
@@ -265,7 +270,7 @@ export default function EvaluatedTeamsTabs() {
       }
     } catch (error) {
       console.error("Error fetching data:", error);
-      toast.error("Error search classes!", {
+      toast.error("Xảy ra lỗi khi tìm kiếm lớp học", {
         position: toast.POSITION.TOP_CENTER,
       });
     } finally {
@@ -303,7 +308,7 @@ export default function EvaluatedTeamsTabs() {
       }
     } catch (error) {
       console.error("Error fetching data:", error);
-      toast.error("Error search teams!", {
+      toast.error("Xảy ra lỗi khi tìm kiếm nhóm", {
         position: toast.POSITION.TOP_CENTER,
       });
     } finally {
@@ -343,7 +348,7 @@ export default function EvaluatedTeamsTabs() {
       }
     } catch (error) {
       console.error("Error fetching data:", error);
-      toast.error("Error search council teams!", {
+      toast.error("Xảy ra lỗi khi tìm kiếm phân công hội đồng", {
         position: toast.POSITION.TOP_CENTER,
       });
     } finally {
@@ -421,90 +426,137 @@ export default function EvaluatedTeamsTabs() {
 
   return (
     <>
-      <Head title="Evaluated Teams"></Head>
+      <Head title="Phân công hội đồng"></Head>
       <Content>
-        <BlockTitle>Evaluated Teams</BlockTitle>
-        <div className="d-flex justify-content-between align-items-end w-100 mb-3 mt-4">
-          <div className="d-flex align-items-end" style={{ gap: "20px" }}>
-            <div className="form-group mb-0" style={{ minWidth: "150px" }}>
-              <label className="form-label">Semester</label>
-              {isFetching?.semester ? (
-                <div>
-                  <Spinner />
+        <BlockHead size="sm">
+          <BlockBetween>
+            <BlockHeadContent>
+              <BlockTitle page> Phân công hội đồng</BlockTitle>
+            </BlockHeadContent>
+            <BlockHeadContent>
+              <div className="toggle-wrap nk-block-tools-toggle">
+                <Button
+                  className={`btn-icon btn-trigger toggle-expand me-n1 ${sm ? "active" : ""}`}
+                  onClick={() => updateSm(!sm)}
+                >
+                  <Icon name="menu-alt-r"></Icon>
+                </Button>
+                <div className="toggle-expand-content" style={{ display: sm ? "block" : "none" }}>
+                  <ul className="nk-block-tools g-3">
+                    <li>
+                      <UncontrolledDropdown>
+                        <DropdownToggle tag="a" className="dropdown-toggle btn btn-white btn-dim btn-outline-light">
+                          <Icon name="filter-alt" className="d-none d-sm-inline"></Icon>
+                          <span>Bộ lọc</span>
+                          <Icon name="chevron-right" className="dd-indc"></Icon>
+                        </DropdownToggle>
+                        <DropdownMenu end className="filter-wg dropdown-menu-xxl" style={{ overflow: "visible" }}>
+                          <div className="dropdown-head">
+                            <span className="sub-title dropdown-title">Lọc phân công hội đồng</span>
+                            <div className="dropdown">
+                              <a
+                                href="#more"
+                                onClick={(ev) => {
+                                  ev.preventDefault();
+                                }}
+                                className="btn btn-sm btn-icon"
+                              >
+                                <Icon name="more-h"></Icon>
+                              </a>
+                            </div>
+                          </div>
+                          <div className="dropdown-body dropdown-body-rg">
+                            <div className="d-flex flex-wrap justify-content-between">
+                              <div className="form-group mb-0" style={{ minWidth: "48%" }}>
+                                <label className="form-label">Học kỳ</label>
+                                {isFetching?.semester ? (
+                                  <div>
+                                    <Spinner />
+                                  </div>
+                                ) : (
+                                  <RSelect
+                                    options={semesters}
+                                    value={filterForm.semester}
+                                    onChange={(e) => setFilterForm({ ...filterForm, semester: e })}
+                                    styles={{ control: (base) => ({ ...base, width: "100%" }) }}
+                                  />
+                                )}
+                              </div>
+                              <div className="form-group mb-0" style={{ minWidth: "48%" }}>
+                                <label className="form-label">Môn học</label>
+                                {isFetching?.subject ? (
+                                  <div>
+                                    <Spinner />
+                                  </div>
+                                ) : (
+                                  <RSelect
+                                    options={subjects}
+                                    value={filterForm.subject}
+                                    onChange={(e) => setFilterForm({ ...filterForm, subject: e })}
+                                    styles={{ control: (base) => ({ ...base, width: "100%" }) }}
+                                  />
+                                )}
+                              </div>
+                            </div>
+                            <div className="d-flex flex-wrap justify-content-between mt-2">
+                              <div className="form-group mb-0" style={{ minWidth: "48%" }}>
+                                <label className="form-label">Lần chấm</label>
+                                {isFetching?.round ? (
+                                  <div>
+                                    <Spinner />
+                                  </div>
+                                ) : (
+                                  <RSelect
+                                    options={rounds}
+                                    value={filterForm.round || null}
+                                    onChange={(e) => setFilterForm({ ...filterForm, round: e })}
+                                    styles={{ control: (base) => ({ ...base, width: "100%" }) }}
+                                  />
+                                )}
+                              </div>
+                              <div className="form-group mb-0" style={{ minWidth: "48%" }}>
+                                <label className="form-label">Lớp học</label>
+                                {isFetching?.classes ? (
+                                  <div>
+                                    <Spinner />
+                                  </div>
+                                ) : (
+                                  <RSelect
+                                    options={classes}
+                                    value={filterForm.classes}
+                                    onChange={(e) => setFilterForm({ ...filterForm, classes: e })}
+                                    styles={{ control: (base) => ({ ...base, width: "100%" }) }}
+                                  />
+                                )}
+                              </div>
+                            </div>
+                            <div className="d-flex flex-wrap justify-content-between mt-2">
+                              <div className="form-group mb-0" style={{ minWidth: "48%" }}>
+                                <label className="form-label">Nhóm</label>
+                                {isFetching?.team ? (
+                                  <div>
+                                    <Spinner />
+                                  </div>
+                                ) : (
+                                  <RSelect
+                                    options={teams}
+                                    value={filterForm.team}
+                                    onChange={(e) => setFilterForm({ ...filterForm, team: e })}
+                                    styles={{ control: (base) => ({ ...base, width: "100%" }) }}
+                                  />
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        </DropdownMenu>
+                      </UncontrolledDropdown>
+                    </li>
+                  </ul>
                 </div>
-              ) : (
-                <RSelect
-                  options={semesters}
-                  value={filterForm.semester}
-                  onChange={(e) => setFilterForm({ ...filterForm, semester: e })}
-                  styles={{ control: (base) => ({ ...base, width: "100%" }) }}
-                />
-              )}
-            </div>
-            <div className="form-group mb-0" style={{ minWidth: "150px" }}>
-              <label className="form-label">Subject</label>
-              {isFetching?.subject ? (
-                <div>
-                  <Spinner />
-                </div>
-              ) : (
-                <RSelect
-                  options={subjects}
-                  value={filterForm.subject}
-                  onChange={(e) => setFilterForm({ ...filterForm, subject: e })}
-                  styles={{ control: (base) => ({ ...base, width: "100%" }) }}
-                />
-              )}
-            </div>
-            <div className="form-group mb-0" style={{ minWidth: "150px" }}>
-              <label className="form-label">Round</label>
-              {isFetching?.round ? (
-                <div>
-                  <Spinner />
-                </div>
-              ) : (
-                <RSelect
-                  options={rounds}
-                  value={filterForm.round || null}
-                  onChange={(e) => setFilterForm({ ...filterForm, round: e })}
-                  styles={{ control: (base) => ({ ...base, width: "100%" }) }}
-                />
-              )}
-            </div>
-            <div className="form-group mb-0" style={{ minWidth: "210px" }}>
-              <label className="form-label">Class</label>
-              {isFetching?.classes ? (
-                <div>
-                  <Spinner />
-                </div>
-              ) : (
-                <RSelect
-                  options={classes}
-                  value={filterForm.classes}
-                  onChange={(e) => setFilterForm({ ...filterForm, classes: e })}
-                  styles={{ control: (base) => ({ ...base, width: "100%" }) }}
-                />
-              )}
-            </div>
-            <div className="form-group mb-0" style={{ minWidth: "150px" }}>
-              <label className="form-label">Team</label>
-              {isFetching?.team ? (
-                <div>
-                  <Spinner />
-                </div>
-              ) : (
-                <RSelect
-                  options={teams}
-                  value={filterForm.team}
-                  onChange={(e) => setFilterForm({ ...filterForm, team: e })}
-                  styles={{ control: (base) => ({ ...base, width: "100%" }) }}
-                />
-              )}
-            </div>
-            <div className="form-group mb-0 ms-5 text-end" style={{ minWidth: "350px" }}></div>
-          </div>
-          <div className="text-end"></div>
-        </div>
+              </div>
+            </BlockHeadContent>
+          </BlockBetween>
+        </BlockHead>
         <Block>
           <Nav tabs className="mb-4">
             <NavItem>
@@ -517,7 +569,7 @@ export default function EvaluatedTeamsTabs() {
                   toggle("1");
                 }}
               >
-                Classes
+                Phân công theo lớp
               </NavLink>
             </NavItem>
             <NavItem>
@@ -530,7 +582,7 @@ export default function EvaluatedTeamsTabs() {
                   toggle("2");
                 }}
               >
-                Teams
+                Phân công theo nhóm
               </NavLink>
             </NavItem>
           </Nav>

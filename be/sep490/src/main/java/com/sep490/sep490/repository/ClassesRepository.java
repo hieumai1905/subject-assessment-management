@@ -15,8 +15,7 @@ public interface ClassesRepository extends BaseRepository<Classes,Integer>{
             "WHERE (:subjectId IS NULL OR c.subject.id = :subjectId) " +
             "AND (:teacherId IS NULL OR c.teacher.id = :teacherId) " +
             "AND (:settingId IS NULL OR c.semester.id = :settingId) " +
-            "AND (:keyWord IS NULL OR LOWER(c.classCode) LIKE LOWER(CONCAT('%', :keyWord, '%')) " +
-            " OR LOWER(c.name) LIKE LOWER(CONCAT('%', :keyWord, '%'))) " +
+            "AND (:keyWord IS NULL OR LOWER(c.classCode) LIKE %:keyWord% OR LOWER(c.name) LIKE %:keyWord% ) " +
             "AND (:active IS NULL OR c.active = :active) " +
             "AND (:isCurrentClass = false or " +
             "   c.teacher.id = :userId  " +

@@ -94,7 +94,7 @@ const CouncilModal = ({
 
   const onSubmit = async () => {
     if(!formData || formData.length < 2){
-      toast.info("Please select at least two teachers!", {
+      toast.info("Vui lòng chọn ít nhất 2 giảng viên", {
         position: toast.POSITION.TOP_CENTER,
       });
       return false;
@@ -111,7 +111,7 @@ const CouncilModal = ({
         });
         console.log("add council:", response.data.data);
         if (response.data.statusCode === 200) {
-          toast.success("Create council successfully!", {
+          toast.success("Tạo hội đồng thành công", {
             position: toast.POSITION.TOP_CENTER,
           });
           let updateCouncils = [...councils];
@@ -150,7 +150,7 @@ const CouncilModal = ({
         }
       } catch (error) {
         console.error("Error creating council:", error);
-        toast.error("Error creating council!", {
+        toast.error("Xảy ra lỗi khi tạo hội đồng", {
           position: toast.POSITION.TOP_CENTER,
         });
       } finally {
@@ -169,7 +169,7 @@ const CouncilModal = ({
         });
         console.log("update council:", response.data.data);
         if (response.data.statusCode === 200) {
-          toast.success("Update council successfully!", {
+          toast.success("Cập nhật hội đồng thành công", {
             position: toast.POSITION.TOP_CENTER,
           });
           let updateCouncils = [...councils];
@@ -214,7 +214,7 @@ const CouncilModal = ({
         }
       } catch (error) {
         console.error("Error updating council:", error);
-        toast.error("Error updating council!", {
+        toast.error("Xảy ra lỗi khi cập nhật hội đồng", {
           position: toast.POSITION.TOP_CENTER,
         });
       } finally {
@@ -243,12 +243,12 @@ const CouncilModal = ({
           <Icon name="cross-sm"></Icon>
         </a>
         <div className="p-2">
-          <h5 className="title">Council Detail</h5>
+          <h5 className="title">Chi tiết hội đồng</h5>
           <div className="mt-4">
             <Block className="mb-5">
               <div className="mb-3">
-                <span className="fw-bold me-2">Semester: {filterForm?.semester?.label}</span>
-                <span className="fw-bold me-2">Round: {filterForm?.round?.label}</span>
+                <span className="fw-bold me-2">Học kỳ: {filterForm?.semester?.label}</span>
+                <span className="fw-bold me-2">Lần chấm: {filterForm?.round?.label}</span>
               </div>
               <div style={{ height: 400, width: "100%" }}>
                 <DataGrid
@@ -271,11 +271,11 @@ const CouncilModal = ({
                   {isFetching ? (
                     <Button disabled color="primary">
                       <Spinner size="sm" />
-                      <span> Submitting... </span>
+                      <span> Đang Lưu... </span>
                     </Button>
                   ) : (
                     <Button color="primary" size="md" type="button" onClick={() => onSubmit()}>
-                      Submit
+                      Lưu
                     </Button>
                   )}
                 </li>

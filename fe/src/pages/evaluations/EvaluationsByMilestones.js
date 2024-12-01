@@ -48,7 +48,7 @@ function CustomToolbar({ rows, columns, columnsGroups, evaluations }) {
       await generateTemplateAllMileEval(rows, columns, columnsGroups, evaluations);
     } catch (error) {
       console.log("err export:", error);
-      toast.error(`Fail to export evaluation!`, {
+      toast.error(`Xảy ra lỗi khi xuất file`, {
         position: toast.POSITION.TOP_CENTER,
       });
     } finally {
@@ -81,7 +81,7 @@ function CustomToolbar({ rows, columns, columnsGroups, evaluations }) {
           <Spinner />
         ) : (
           <>
-            <FileDownloadIcon /> EXPORT
+            <FileDownloadIcon /> Xuất File
           </>
         )}
       </div>
@@ -153,7 +153,7 @@ export default function EvaluationsByMilestones({ evaluations, setEvaluations, l
     const createColumns = () => {
       if (evaluations === undefined || evaluations === null || evaluations.length === 0) setColumns([]);
       const baseColumns = [
-        { field: "fullname", headerName: "Full Name", width: 150 },
+        { field: "fullname", headerName: "Họ và tên", width: 150 },
         { field: "email", headerName: "Email", width: 260 },
       ];
 
@@ -166,7 +166,7 @@ export default function EvaluationsByMilestones({ evaluations, setEvaluations, l
           width: 70,
           type: "number",
           renderHeader: (params) => (
-            <Tooltip title={`Ongoing Grade`}>
+            <Tooltip title={`Điểm quá trình`}>
               <span className="fw-bold">OG</span>
             </Tooltip>
           ),
@@ -223,31 +223,6 @@ export default function EvaluationsByMilestones({ evaluations, setEvaluations, l
                 </>
               ),
             });
-            // criteriaColumns.push({
-            //   field: `${criteria.id}_comment`,
-            //   headerName: `comment`,
-            //   // width: 20,
-            //   renderHeader: () => (
-            //     <span title="Comment">
-            //       <CommentIcon />
-            //     </span>
-            //   ),
-            //   renderCell: (params) => (
-            //     <>
-            //       <AddCommentIcon onClick={(event) => onCommentClick(event, params.row, criteria.name, criteria.id)} />
-            //     </>
-            //   ),
-            // });
-            // colGroup.push({
-            //   groupId: `${criteria.name} (${criteria?.weight}%)`,
-            //   children: [
-            //     { field: `${criteria.id}_evalGrade`, headerAlign: "center", sx: centeredHeaderStyle },
-            //     { field: `${criteria.id}_comment`, headerAlign: "center", sx: centeredHeaderStyle },
-            //   ],
-            //   headerAlign: "center",
-            //   sx: centeredHeaderStyle,
-            //   description: `${criteria.id}_evalGrade`,
-            // });
           });
       }
 
@@ -273,7 +248,7 @@ export default function EvaluationsByMilestones({ evaluations, setEvaluations, l
   return (
     <>
       <ToastContainer />
-      <Head title="View Evaluation" />
+      <Head title="Danh sách điểm đánh giá" />
       {loadings ? (
         <div className="d-flex justify-content-center">
           <Spinner style={{ width: "3rem", height: "3rem" }} />
@@ -316,7 +291,7 @@ export default function EvaluationsByMilestones({ evaluations, setEvaluations, l
           >
             <div style={{ padding: 10, display: "flex", flexDirection: "column", gap: 10 }}>
               <p className="fw-bold">
-                Comment for {studentComment?.fullname} in {studentComment?.title}
+                Nhận xét cho {studentComment?.fullname} trong {studentComment?.title}
               </p>
               <TextareaAutosize
                 readOnly={true}

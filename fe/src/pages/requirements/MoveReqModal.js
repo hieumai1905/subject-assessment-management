@@ -34,7 +34,8 @@ export default function MoveReqModal({
   setSelectedItem,
   initFormData,
   role,
-  user
+  user,
+  classId
 }) {
   const [isFetching, setIsFetching] = useState({
     team: true,
@@ -61,28 +62,25 @@ export default function MoveReqModal({
       if (!formData?.milestone?.value) {
         setError("milestone", {
           type: "manual",
-          message: "This field is required",
+          message: "Trường này là bắt buộc",
         });
         return false;
       }
       if (!formData?.teams?.value) {
         setError("teams", {
           type: "manual",
-          message: "This field is required",
+          message: "Trường này là bắt buộc",
         });
         return false;
       }
-      // let teamIds = null;
       setIsFetching({ ...isFetching, submit: true });
-      // if (formData?.teams && formData?.teams.length > 0) {
-      //   teamIds = formData?.teams.map((te) => te.value);
-      // }
+
       const response = await authApi.put("/requirements/move-requirements", {
         milestoneId: formData?.milestone?.value,
         teamIds: [formData?.teams?.value],
         requirementIds: selectedData.map((item) => item.id),
       });
-      console.log("assigne reqs: ", response.data.data);
+      console.log("gán yêu cầu: ", response.data.data);
       if (response.data.statusCode === 200) {
         if (selectedData[0].milestoneId !== formData?.milestone?.value) {
           let unSelectedData = data.filter((item) => !item.checked);
@@ -91,7 +89,7 @@ export default function MoveReqModal({
           setData([...response.data.data, ...data]);
         }
         closeModal();
-        toast.success(`Assigne requirements successfully!`, {
+        toast.success(`Gán yêu cầu thành công!`, {
           position: toast.POSITION.TOP_CENTER,
         });
       } else {
@@ -100,8 +98,8 @@ export default function MoveReqModal({
         });
       }
     } catch (error) {
-      console.error("Error fetching data:", error);
-      toast.error("Error asigning requirements!", {
+      console.error("Lỗi khi lấy dữ liệu:", error);
+      toast.error("Lỗi khi gán yêu cầu!", {
         position: toast.POSITION.TOP_CENTER,
       });
     } finally {
@@ -136,7 +134,6 @@ export default function MoveReqModal({
       // });
     }
   }, [data, milestones, teamOptions]);
-
   useEffect(() => {
     const fetchTeams = async () => {
       if (!formData?.milestone?.value) {
@@ -150,20 +147,20 @@ export default function MoveReqModal({
         const response = await authApi.post("/teams/search", {
           pageSize: 9999,
           pageIndex: 1,
-          milestoneId: formData?.milestone?.value || initial?.milestone?.value,
+          classId: classId,
         });
-        console.log("teams:", response.data.data);
+        console.log("nhóm:", response.data.data);
         if (response.data.statusCode === 200) {
           let rTeams = response.data.data.teamDTOs;
           let teamOptions = convertToOptions(rTeams, "id", "teamName");
-          teamOptions = teamOptions?.filter((team) => team.label !== "Wish List");
+          teamOptions = teamOptions?.filter((team) => team.label !== "Danh sách mong muốn");
           let sameTeam = teamOptions.find((item) => item.value === initFormData?.teams?.value);
-          
-          if(!sameTeam && role === 'STUDENT'){
+
+          if (!sameTeam && role === "SINH VIÊN") {
             let isFound = false;
-            rTeams.forEach(item => {
-              item.members.forEach(tm => {
-                if(tm.id === user.id){
+            rTeams.forEach((item) => {
+              item.members.forEach((tm) => {
+                if (tm.id === user.id) {
                   sameTeam = {
                     value: item.id,
                     label: item.teamName,
@@ -171,12 +168,11 @@ export default function MoveReqModal({
                   isFound = true;
                 }
               });
-              if(isFound)
-                return;
+              if (isFound) return;
             });
           }
           if (sameTeam) {
-            teamOptions = teamOptions.filter(item => item.value === sameTeam.value);
+            teamOptions = teamOptions.filter((item) => item.value === sameTeam.value);
             setFormData({ ...formData, teams: sameTeam });
           } else {
             setFormData({ ...formData, teams: null });
@@ -186,8 +182,8 @@ export default function MoveReqModal({
           toast.error(`${response.data.data}`, { position: toast.POSITION.TOP_CENTER });
         }
       } catch (error) {
-        console.error("Error fetching data:", error);
-        toast.error("Error search teams!", { position: toast.POSITION.TOP_CENTER });
+        console.error("Lỗi khi lấy dữ liệu:", error);
+        toast.error("Lỗi tìm kiếm nhóm!", { position: toast.POSITION.TOP_CENTER });
       } finally {
         setIsFetching((prev) => ({ ...prev, team: false }));
       }
@@ -212,7 +208,7 @@ export default function MoveReqModal({
           <Icon name="cross-sm"></Icon>
         </a>
         <div className="p-2">
-          <h5 className="title">Assign Requirements</h5>
+          <h5 className="title">Chuyển Yêu cầu</h5>
           <div className="mt-4">
             <Row className="m-2 p-2">
               <Col md="12">
@@ -233,7 +229,7 @@ export default function MoveReqModal({
               </Col>
               <Col md="12">
                 <div className="form-group mt-4">
-                  <label className="form-label">Milestone*</label>
+                  <label className="form-label">Mốc thời gian*</label>
                   <RSelect
                     {...register("milestone")}
                     options={milestones}
@@ -247,7 +243,7 @@ export default function MoveReqModal({
               </Col>
               <Col md="12">
                 <div className="form-group mt-4">
-                  <label className="form-label">Teams</label>
+                  <label className="form-label">Nhóm</label>
                   {isFetching?.team ? (
                     <div>
                       <Spinner />
@@ -257,7 +253,6 @@ export default function MoveReqModal({
                       options={teams}
                       {...register("teams")}
                       value={formData.teams}
-                      // isMulti
                       onChange={(e) => {
                         setFormData({ ...formData, teams: e });
                       }}
@@ -267,16 +262,16 @@ export default function MoveReqModal({
                 </div>
               </Col>
               <Col className="mt-5" size="12">
-                <ul className=" text-end">
+                <ul className="text-end">
                   <li>
                     {isFetching?.submit ? (
                       <Button disabled color="primary">
                         <Spinner size="sm" />
-                        <span> Moving... </span>
+                        <span> Đang xử lý... </span>
                       </Button>
                     ) : (
                       <Button color="primary" size="md" type="button" onClick={() => onSubmit()}>
-                        Assign Requirements
+                        Chuyển Yêu cầu
                       </Button>
                     )}
                   </li>

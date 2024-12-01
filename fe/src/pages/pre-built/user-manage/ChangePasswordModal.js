@@ -27,7 +27,7 @@ const ChangePasswordModal = ({ isOpen, toggle, userId }) => {
       });
 
       if (response.data.statusCode === 200) {
-        toast.success("Change password successful!", {
+        toast.success("Đổi mật khẩu thành công", {
           position: toast.POSITION.TOP_CENTER,
         });
         setTimeout(() => {
@@ -40,7 +40,7 @@ const ChangePasswordModal = ({ isOpen, toggle, userId }) => {
         });
       }
     } catch (error) {
-      setError("oldPassword", { type: "manual", message: "Failed to change password" });
+      setError("oldPassword", { type: "manual", message: "Xảy ra lỗi khi đổi mật khẩu" });
     } finally {
       setLoading(false);
     }
@@ -48,16 +48,16 @@ const ChangePasswordModal = ({ isOpen, toggle, userId }) => {
   
   return (
     <Modal isOpen={isOpen} toggle={toggle} className="modal-dialog-centered">
-      <ModalHeader toggle={toggle}>Change Password</ModalHeader>
+      <ModalHeader toggle={toggle}>Đổi mật khẩu</ModalHeader>
       <Form onSubmit={handleSubmit(onSubmit)}>
         <ModalBody>
           <FormGroup>
-            <Label for="oldPassword">Current Password</Label>
+            <Label for="oldPassword">Mật khẩu hiện tại</Label>
             <Controller
               name="oldPassword"
               control={control}
               defaultValue=""
-              rules={{ required: "Current password is required" }}
+              rules={{ required: "Mật khẩu hiện tại là bắt buộc" }}
               render={({ field }) => (
                 <Input type="password" id="oldPassword" {...field} invalid={!!errors.oldPassword} />
               )}
@@ -65,12 +65,12 @@ const ChangePasswordModal = ({ isOpen, toggle, userId }) => {
             {errors.oldPassword && <div className="invalid-feedback">{errors.oldPassword.message}</div>}
           </FormGroup>
           <FormGroup>
-            <Label for="newPassword">New Password</Label>
+            <Label for="newPassword">Mật khẩu mới</Label>
             <Controller
               name="newPassword"
               control={control}
               defaultValue=""
-              rules={{ required: "New Password is required" }}
+              rules={{ required: "Mật khẩu mới là bắt buộc" }}
               render={({ field }) => (
                 <Input type="password" id="newPassword" {...field} invalid={!!errors.newPassword} />
               )}
@@ -78,14 +78,14 @@ const ChangePasswordModal = ({ isOpen, toggle, userId }) => {
             {errors.newPassword && <div className="invalid-feedback">{errors.newPassword.message}</div>}
           </FormGroup>
           <FormGroup>
-            <Label for="confirmPassword">Confirm New Password</Label>
+            <Label for="confirmPassword">Xác nhận mật khẩu mới</Label>
             <Controller
               name="confirmPassword"
               control={control}
               defaultValue=""
               rules={{
-                required: "Please confirm your new password",
-                validate: (value) => value === newPassword || "Passwords do not match",
+                required: "Vui lòng nhập lại mật khẩu mới",
+                validate: (value) => value === newPassword || "Mật khẩu mới không khớp",
               }}
               render={({ field }) => (
                 <Input type="password" id="confirmPassword" {...field} invalid={!!errors.confirmPassword} />
@@ -96,11 +96,11 @@ const ChangePasswordModal = ({ isOpen, toggle, userId }) => {
         </ModalBody>
         <ModalFooter>
           <Button color="primary" type="submit" disabled={loading}>
-            {loading ? "Changing..." : "Change Password"}
+            {loading ? "Đang đổi..." : "Đổi mật khẩu"}
           </Button>
                   
           <Button color="secondary" onClick={toggle} disabled={loading}>
-            Cancel
+            Hủy
           </Button>
         </ModalFooter>
         <ToastContainer />

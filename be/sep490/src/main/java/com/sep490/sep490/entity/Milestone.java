@@ -32,8 +32,8 @@ public class Milestone extends BaseEntity {
     private Integer expectedLoc;
     @Column(name = "eval_weight")
     private Integer evalWeight;
-    @Column(name = "type_evaluator")
-    private String typeEvaluator;
+    @Column(name = "evaluation_type")
+    private String evaluationType;
 
     @ManyToOne
     @EqualsAndHashCode.Exclude

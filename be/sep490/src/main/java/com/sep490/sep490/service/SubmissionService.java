@@ -3,22 +3,15 @@ package com.sep490.sep490.service;
 
 import com.sep490.sep490.common.exception.ApiInputException;
 import com.sep490.sep490.common.exception.ConflictException;
-import com.sep490.sep490.common.exception.NameAlreadyExistsException;
 import com.sep490.sep490.common.exception.RecordNotFoundException;
 import com.sep490.sep490.common.utils.Constants;
 import com.sep490.sep490.common.utils.ConvertUtils;
 import com.sep490.sep490.dto.RequirementDTO;
-import com.sep490.sep490.dto.SettingDTO;
 import com.sep490.sep490.dto.SubmissionDTO;
-import com.sep490.sep490.dto.requirement.request.SearchRequirementRequest;
 import com.sep490.sep490.dto.requirement.request.SubmitRequirementRequest;
-import com.sep490.sep490.dto.setting.request.SearchSettingRequest;
-import com.sep490.sep490.dto.setting.response.SearchSettingResponse;
 import com.sep490.sep490.dto.submission.request.SearchSubmissionRequest;
 import com.sep490.sep490.dto.submission.response.SearchSubmissionResponse;
-import com.sep490.sep490.dto.team.request.SearchTeamRequest;
 import com.sep490.sep490.entity.*;
-import com.sep490.sep490.mapper.SettingMapper;
 import com.sep490.sep490.mapper.SubmissionMapper;
 import com.sep490.sep490.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +25,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -69,8 +61,8 @@ public class SubmissionService{
             teams = getLastTeams(request.getMilestoneId());
         }
         if(request.getIsSearchGrandFinal()){
-            Team team = teamRepository.findById(request.getTeamId()).orElseThrow(() -> new RecordNotFoundException("Team"));
-            team.getClasses().getMilestones().stream().filter(item -> item.getTypeEvaluator().equals(Constants.TypeAssignments.GRAND_FINAL))
+            Team team = teamRepository.findById(request.getTeamId()).orElseThrow(() -> new RecordNotFoundException("Nhóm"));
+            team.getClasses().getMilestones().stream().filter(item -> item.getEvaluationType().equals(Constants.TypeAssignments.GRAND_FINAL))
                             .findFirst().ifPresent(item ->  request.setMilestoneId(item.getId()));
             teams.add(team);
         }
@@ -104,10 +96,10 @@ public class SubmissionService{
         }
         for (Submission submission : submissions.getContent()) {
             var milestone = milestoneRepository.findById(submission.getMilestoneId()).orElseThrow(
-                    () -> new RecordNotFoundException("Milestone")
+                    () -> new RecordNotFoundException("Cột mốc")
             );
             var team = teamRepository.findById(submission.getTeamId()).orElseThrow(
-                    () -> new RecordNotFoundException("Team")
+                    () -> new RecordNotFoundException("Nhóm")
             );
 //            var milestone = milestoneRepository.findById(submission.getMilestone().getId()).orElseThrow(
 //                    () -> new RecordNotFoundException("Milestone")
@@ -131,28 +123,9 @@ public class SubmissionService{
     }
 
     private List<Team> getLastTeams(Integer milestoneId) {
-        Milestone milestone = milestoneRepository.findById(milestoneId).orElseThrow(() -> new RecordNotFoundException("Milestone"));
+        Milestone milestone = milestoneRepository.findById(milestoneId).orElseThrow(() -> new RecordNotFoundException("Cột mốc"));
         if(milestone != null){
-            List<Milestone> milestones = milestone.getClasses().getMilestones().stream()
-                    .sorted(Comparator.comparing(Milestone::getDisplayOrder))
-                    .toList();
-            if(milestones.size() > 1){
-                int lastMilestoneId = milestones.get(0).getId(), index = -1;
-                for (int i = 1; i < milestones.size(); i++) {
-                    if(milestone.getId().equals(milestones.get(i).getId())){
-                        index = i-1;
-                        break;
-                    }
-                }
-                while (index >= 0){
-                    if(milestones.get(index).getTeams() != null && milestones.get(index).getTeams().size() > 0){
-                        lastMilestoneId = milestones.get(index).getId();
-                        break;
-                    }
-                    index--;
-                }
-                return teamRepository.findByMilestoneId(lastMilestoneId);
-            }
+            return milestone.getClasses().getTeams();
         }
         return new ArrayList<>();
     }

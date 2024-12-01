@@ -69,7 +69,7 @@ public class EvaluationServiceTest {
         request.setStudentEvals(Collections.singletonList(studentEvalRequest));
 
         milestone = new Milestone();
-        milestone.setTypeEvaluator(Constants.TypeAssignments.GRAND_FINAL);
+        milestone.setEvaluationType(Constants.TypeAssignments.GRAND_FINAL);
         milestone.setMilestoneCriteriaList(new ArrayList<>());
 
         team = new Team();
@@ -97,7 +97,7 @@ public class EvaluationServiceTest {
         when(teamRepository.findById(anyInt())).thenReturn(Optional.of(team));
 
         Milestone finalMilestone = new Milestone();
-        finalMilestone.setTypeEvaluator(Constants.TypeAssignments.GRAND_FINAL);
+        finalMilestone.setEvaluationType(Constants.TypeAssignments.GRAND_FINAL);
         finalMilestone.setMilestoneCriteriaList(new ArrayList<>());
 
         Object result = evaluationService.evaluateStudentForGrandFinal(request);
@@ -157,7 +157,7 @@ public class EvaluationServiceTest {
         when(teamRepository.findById(anyInt())).thenReturn(Optional.of(team));
 
         Milestone finalMilestone = new Milestone();
-        finalMilestone.setTypeEvaluator(Constants.TypeAssignments.GRAND_FINAL);
+        finalMilestone.setEvaluationType(Constants.TypeAssignments.GRAND_FINAL);
         finalMilestone.setMilestoneCriteriaList(new ArrayList<>());
         studentEvalRequest.setEvalGrade(11f);
 
@@ -181,7 +181,7 @@ public class EvaluationServiceTest {
         when(teamRepository.findById(anyInt())).thenReturn(Optional.of(team));
 
         Milestone finalMilestone = new Milestone();
-        finalMilestone.setTypeEvaluator(Constants.TypeAssignments.GRAND_FINAL);
+        finalMilestone.setEvaluationType(Constants.TypeAssignments.GRAND_FINAL);
         finalMilestone.setMilestoneCriteriaList(new ArrayList<>());
         String longComment = "a".repeat(751);
         studentEvalRequest.setComment(longComment);

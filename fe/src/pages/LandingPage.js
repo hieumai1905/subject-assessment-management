@@ -267,39 +267,39 @@ const LandingPage = () => {
 
   return (
     <>
-      <Head title="Homepage" />
+      <Head title="Trang chủ" />
       <Content>
         <BlockHead size="sm" className="p-4 rounded animate__animated animate__fadeInDown">
           <BlockBetween>
             <BlockHeadContent>
               <Title page tag="h2" className="text-dark" style={{ fontSize: "2rem" }}>
-                Lab Project Evaluation and Grading System
+                Hệ Thống Đánh Giá và Chấm Điểm Dự Án Lab
               </Title>
               <BlockDes>
                 <p className="text-dark" style={{ fontSize: "1.2rem" }}>
-                  Welcome to SWP Evaluation System
+                  Chào mừng đến với Hệ Thống Đánh Giá
                 </p>
               </BlockDes>
             </BlockHeadContent>
           </BlockBetween>
         </BlockHead>
 
-        {/* Introduction Section */}
-        <Block className="mt-5 animate__animated animate__fadeInUp text-center">
+        {/* Phần giới thiệu */}
+        {/* <Block className="mt-5 animate__animated animate__fadeInUp text-center">
           <ImageContainer
-            img="https://fpt.edu.vn/Resources/brand/uploads/Banner2.jpg"
-            style={{ width: "100%", height: "auto", borderRadius: "8px" }}
+            img={OIPAA}
+            style={{ width: "50%", height: "60px", borderRadius: "8px", objectFit: "cover" }}
           />
-        </Block>
+        </Block> */}
 
-        {/* Features Section */}
+        {/* Phần tính năng */}
         <Block className="mt-5 animate__animated animate__fadeInUp">
           <BlockHeadContent className="text-center mb-4">
             <Title tag="h4" style={{ fontSize: "1.5rem" }}>
-              Features
+              Tính Năng
             </Title>
             <BlockDes>
-              <p style={{ fontSize: "1.2rem" }}>Discover the key features of our platform:</p>
+              <p style={{ fontSize: "1.2rem" }}>Khám phá các tính năng chính của nền tảng:</p>
             </BlockDes>
           </BlockHeadContent>
           <Row className="g-gs text-center">
@@ -307,52 +307,40 @@ const LandingPage = () => {
               <FeatureCard>
                 <img
                   src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTRAXFPBNQyXTlEfNf8vVgJi2j0EKtuv0tYWQ&s"
-                  alt="Automated Grading"
+                  alt="Chấm điểm tự động"
                 />
-                <h5>Automated Grading</h5>
-                <p>
-                  Save time with our automated grading system, ensuring quick and accurate results s for improvement.
-                </p>
-                
+                <h5>Chấm điểm tự động</h5>
+                <p>Tiết kiệm thời gian với hệ thống chấm điểm tự động, đảm bảo kết quả nhanh chóng và chính xác.</p>
               </FeatureCard>
             </Col>
             <Col md="3">
               <FeatureCard>
-                <img src="https://cdn-icons-png.freepik.com/512/8437/8437070.png" alt="Detailed Feedback" />
-                <h5>Detailed Feedback</h5>
-                <p>Receive detailed feedback to help you understand your strengths and areas for improvement.</p>
-                
+                <img src="https://cdn-icons-png.freepik.com/512/8437/8437070.png" alt="Phản hồi chi tiết" />
+                <h5>Phản hồi chi tiết</h5>
+                <p>Nhận phản hồi chi tiết giúp bạn hiểu rõ điểm mạnh và các khía cạnh cần cải thiện.</p>
               </FeatureCard>
             </Col>
             <Col md="3">
               <FeatureCard>
-                <img src="https://cdn-icons-png.flaticon.com/512/463/463662.png" alt="Secure and Reliable" />
-                <h5>Secure and Reliable</h5>
-                <p>
-                  Your data is protected with the highest security standards to ensure privacy and reliability for
-                  improvement.
-                </p>
-                
+                <img src="https://cdn-icons-png.flaticon.com/512/463/463662.png" alt="Bảo mật và đáng tin cậy" />
+                <h5>Bảo mật và đáng tin cậy</h5>
+                <p>Dữ liệu của bạn được bảo vệ với các tiêu chuẩn bảo mật cao nhất để đảm bảo quyền riêng tư.</p>
               </FeatureCard>
             </Col>
             <Col md="3">
               <FeatureCard>
                 <img
                   src="https://www.pngitem.com/pimgs/m/621-6210821_rr-icon-recovery-new-tektronix-logo-hd-png.png"
-                  alt="Easy to use"
+                  alt="Dễ sử dụng"
                 />
-                <h5>Easy to use</h5>
-                <p>
-                  Interface is friendly, with the highest security standards easy for user to use and interact with
-                  system!
-                </p>
-                
+                <h5>Dễ sử dụng</h5>
+                <p>Giao diện thân thiện, dễ sử dụng và tương tác với hệ thống!</p>
               </FeatureCard>
             </Col>
           </Row>
         </Block>
 
-        {/* Testimonials Section */}
+        {/* Phần đánh giá của người dùng */}
         <Block
           className="mt-5 p-4 rounded animate__animated animate__fadeInUp testimonials-section"
           style={{
@@ -363,147 +351,81 @@ const LandingPage = () => {
         >
           <BlockHeadContent className="text-center mb-5">
             <Title tag="h4" style={{ fontSize: "1.5rem" }}>
-              Testimonials
+              Đánh Giá Từ Người Dùng
             </Title>
             <BlockDes>
-              <p style={{ fontSize: "1.2rem" }}>What our users are saying:</p>
+              <p style={{ fontSize: "1.2rem" }}>Những gì người dùng của chúng tôi nói:</p>
             </BlockDes>
           </BlockHeadContent>
           <Row className="g-gs">
             <Col md="4">
               <Testimonial color="#FF6347">
-                <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="User" />
+                <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Người dùng" />
                 <p style={{ fontSize: "1rem" }}>
-                  "The grading system has significantly improved our workflow and saved us a lot of time."
+                  "Hệ thống chấm điểm đã cải thiện đáng kể quy trình làm việc và tiết kiệm rất nhiều thời gian."
                 </p>
                 <p>
-                  <strong>- Vũ Minh Long (GV_FPTU), Instructor</strong>
+                  <strong>- Vũ Minh Long (GV_UTC), Giảng viên</strong>
                 </p>
               </Testimonial>
             </Col>
             <Col md="4">
               <Testimonial color="#4682B4">
-                <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="User" />
+                <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Người dùng" />
                 <p style={{ fontSize: "1rem" }}>
-                  "I love how easy it is to submit and receive feedback on my lab projects!"
+                  "Tôi rất thích cách dễ dàng để nộp bài và nhận phản hồi từ các dự án Lab!"
                 </p>
                 <p>
-                  <strong>- Nguyễn Đức Cường (K16_HL), Student</strong>
+                  <strong>- Nguyễn Đức Cường (K16_UTC), Sinh viên</strong>
                 </p>
               </Testimonial>
             </Col>
             <Col md="4">
               <Testimonial color="green">
-                <img src="https://randomuser.me/api/portraits/women/50.jpg" alt="User" />
-                <p style={{ fontSize: "1rem" }}>
-                  "I love how easy it is to submit and receive feedback on my lab projects."
-                </p>
+                <img src="https://randomuser.me/api/portraits/women/50.jpg" alt="Người dùng" />
+                <p style={{ fontSize: "1rem" }}>"Hệ thống dễ sử dụng và rất tiện lợi cho việc quản lý dự án Lab."</p>
                 <p>
-                  <strong>- Hoàng Tuấn Minh (k17_HCM), Student</strong>
+                  <strong>- Hoàng Tuấn Minh (K17_UTC), Sinh viên</strong>
                 </p>
               </Testimonial>
             </Col>
           </Row>
         </Block>
-
-        {/* Partners Section */}
-        {/* <Block className="mt-5 animate__animated animate__fadeInUp">
-          <BlockHeadContent className="text-center mb-5">
-            <Title tag="h4" style={{ fontSize: "1.5rem" }}>
-              Our Partners
-            </Title>
-            <BlockDes>
-              <p style={{ fontSize: "1.2rem" }}>We collaborate with leading cloud providers:</p>
-            </BlockDes>
-          </BlockHeadContent>
-          <Row className="g-gs text-center">
-            <Col md="2">
-              <PartnerImage img="https://finance.vietstock.vn/image/VPB" alt="Partner 1" />
-            </Col>
-            <Col md="2">
-              <PartnerImage
-                img="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ-9Qh2rJaKcHthgCzbqkeZ2GWJJmcT2M4oXA&s"
-                alt="Partner 2"
-              />
-            </Col>
-            <Col md="2">
-              <PartnerImage
-                img="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTLAlXVjRTlfdQ6oxkluC8JDvGJfyFzn-sOpg&s"
-                alt="Partner 3"
-              />
-            </Col>
-            <Col md="2">
-              <PartnerImage
-                img="https://casso.vn/wp-content/uploads/2023/07/Logo-TCB-H-1024x341.webp"
-                alt="Partner 4"
-              />
-            </Col>
-            <Col md="2">
-              <PartnerImage
-                img="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSqOIRHEJ2IGM3hdNBUE2C4_9izZ3Dds-HGKQ&s"
-                alt="Partner 5"
-              />
-            </Col>
-            <Col md="2">
-              <PartnerImage img="https://upload.wikimedia.org/wikipedia/commons/2/25/Logo_MB_new.png" alt="Partner 6" />
-            </Col>
-          </Row>
-        </Block> */}
       </Content>
+
       <BackToTopButton onClick={scrollToTop} visible={isVisible}>
         ↑
       </BackToTopButton>
       <FooterContainer>
         <FooterRow>
           <FooterColumn>
-            <h4>About Us</h4>
+            <h4>Về Chúng Tôi</h4>
             <p>
-              Our platform is dedicated to improving the efficiency and quality of lab project evaluations. We strive to
-              provide the best service for students and instructors alike.
+              Nền tảng của chúng tôi cam kết cải thiện hiệu quả và chất lượng trong việc đánh giá các dự án lab. Chúng
+              tôi nỗ lực cung cấp dịch vụ tốt nhất cho cả sinh viên và giảng viên.
             </p>
           </FooterColumn>
 
           <FooterColumn>
-            <h4>Quick Links</h4>
-            <ul>
-              <li>
-                <a href="#">Home</a>
-              </li>
-              <li>
-                <a href="#">Features</a>
-              </li>
-              <li>
-                <a href="#">Pricing</a>
-              </li>
-              <li>
-                <a href="#">Contact Us</a>
-              </li>
-              <li>
-                <a href="#">Support</a>
-              </li>
-            </ul>
-          </FooterColumn>
-
-          <FooterColumn>
-            <h4>Contact Us</h4>
+            <h4>Liên Hệ Với Chúng Tôi</h4>
             <p>Email: support@swpevaluationsystem.com</p>
-            <p>Phone: 024 7300 1866</p>
+            <p>Điện thoại: 024 7300 1866</p>
             <p>
-              Address: Khu Giáo dục và Đào tạo – Khu Công nghệ cao Hòa Lạc – Km29 Đại lộ Thăng Long, H. Thạch Thất, TP.
+              Địa chỉ: Khu Giáo dục và Đào tạo – Khu Công nghệ cao Hòa Lạc – Km29 Đại lộ Thăng Long, H. Thạch Thất, TP.
               Hà Nội
             </p>
           </FooterColumn>
 
           <FooterColumn>
-            <h4>Subscribe to our Newsletter</h4>
+            <h4>Đăng Ký Nhận Bản Tin</h4>
             <EmailForm>
-              <input type="email" placeholder="Enter your email" required />
-              <button type="submit">Subscribe</button>
+              <input type="email" placeholder="Nhập email của bạn" required />
+              <button type="submit">Đăng Ký</button>
             </EmailForm>
           </FooterColumn>
 
           <FooterColumn>
-            <h4>Follow Us</h4>
+            <h4>Theo Dõi Chúng Tôi</h4>
             <SocialIcons>
               <a href="#">
                 <FaFacebook />
@@ -522,7 +444,7 @@ const LandingPage = () => {
         </FooterRow>
 
         <FooterBottom>
-          <p>&copy; 2024 SWP Evaluation System. All rights reserved.</p>
+          <p>&copy; 2024 Hệ Thống Đánh Giá Môn Học. Bảo lưu mọi quyền.</p>
         </FooterBottom>
       </FooterContainer>
     </>

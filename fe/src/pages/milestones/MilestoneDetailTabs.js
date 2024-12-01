@@ -523,7 +523,7 @@ export default function MilestoneDetailTabs() {
                         <Col xs="12" sm="6" md="4">
                           <BlockDes className="text-muted" style={{ fontSize: "16px" }}>
                             <Icon name="briefcase" className="fs-5 me-2"></Icon>
-                            <strong>Type Evaluator:</strong> {milestone.typeEvaluator}
+                            <strong>Type Evaluator:</strong> {milestone.evaluationType}
                           </BlockDes>
                         </Col>
 

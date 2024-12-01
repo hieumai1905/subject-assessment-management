@@ -113,7 +113,7 @@ const SessionList = () => {
         }
       } catch (error) {
         console.error("Error fetching data:", error);
-        toast.error("Error search setting!", {
+        toast.error("Xảy ra lỗi khi tìm kiếm học kỳ", {
           position: toast.POSITION.TOP_CENTER,
         });
       } finally {
@@ -151,7 +151,7 @@ const SessionList = () => {
         }
       } catch (error) {
         console.error("Error fetching data:", error);
-        toast.error("Error search subject!", {
+        toast.error("Xảy ra lỗi khi tìm kiếm môn học", {
           position: toast.POSITION.TOP_CENTER,
         });
       } finally {
@@ -204,7 +204,7 @@ const SessionList = () => {
       }
     } catch (error) {
       console.error("Error fetching data:", error);
-      toast.error("Error search round!", {
+      toast.error("Xảy ra lỗi khi tìm kiếm lần đánh giá", {
         position: toast.POSITION.TOP_CENTER,
       });
     } finally {
@@ -239,7 +239,7 @@ const SessionList = () => {
       }
     } catch (error) {
       console.error("Error fetching data:", error);
-      toast.error("Error search sessions!", {
+      toast.error("Xảy ra lỗi khi tìm kiếm phiên đánh giá", {
         position: toast.POSITION.TOP_CENTER,
       });
     } finally {
@@ -332,7 +332,7 @@ const SessionList = () => {
       const response = await authApi.post("/sessions/create", submittedData);
       console.log("create session:", response.data.data);
       if (response.data.statusCode === 200) {
-        toast.success("Create session successfully!", {
+        toast.success("Tạo phiên đánh giá thành công", {
           position: toast.POSITION.TOP_CENTER,
         });
         setTotalElements(totalElements + 1);
@@ -346,7 +346,7 @@ const SessionList = () => {
       }
     } catch (error) {
       console.error("Error creating session:", error);
-      toast.error("Error creating session!", {
+      toast.error("Xảy ra lỗi khi tạo phiên đánh giá", {
         position: toast.POSITION.TOP_CENTER,
       });
     } finally {
@@ -372,7 +372,7 @@ const SessionList = () => {
       });
       console.log("edit session: ", response.data.data);
       if (response.data.statusCode === 200) {
-        toast.success("Update session successfully!", {
+        toast.success("Cập nhật phiên đánh giá thành công", {
           position: toast.POSITION.TOP_CENTER,
         });
         let submittedData;
@@ -403,7 +403,7 @@ const SessionList = () => {
       }
     } catch (error) {
       console.error("Error update session:", error);
-      toast.error("Error update session!", {
+      toast.error("Xảy ra lỗi khi cập nhật phiên đánh giá", {
         position: toast.POSITION.TOP_CENTER,
       });
     } finally {
@@ -431,18 +431,19 @@ const SessionList = () => {
   // function to delete selected item
   const onDeleteClick = async (id) => {
     Swal.fire({
-      title: "Are you sure?",
-      text: `Are you sure you want to delete this session?`,
+      title: "Bạn có chắc chắn?",
+      text: `Bạn có chắc chắn muốn xóa phiên đánh giánày?`,
       icon: "warning",
       showCancelButton: true,
-      confirmButtonText: "Yes, delete it!",
+      confirmButtonText: "Đồng ý xóa",
+      cancelButtonText: "Hủy",
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
           const response = await authApi.delete("/sessions/delete/" + id);
-          console.log("delete: ", response.data);
+          console.log("Xóa: ", response.data);
           if (response.data.statusCode === 200) {
-            toast.success("Delete session successfully!", {
+            toast.success("Xóa phiên đánh giá thành công!", {
               position: toast.POSITION.TOP_CENTER,
             });
             let newData = [...data];
@@ -457,8 +458,8 @@ const SessionList = () => {
             });
           }
         } catch (error) {
-          console.error("Error delete session:", error);
-          toast.error("Error delete session!", {
+          console.error("Lỗi khi xóa phiên đánh giá", error);
+          toast.error("Lỗi khi xóa phiên đánh giá", {
             position: toast.POSITION.TOP_CENTER,
           });
         }
@@ -483,12 +484,12 @@ const SessionList = () => {
     <>
       <Head title="Setting List"></Head>
       <Content>
-        <BlockTitle page>Final Presentation Sessions</BlockTitle>
-        <BlockDes>You have total {data.length} sessions</BlockDes>
+        <BlockTitle page>Các Phiên Đánh Giá Cuối Kỳ</BlockTitle>
+        <BlockDes>Bạn có tổng cộng {data.length} phiên đánh giá</BlockDes>
         <div className="d-flex justify-content-between align-items-end w-100 mb-3 mt-4">
           <div className="d-flex align-items-end" style={{ gap: "20px" }}>
             <div className="form-group mb-0" style={{ minWidth: "150px" }}>
-              <label className="form-label">Semester</label>
+              <label className="form-label">Học Kỳ</label>
               {isFetching?.semester ? (
                 <div>
                   <Spinner />
@@ -503,7 +504,7 @@ const SessionList = () => {
               )}
             </div>
             <div className="form-group mb-0" style={{ minWidth: "150px" }}>
-              <label className="form-label">Subject</label>
+              <label className="form-label">Môn Học</label>
               {isFetching?.subject ? (
                 <div>
                   <Spinner />
@@ -518,7 +519,7 @@ const SessionList = () => {
               )}
             </div>
             <div className="form-group mb-0" style={{ minWidth: "150px" }}>
-              <label className="form-label">Round</label>
+              <label className="form-label">Lần đánh giá</label>
               {isFetching?.round ? (
                 <div>
                   <Spinner />
@@ -543,7 +544,7 @@ const SessionList = () => {
                 }}
               >
                 <Icon name="plus"></Icon>
-                <span>Add Session</span>
+                <span>Thêm Mới</span>
               </Button>
             )}
           </div>
@@ -559,22 +560,22 @@ const SessionList = () => {
               <DataTableBody>
                 <DataTableHead className="nk-tb-item nk-tb-head">
                   <DataTableRow>
-                    <span className="sub-text">ID</span>
+                    <span className="sub-text">Mã</span>
                   </DataTableRow>
                   <DataTableRow>
-                    <span className="sub-text">Round</span>
+                    <span className="sub-text">Vòng</span>
                   </DataTableRow>
                   <DataTableRow>
-                    <span className="sub-text">Session</span>
+                    <span className="sub-text">Phiên Đánh Giá</span>
                   </DataTableRow>
                   <DataTableRow>
-                    <span className="sub-text">Date</span>
+                    <span className="sub-text">Ngày</span>
                   </DataTableRow>
                   <DataTableRow>
-                    <span className="sub-text">AM/PM</span>
+                    <span className="sub-text">Sáng/Chiều</span>
                   </DataTableRow>
                   <DataTableRow className="nk-tb-col-tools text-end">
-                    <span className="sub-text">Action</span>
+                    <span className="sub-text">Hành Động</span>
                   </DataTableRow>
                 </DataTableHead>
                 {data.length > 0
@@ -596,7 +597,7 @@ const SessionList = () => {
                             <span>{getOnlyDate(item.sessionDate)}</span>
                           </DataTableRow>
                           <DataTableRow>
-                            <span>{item.time ? "AM" : "PM"}</span>
+                            <span>{item.time ? "Sáng" : "Chiều"}</span>
                           </DataTableRow>
                           <DataTableRow className="nk-tb-col-tools text-end">
                             <ul className="nk-tb-actions gx-1">
@@ -619,7 +620,7 @@ const SessionList = () => {
                                           }}
                                         >
                                           <Icon name={`${canEdit ? "edit" : "info"}`}></Icon>
-                                          <span>{canEdit ? "Edit" : "View"}</span>
+                                          <span>{canEdit ? "Chỉnh Sửa" : "Xem"}</span>
                                         </DropdownItem>
                                       </li>
                                       {item.canDelete && canEdit && (
@@ -636,7 +637,7 @@ const SessionList = () => {
                                             }}
                                           >
                                             <Icon name="trash"></Icon>
-                                            <span>Delete</span>
+                                            <span>Xóa</span>
                                           </DropdownItem>
                                         </li>
                                       )}
@@ -661,7 +662,7 @@ const SessionList = () => {
                   />
                 ) : (
                   <div className="text-center">
-                    <span className="text-silent">No data found</span>
+                    <span className="text-silent">Không có dữ liệu</span>
                   </div>
                 )}
               </div>

@@ -9,11 +9,8 @@ import com.sep490.sep490.common.utils.ConvertUtils;
 import com.sep490.sep490.common.utils.ValidateUtils;
 import com.sep490.sep490.dto.MilestoneCriteriaDTO;
 import com.sep490.sep490.dto.MilestoneDTO;
-import com.sep490.sep490.dto.assignment.request.AssignmentRequest;
-import com.sep490.sep490.dto.evaluationCriteria.request.CreateMilestoneCriteriaRequest;
 import com.sep490.sep490.dto.evaluationCriteria.request.MilestoneCriteriaRequest;
 import com.sep490.sep490.dto.evaluationCriteria.response.MilestoneCriteriaResponse;
-import com.sep490.sep490.dto.milestone.request.MilestoneRequest;
 import com.sep490.sep490.dto.milestone.request.SearchMilestoneCriteriaRequest;
 import com.sep490.sep490.dto.milestone.request.SearchMilestoneRequest;
 import com.sep490.sep490.dto.milestone.request.UpdateMilestoneRequest;
@@ -386,13 +383,13 @@ public class MilestoneService implements BaseService<Milestone, Integer>{
             milestone.setDisplayOrder(assignment.getDisplayOrder());
             milestone.setEvalWeight(assignment.getEvalWeight());
             milestone.setExpectedLoc(assignment.getExpectedLoc());
-//            milestone.setTypeEvaluator(assignment.getTypeEvaluator());
-//            if(isFirstMilestone && assignment.getTypeEvaluator().equals(Constants.TypeAssignments.NORMAL)){
-//                milestone.setActive(true);
-//                isFirstMilestone = false;
-//            } else{
-//              milestone.setActive(false);
-//            }
+            milestone.setEvaluationType(assignment.getEvaluationType());
+            if(isFirstMilestone && assignment.getEvaluationType().equals(Constants.TypeAssignments.NORMAL)){
+                milestone.setActive(true);
+                isFirstMilestone = false;
+            } else{
+              milestone.setActive(false);
+            }
 //            milestone.setAssignment(assignment);
             milestone.setClasses(classes);
             cloneCriteria(assignment, milestone);

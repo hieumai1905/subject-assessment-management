@@ -93,7 +93,7 @@ const UserProfileAside = ({ updateSm, sm }) => {
               className={window.location.pathname === `${process.env.PUBLIC_URL}/user-profile` ? "active" : ""}
             >
               <Icon name="user-fill-c"></Icon>
-              <span>Personal Information</span>
+              <span>Thông tin cá nhân</span>
             </Link>
           </li>
           {/* <li onClick={() => updateSm(false)}>
@@ -122,7 +122,7 @@ const UserProfileAside = ({ updateSm, sm }) => {
               className={window.location.pathname === `${process.env.PUBLIC_URL}/user-profile-setting` ? "active" : ""}
             >
               <Icon name="lock-alt-fill"></Icon>
-              <span>Security Setting</span>
+              <span>Đổi mật khẩu</span>
             </Link>
           </li>
         </ul>

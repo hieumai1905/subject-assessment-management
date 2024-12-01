@@ -47,7 +47,7 @@ public class SessionController {
     @DeleteMapping("/delete/{id}")
     public HttpResponse<?> delete(@PathVariable("id") Integer id) {
         sessionsService.delete(id);
-        return HttpResponse.ok("Delete session successfully!");
+        return HttpResponse.ok("Xóa phiên đánh giá thành công");
     }
 
 }

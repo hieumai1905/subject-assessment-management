@@ -33,7 +33,7 @@ const useQueryMilestone = ({
                 console.log('milestone: ', response.data.data);
                 if(response.data.statusCode === 200) {
                     let rMilestone = response.data.data.milestoneResponses;
-                    setMilestones(rMilestone.filter(item => item.typeEvaluator !== evaluationTypes[2].value));
+                    setMilestones(rMilestone.filter(item => item.evaluationType !== evaluationTypes[2].value));
                     setTotalElements(response.data.data.totalElements);
                 }else{
                     setError(response.data.data);

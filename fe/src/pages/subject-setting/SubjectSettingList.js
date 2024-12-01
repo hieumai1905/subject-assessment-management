@@ -128,7 +128,7 @@ export const SubjectSettingList = ({ subject }) => {
       const response = await authApi.post("/setting/create", submittedData);
       console.log("create subject setting:", response.data.data);
       if (response.data.statusCode === 200) {
-        toast.success("Create subject setting successfully!", {
+        toast.success("Tạo cấu hình môn học thành công", {
           position: toast.POSITION.TOP_CENTER,
         });
         setTotalElements(totalElements + 1);
@@ -142,7 +142,7 @@ export const SubjectSettingList = ({ subject }) => {
       }
     } catch (error) {
       console.error("Error creating subject setting:", error);
-      toast.error("Error creating subject setting!", {
+      toast.error("Xảy ra lỗi khi tạo cấu hình môn học", {
         position: toast.POSITION.TOP_CENTER,
       });
     }
@@ -164,7 +164,7 @@ export const SubjectSettingList = ({ subject }) => {
       });
       console.log("edit subject setting: ", response.data);
       if (response.data.statusCode === 200) {
-        toast.success("Update subject setting successfully!", {
+        toast.success("Cập nhật cấu hình môn học thành công", {
           position: toast.POSITION.TOP_CENTER,
         });
         let submittedData;
@@ -193,7 +193,7 @@ export const SubjectSettingList = ({ subject }) => {
       }
     } catch (error) {
       console.error("Error update subject setting:", error);
-      toast.error("Error update subject setting!", {
+      toast.error("Xảy ra lỗi khi cập nhật cấu hình môn học", {
         position: toast.POSITION.TOP_CENTER,
       });
     }
@@ -243,7 +243,7 @@ export const SubjectSettingList = ({ subject }) => {
 
   return (
     <>
-      <Head title="Setting List"></Head>
+      <Head title="Danh sách cấu hình"></Head>
       {loading ? (
         <div className="d-flex justify-content-center">
           <Spinner style={{ width: "3rem", height: "3rem" }} />
@@ -253,8 +253,8 @@ export const SubjectSettingList = ({ subject }) => {
           <BlockHead size="sm">
             <BlockBetween>
               <BlockHeadContent>
-                <BlockTitle page> Settings</BlockTitle>
-                <BlockDes className="text-soft">You have total {totalElements} settings</BlockDes>
+                <BlockTitle page>Cấu hình</BlockTitle>
+                <BlockDes className="text-soft">Bạn có tổng cộng {totalElements} cấu hình</BlockDes>
               </BlockHeadContent>
               <BlockHeadContent>
                 <div className="toggle-wrap nk-block-tools-toggle">
@@ -270,12 +270,12 @@ export const SubjectSettingList = ({ subject }) => {
                         <UncontrolledDropdown>
                           <DropdownToggle tag="a" className="dropdown-toggle btn btn-white btn-dim btn-outline-light">
                             <Icon name="filter-alt" className="d-none d-sm-inline"></Icon>
-                            <span>Filtered By</span>
+                            <span>Bộ lọc</span>
                             <Icon name="chevron-right" className="dd-indc"></Icon>
                           </DropdownToggle>
                           <DropdownMenu end className="filter-wg dropdown-menu-xl" style={{ overflow: "visible" }}>
                             <div className="dropdown-head">
-                              <span className="sub-title dropdown-title">Filter Setting</span>
+                              <span className="sub-title dropdown-title">Lọc cấu hình</span>
                               <div className="dropdown">
                                 <a
                                   href="#more"
@@ -292,11 +292,11 @@ export const SubjectSettingList = ({ subject }) => {
                               <Row className="gx-6 gy-3">
                                 <Col size="12">
                                   <div className="form-group">
-                                    <label className="form-label">Setting Name</label>
+                                    <label className="form-label">Tên cấu hình</label>
                                     <input
                                       type="text"
                                       value={filterForm.name}
-                                      placeholder="Enter setting name"
+                                      placeholder="Nhập tên cấu hình"
                                       onChange={(e) => setFilterForm({ ...filterForm, name: e.target.value })}
                                       className="form-control"
                                     />
@@ -304,7 +304,7 @@ export const SubjectSettingList = ({ subject }) => {
                                 </Col>
                                 <Col size="6">
                                   <div className="form-group">
-                                    <label className="overline-title overline-title-alt">Setting Type</label>
+                                    <label className="overline-title overline-title-alt">Loại cấu hình</label>
                                     <RSelect
                                       options={settingTypeData}
                                       value={filterForm.type}
@@ -314,7 +314,7 @@ export const SubjectSettingList = ({ subject }) => {
                                 </Col>
                                 <Col size="6">
                                   <div className="form-group">
-                                    <label className="overline-title overline-title-alt">Status</label>
+                                    <label className="overline-title overline-title-alt">Trạng thái</label>
                                     <RSelect
                                       options={statusList}
                                       value={filterForm.active}
@@ -340,7 +340,7 @@ export const SubjectSettingList = ({ subject }) => {
                                 }}
                                 className="clickable"
                               >
-                                Reset Filter
+                                Đặt lại bộ lọc
                               </a>
                               <button
                                 onClick={() => {
@@ -349,7 +349,7 @@ export const SubjectSettingList = ({ subject }) => {
                                 type="button"
                                 className="btn btn-secondary"
                               >
-                                Filter
+                                Lọc
                               </button>
                             </div>
                           </DropdownMenu>
@@ -359,7 +359,7 @@ export const SubjectSettingList = ({ subject }) => {
                         <li className="nk-block-tools-opt" onClick={() => setModal({ add: true })}>
                           <Button color="primary">
                             <Icon name="plus"></Icon>
-                            <span>Add Setting</span>
+                            <span>Thêm cấu hình</span>
                           </Button>
                         </li>
                       )}
@@ -380,30 +380,30 @@ export const SubjectSettingList = ({ subject }) => {
                   </DataTableRow>
                   <DataTableRow>
                     <span onClick={() => handleSort("name")} className="sub-text">
-                      Setting Name {upDownArrow(sortBy === "name" ? orderBy : "")}
+                      Tên cấu hình {upDownArrow(sortBy === "name" ? orderBy : "")}
                     </span>
                   </DataTableRow>
                   <DataTableRow size="mb">
                     <span onClick={() => handleSort("extValue")} className="sub-text">
-                      Value {upDownArrow(sortBy === "extValue" ? orderBy : "")}
+                      Giá trị {upDownArrow(sortBy === "extValue" ? orderBy : "")}
                     </span>
                   </DataTableRow>
                   <DataTableRow size="mb">
                     <span onClick={() => handleSort("settingType")} className="sub-text">
-                      Setting Type {upDownArrow(sortBy === "settingType" ? orderBy : "")}
+                      Loại cấu hình {upDownArrow(sortBy === "settingType" ? orderBy : "")}
                     </span>
                   </DataTableRow>
                   <DataTableRow size="mb">
                     <span onClick={() => handleSort("displayOrder")} className="sub-text">
-                      Priority {upDownArrow(sortBy === "displayOrder" ? orderBy : "")}
+                      Mức ưu tiên {upDownArrow(sortBy === "displayOrder" ? orderBy : "")}
                     </span>
                   </DataTableRow>
                   <DataTableRow size="mb">
-                    <span className="sub-text">Status</span>
+                    <span className="sub-text">Trạng thái</span>
                   </DataTableRow>
                   {canModify(role, "subject-setting", "crud") && (
                     <DataTableRow className="nk-tb-col-tools text-end">
-                      <span className="sub-text">Action</span>
+                      <span className="sub-text">Hành động</span>
                     </DataTableRow>
                   )}
                 </DataTableHead>
@@ -427,12 +427,12 @@ export const SubjectSettingList = ({ subject }) => {
                             <span>{item.displayOrder}</span>
                           </DataTableRow>
                           <DataTableRow size="mb">
-                            <span>{item.active ? "Active" : "InActive"}</span>
+                            <span>{item.active ? "Hoạt động" : "Không hoạt động"}</span>
                           </DataTableRow>
                           {canModify(role, "subject-setting", "crud") && (
                             <DataTableRow className="nk-tb-col-tools text-end">
                               <Button onClick={() => onEditClick(item.id)} color="warning">
-                                Edit
+                                Sửa
                               </Button>
                             </DataTableRow>
                           )}
@@ -451,7 +451,7 @@ export const SubjectSettingList = ({ subject }) => {
                   />
                 ) : (
                   <div className="text-center">
-                    <span className="text-silent">No settings found</span>
+                    <span className="text-silent">Không có cấu hình nào</span>
                   </div>
                 )}
               </div>
