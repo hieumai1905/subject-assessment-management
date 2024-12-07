@@ -110,6 +110,8 @@ export const ViewStudentEval = ({ data, classId, loadings }) => {
                 (item.updateRequirementEval && item.updateRequirementEval.grade))
           );
           setWorkEvaluation(workEval);
+        } else{
+          setWorkEvaluation([]);
         }
         setComplexity(response.data.data?.complexities);
         setQuality(response.data.data?.qualities);
@@ -118,7 +120,7 @@ export const ViewStudentEval = ({ data, classId, loadings }) => {
       }
     } catch (error) {
       console.error("Error fetching data:", error);
-      toast.error("Error searching work evaluations!", { position: toast.POSITION.TOP_CENTER });
+      toast.error("Xảy ra lỗi khi tìm kiếm đánh giá yêu cầu", { position: toast.POSITION.TOP_CENTER });
     } finally {
       setIsFetching({ ...isFetching, [`reqEval-${milestoneId}`]: false });
       setModal({ detail: true });
@@ -147,13 +149,15 @@ export const ViewStudentEval = ({ data, classId, loadings }) => {
           //       (item.updateRequirementEval && item.updateRequirementEval.grade))
           // );
           setWorkEvaluation(workEval);
+        } else{
+          setWorkEvaluation([]);
         }
       } else {
         toast.error(`${response.data.data}`, { position: toast.POSITION.TOP_CENTER });
       }
     } catch (error) {
       console.error("Error fetching data:", error);
-      toast.error("Error search work evaluations!", { position: toast.POSITION.TOP_CENTER });
+      toast.error("Xảy ra lỗi khi tìm kiếm đánh giá yêu cầu", { position: toast.POSITION.TOP_CENTER });
     } finally {
       setIsFetching({ ...isFetching, [`reqEval-${milestoneId}`]: false });
       setModal({ grand_final: true });
@@ -172,11 +176,11 @@ export const ViewStudentEval = ({ data, classId, loadings }) => {
         <table style={tableStyle}>
           <thead>
             <tr>
-              <th style={headerCellStyle}>Milestone</th>
-              <th style={headerCellStyle}>Criteria</th>
-              <th style={headerCellStyle}>Grade</th>
-              <th style={headerCellStyle}>Comment/Status</th>
-              <th style={headerCellStyle}>Total LOC</th>
+              <th style={headerCellStyle}>Cột mốc</th>
+              <th style={headerCellStyle}>Tiêu chí</th>
+              <th style={headerCellStyle}>Điểm</th>
+              <th style={headerCellStyle}>Nhận xét</th>
+              <th style={headerCellStyle}>Tổng LOC</th>
             </tr>
           </thead>
           <tbody>
@@ -207,7 +211,7 @@ export const ViewStudentEval = ({ data, classId, loadings }) => {
                           {isFetching[`reqEval-${item.id}`] ? (
                             <Button disabled color="primary">
                               <Spinner size="sm" />
-                              <span> Loading... </span>
+                              <span> Đang tải... </span>
                             </Button>
                           ) : (
                             <button
@@ -220,7 +224,7 @@ export const ViewStudentEval = ({ data, classId, loadings }) => {
                                 }
                               }}
                             >
-                              {totalLOC || 0} LOC Detail
+                              {totalLOC || 0} - Xem chi tiết
                             </button>
                           )}
                         </td>
@@ -240,7 +244,7 @@ export const ViewStudentEval = ({ data, classId, loadings }) => {
                         </tr>
                       ))}
                       <tr>
-                        <td style={cellStyle}>Total ({item.weight}%)</td>
+                        <td style={cellStyle}>Tổng ({item.weight}%)</td>
                         <td style={cellStyle}>{evalGrade}</td>
                         <td style={cellStyle}>
                           <CommentIcon
@@ -273,7 +277,7 @@ export const ViewStudentEval = ({ data, classId, loadings }) => {
                         {isFetching[`reqEval-${item.id}`] ? (
                           <Button disabled color="primary" variant="contained">
                             <Spinner size="sm" />
-                            <span> Loading... </span>
+                            <span> Đang tải... </span>
                           </Button>
                         ) : (
                           !item.status && (
@@ -287,7 +291,7 @@ export const ViewStudentEval = ({ data, classId, loadings }) => {
                                 }
                               }}
                             >
-                              {totalLOC || 0} LOC Detail
+                              {totalLOC || 0} - Xem chi tiết
                             </button>
                           )
                         )}
@@ -299,7 +303,7 @@ export const ViewStudentEval = ({ data, classId, loadings }) => {
             ) : (
               <tr>
                 <td colSpan="5" style={cellStyle}>
-                  No data found!
+                  Không có dữ liệu
                 </td>
               </tr>
             )}
@@ -321,12 +325,12 @@ export const ViewStudentEval = ({ data, classId, loadings }) => {
         }}
       >
         <div style={popoverContentStyle}>
-          <p className="fw-bold">Comment in {studentComment?.title}</p>
+          <p className="fw-bold">Nhận xét trong {studentComment?.title}</p>
           <TextareaAutosize
             readOnly
             minRows={3}
             maxRows={5}
-            placeholder="Any comment"
+            placeholder="nhận xét"
             style={{ width: "100%", overflow: "auto" }}
             value={comment}
           />

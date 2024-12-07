@@ -13,7 +13,7 @@ public class EvaluateReqForGrandFinal {
     private Integer teamId;
     List<EvaluateRequirementRequest> evalRequirements;
     public void validateInput(){
-        ValidateUtils.checkNullOrEmpty(sessionId, "Session id");
-        ValidateUtils.checkNullOrEmpty(teamId, "Team id");
+        ValidateUtils.checkNullOrEmpty(sessionId, "Phiên chấm");
+        ValidateUtils.checkNullOrEmpty(teamId, "Nhóm");
     }
 }

@@ -25,14 +25,14 @@ public class AssignmentDTO {
     private List<EvaluationCriteriaDTO> evaluationCriterias;
 
     public void validateInput(){
-        ValidateUtils.checkNullOrEmpty(title, "Assignment title");
-        title = ValidateUtils.checkLength(title, "Assignment title", 1, 255);
+        ValidateUtils.checkNullOrEmpty(title, "Tiêu đề");
+        title = ValidateUtils.checkLength(title, "Tiêu đề", 1, 255);
 
-        note = ValidateUtils.checkLength(note, "Assignment note", 0, Constants.DefaultValueEntity.DESCRIPTION_LENGTH);
+        note = ValidateUtils.checkLength(note, "Ghi chú", 0, Constants.DefaultValueEntity.DESCRIPTION_LENGTH);
 
-        ValidateUtils.checkIntegerInRange(expectedLoc, "Assignment expected loc", 0, Integer.MAX_VALUE);
+        ValidateUtils.checkIntegerInRange(expectedLoc, "LOC mong muốn", 0, Integer.MAX_VALUE);
 
-        ValidateUtils.checkNullOrEmpty(evalWeight, "Evaluation Weight");
-        ValidateUtils.checkIntegerInRange(evalWeight, "Evaluation Weight", 1, 100);
+        ValidateUtils.checkNullOrEmpty(evalWeight, "Tỷ trọng");
+        ValidateUtils.checkIntegerInRange(evalWeight, "Tỷ trọng", 1, 100);
     }
 }

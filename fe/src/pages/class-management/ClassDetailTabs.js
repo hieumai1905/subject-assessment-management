@@ -337,7 +337,7 @@ export default function ClassDetailTabs() {
                 Nhóm
               </NavLink>
             </NavItem>
-            {/* {role !== "STUDENT" && (
+            {role !== "STUDENT" && (
               <NavItem>
                 <NavLink
                   tag="a"
@@ -352,7 +352,7 @@ export default function ClassDetailTabs() {
                   Tiêu Chí Đánh Giá
                 </NavLink>
               </NavItem>
-            )} */}
+            )}
           </Nav>
 
           <TabContent activeTab={activeTab}>

@@ -59,8 +59,9 @@ const FormModal = ({
       });
       console.log("add reqs: ", response.data.data);
       if (response.data.statusCode === 200) {
-        setData((prev) => [...response.data.data, ...prev]);
-        setTotalItems((prev) => prev + response.data.data.length);
+        let res = response.data.data.filter(item => item.teamId === currentTeam?.value);
+        setData((prev) => [...res, ...prev]);
+        setTotalItems((prev) => prev + res.length);
         closeModal();
         toast.success(`Thêm yêu cầu thành công`, {
           position: toast.POSITION.TOP_CENTER,

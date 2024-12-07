@@ -10,11 +10,11 @@ public class UpdateStatusRequirementRequest {
     Integer requirementId;
     Integer teamId;
     public void validateInput(){
-        ValidateUtils.checkNullOrEmpty(requirementId, "Requirement id");
-        ValidateUtils.checkNullOrEmpty(teamId, "Team id");
-        ValidateUtils.checkNullOrEmpty(status, "Status");
+        ValidateUtils.checkNullOrEmpty(requirementId, "Yêu cầu");
+        ValidateUtils.checkNullOrEmpty(teamId, "Nhóm");
+        ValidateUtils.checkNullOrEmpty(status, "Trạng thái");
 
         status = (ValidateUtils.checkExistedInList(Constants.RequirementStatus.REQUIREMENT_STATUSES, status,
-                "Status", Constants.RequirementStatus.REQUIREMENT_STATUSES.get(0)));
+                "Trạng thái", Constants.RequirementStatus.REQUIREMENT_STATUSES.get(0)));
     }
 }

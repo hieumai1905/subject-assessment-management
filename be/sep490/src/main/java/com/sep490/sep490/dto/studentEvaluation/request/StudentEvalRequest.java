@@ -17,12 +17,12 @@ public class StudentEvalRequest {
 
     public void validateInput(boolean isGrandFinalEval){
         if(!isGrandFinalEval)
-            ValidateUtils.checkNullOrEmpty(milestoneId, "Milestone id");
+            ValidateUtils.checkNullOrEmpty(milestoneId, "Cột mốc");
         if((email == null || email.isBlank()) && teamId == null)
-            throw new ApiInputException("Email or team id is required!");
+            throw new ApiInputException("Email hoặc nhóm là bắt buộc");
         if(evalGrade != null && (evalGrade < 0 || evalGrade > 10))
-            throw new ApiInputException("Grade must be in range 0 to 10!");
-        comment = ValidateUtils.checkLength(comment, "Comment",
+            throw new ApiInputException("Điểm phải nằm trong đoạn từ 0 đến 10");
+        comment = ValidateUtils.checkLength(comment, "Nhận xét",
                 Constants.DefaultValueEntity.MIN_LENGTH, Constants.DefaultValueEntity.DESCRIPTION_LENGTH);
     }
 }

@@ -31,7 +31,7 @@ import useAuthStore from "../../store/Userstore";
 import { useLocation } from "react-router-dom";
 import Head from "../../layout/head/Head";
 import Content from "../../layout/content/Content";
-import { evaluationTypes } from "../../data/ConstantData";
+import { evaluationTypes, fullRequirementStatuses } from "../../data/ConstantData";
 
 const SubmitDetail = (
   {
@@ -516,7 +516,7 @@ const SubmitDetail = (
                                     <span>{item.reqTitle}</span>
                                   </DataTableRow>
                                   <DataTableRow>
-                                    <span style={{ cursor: "pointer" }}>{item.status}</span>
+                                    <span style={{ cursor: "pointer" }}>{fullRequirementStatuses.find(s => s.value === item.status)?.label}</span>
                                   </DataTableRow>
                                   <DataTableRow>
                                     <UncontrolledDropdown>

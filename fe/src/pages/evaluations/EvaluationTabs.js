@@ -38,10 +38,19 @@ export default function EvaluationTabs() {
   const [haveChanged, setHaveChanged] = useState(false);
   const { role } = useAuthStore((state) => state);
   const { user } = useAuthStore((state) => state);
-  // const navigate = useNavigate();
+  const [isFetching, setIsFetching] = useState({
+    semester: true,
+    subject: true,
+    class: true,
+    milestone: true,
+    team: true,
+    reqEval: false,
+    studentEval: false,
+    allMileEval: true,
+  });
 
   const toggle = (tab) => {
-    if (activeTab !== tab) {
+    if (activeTab !== tab && checkCanSwitchTab(tab)) {
       if (activeTab !== "3") {
         if (haveChanged && role === "TEACHER") {
           Swal.fire({
@@ -66,16 +75,24 @@ export default function EvaluationTabs() {
     }
   };
 
-  const [isFetching, setIsFetching] = useState({
-    semester: true,
-    subject: true,
-    class: true,
-    milestone: true,
-    team: true,
-    reqEval: false,
-    studentEval: false,
-    allMileEval: true,
-  });
+  const checkCanSwitchTab = (tab) => {
+    if(isFetching?.semester || isFetching?.subject || isFetching?.class 
+      || isFetching?.milestone || isFetching?.team){
+        return false;
+    }
+    
+    if(tab === "3" && isFetching?.allMileEval){
+      return false;
+    }
+    if(tab === "2" && isFetching?.studentEval){
+      return false;
+    }
+    if(tab === "1" && isFetching?.reqEval){
+      return false;
+    }
+    return true;
+  }
+
   const [filterForm, setFilterForm] = useState({
     semester: null,
     subject: null,

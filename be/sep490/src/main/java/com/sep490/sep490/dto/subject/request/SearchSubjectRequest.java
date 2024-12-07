@@ -13,6 +13,7 @@ public class SearchSubjectRequest extends SearchRequestDTO {
     private String nameOrCode;
     private Integer managerId;
     private Boolean active;
+    private Boolean isCouncil;
     private String sortBy;
 
     public void validateInput(){

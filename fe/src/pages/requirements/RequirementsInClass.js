@@ -866,36 +866,6 @@ export default function RequirementsInClass() {
                               </Col> */}
                             </Row>
                           </div>
-                          {/* <div className="dropdown-foot between">
-                            <a
-                              href="#reset"
-                              onClick={(ev) => {
-                                ev.preventDefault();
-                                // setFilterFormData({
-                                //   nameOrCode: "",
-                                //   managerId: null,
-                                //   status: null,
-                                // });
-                                // setSearchSubjects({});
-                                // setSelectedManager({
-                                //   fullname: "",
-                                //   username: "",
-                                // });
-                              }}
-                              className="clickable"
-                            >
-                              Đặt lại bộ lọc
-                            </a>
-                            <button
-                              onClick={() => {
-                                // setSearchSubjects(filterFormData);
-                              }}
-                              settingType="button"
-                              className="btn btn-secondary"
-                            >
-                              Lọc
-                            </button>
-                          </div> */}
                         </DropdownMenu>
                       </UncontrolledDropdown>
                     </li>

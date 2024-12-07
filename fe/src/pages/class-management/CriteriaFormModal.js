@@ -26,14 +26,14 @@ const CriteriaFormModal = ({ id, modal, setModal, modalType, criterias, setCrite
       (criteria) => criteria.criteriaName.toLowerCase() === criteriaName.trim().toLowerCase() && criteria.id !== id
     );
     if (isNullOrEmpty(criteriaName.trim())) {
-      setError("criteriaName", { type: "manual", message: "Criteria name can't be blank" });
+      setError("criteriaName", { type: "manual", message: "Tên tiêu chí không được để trống" });
       return false;
     } else if (existByName) {
-      setError("criteriaName", { type: "manual", message: "Criteria name already exists" });
+      setError("criteriaName", { type: "manual", message: "Tên tiêu chí đã tồn tại" });
       return false;
     }
     if (evalWeight < 0) {
-      setError("evalWeight", { type: "manual", message: "Eval Weight must be greater than zero" });
+      setError("evalWeight", { type: "manual", message: "Tỷ trọng đánh giá phải lớn hơn 0" });
       return false;
     }
     return true;
@@ -92,18 +92,18 @@ const CriteriaFormModal = ({ id, modal, setModal, modalType, criterias, setCrite
         </a>
         <div className="p-2">
           <h5 className="title">
-            {modalType === "add" && "Add Criteria"} {modalType === "edit" && "Update Criteria"}
+            {modalType === "add" && "Thêm tiêu chí"} {modalType === "edit" && "Cập nhật tiêu chí"}
           </h5>
           <div className="mt-4">
             <Form className="row gy-4" onSubmit={handleSubmit(onSubmit)}>
               <Col md="12">
                 <div className="form-group">
-                  <label className="form-label">Criteria Name*</label>
+                  <label className="form-label">Tên tiêu chí*</label>
                   <input
                     type="text"
-                    {...register("criteriaName", { required: "This field is required" })}
+                    {...register("criteriaName", { required: "Trường này là bắt buộc" })}
                     value={formData.criteriaName}
-                    placeholder="Enter criteria name"
+                    placeholder="Nhập tên tiêu chí"
                     onChange={(e) => setFormData({ ...formData, criteriaName: e.target.value })}
                     className="form-control"
                   />
@@ -112,12 +112,12 @@ const CriteriaFormModal = ({ id, modal, setModal, modalType, criterias, setCrite
               </Col>
               <Col md="6">
                 <div className="form-group">
-                  <label className="form-label">Evaluation Weight (%)*</label>
+                  <label className="form-label">Tỷ trọng đánh giá (%)*</label>
                   <input
                     type="number"
-                    {...register("evalWeight", { required: "This field is required" })}
+                    {...register("evalWeight", { required: "Trường này là bắt buộc" })}
                     value={formData.evalWeight}
-                    placeholder="Enter evaluation weight"
+                    placeholder="Nhập tỷ trọng đánh giá"
                     onChange={(e) => setFormData({ ...formData, evalWeight: e.target.value })}
                     className="form-control"
                   />
@@ -126,7 +126,7 @@ const CriteriaFormModal = ({ id, modal, setModal, modalType, criterias, setCrite
               </Col>
               <Col md="6">
                 <div className="form-group">
-                  <label className="form-label">LOC Evaluation</label>
+                  <label className="form-label">Đánh giá LOC</label>
                   <br />
                   <ul className="custom-control-group">
                     <li>
@@ -147,7 +147,7 @@ const CriteriaFormModal = ({ id, modal, setModal, modalType, criterias, setCrite
                           }}
                         />
                         <label className="custom-control-label" htmlFor="btnRadioControl1LOC">
-                          Yes
+                          Có
                         </label>
                       </div>
                     </li>
@@ -169,69 +169,19 @@ const CriteriaFormModal = ({ id, modal, setModal, modalType, criterias, setCrite
                           }}
                         />
                         <label className="custom-control-label" htmlFor="btnRadioControl5LOC">
-                          No
+                          Không
                         </label>
                       </div>
                     </li>
                   </ul>
                 </div>
               </Col>
-              {/* <Col md="6">
-                <div className="form-group">
-                  <label className="form-label">Status</label>
-                  <br />
-                  <ul className="custom-control-group">
-                    <li>
-                      <div
-                        style={{ height: 40 }}
-                        className="custom-control custom-control-sm custom-radio custom-control-pro checked"
-                      >
-                        <input
-                          type="radio"
-                          className="custom-control-input"
-                          name="btnRadioControl"
-                          id="btnRadioControl1"
-                          defaultChecked={formData.active === "Active" || modalType === "add"}
-                          value={"Active"}
-                          onClick={(e) => {
-                            setFormData({ ...formData, active: e.target.value });
-                          }}
-                        />
-                        <label className="custom-control-label" htmlFor="btnRadioControl1">
-                          Active
-                        </label>
-                      </div>
-                    </li>
-                    <li>
-                      <div
-                        style={{ height: 40 }}
-                        className="custom-control custom-control-sm custom-radio custom-control-pro"
-                      >
-                        <input
-                          type="radio"
-                          className="custom-control-input"
-                          name="btnRadioControl"
-                          id="btnRadioControl5"
-                          defaultChecked={formData.active === "InActive"}
-                          value={"InActive"}
-                          onClick={(e) => {
-                            setFormData({ ...formData, active: e.target.value });
-                          }}
-                        />
-                        <label className="custom-control-label" htmlFor="btnRadioControl5">
-                          InActive
-                        </label>
-                      </div>
-                    </li>
-                  </ul>
-                </div>
-              </Col> */}
               <Col size="12">
                 <div className="form-group">
-                  <label className="form-label">Note</label>
+                  <label className="form-label">Ghi chú</label>
                   <textarea
                     value={formData.note}
-                    placeholder="Your note"
+                    placeholder="Nhập ghi chú"
                     onChange={(e) => setFormData({ ...formData, note: e.target.value })}
                     className="form-control-xl form-control no-resize"
                   />
@@ -241,20 +191,9 @@ const CriteriaFormModal = ({ id, modal, setModal, modalType, criterias, setCrite
                 <ul className=" text-end">
                   <li>
                     <Button color="primary" size="md" type="submit">
-                      {modalType === "add" && "Add Criteria"} {modalType === "edit" && "Update Criteria"}
+                      {modalType === "add" && "Thêm tiêu chí"} {modalType === "edit" && "Cập nhật"}
                     </Button>
                   </li>
-                  {/* <li>
-                    <Button
-                      onClick={(ev) => {
-                        ev.preventDefault();
-                        closeModal();
-                      }}
-                      className="link link-light"
-                    >
-                      Cancel
-                    </Button>
-                  </li> */}
                 </ul>
               </Col>
             </Form>

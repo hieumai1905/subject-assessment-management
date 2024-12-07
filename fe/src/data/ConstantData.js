@@ -37,6 +37,10 @@ export const settingTypeData = [
     label: "Độ phức tạp",
   },
   {
+    value: "Quality",
+    label: "Mức độ hoàn thiện",
+  },
+  {
     value: "Round",
     label: "Lần chấm",
   },

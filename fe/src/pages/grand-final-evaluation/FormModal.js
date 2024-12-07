@@ -163,26 +163,26 @@ const FormModal = ({
           <Icon name="cross-sm"></Icon>
         </a>
         <div className="p-4">
-          <h3 className="title mb-4 text-center">Work Evaluation</h3>
+          <h3 className="title mb-4 text-center">Đánh giá hội đồng</h3>
           <Row className="student-info mb-4">
             <Col md="6">
               <div>
-                <strong>Student:</strong> {formData?.studentFullname || "N/A"}
+                <strong>Sinh viên:</strong> {formData?.studentFullname || "N/A"}
               </div>
             </Col>
             <Col md="6">
               <div>
-                <strong>Team:</strong> {formData?.teamTeamName || "N/A"}
+                <strong>Nhóm:</strong> {formData?.teamTeamName || "N/A"}
               </div>
             </Col>
             <Col md="6" className="mt-2">
               <div>
-                <strong>Function:</strong> {isNullOrEmpty(formData.reqTitle) ? "N/A" : formData.reqTitle}
+                <strong>Yêu cầu:</strong> {isNullOrEmpty(formData.reqTitle) ? "N/A" : formData.reqTitle}
               </div>
             </Col>
             <Col md="6" className="mt-3">
               <div>
-                <strong>Status:</strong> <span className="badge bg-info">{formData?.status}</span>
+                <strong>Trạng thái:</strong> <span className="badge bg-info">{formData?.status}</span>
               </div>
             </Col>
             {/* <Col md="6" className="mt-3">
@@ -209,20 +209,20 @@ const FormModal = ({
           <Form className="row gy-3" onSubmit={handleSubmit(onSubmit)}>
             <Col md="4">
               <div className="form-group">
-                <label className="form-label">Complexity</label>
+                <label className="form-label">Độ phức tạp</label>
                 {!canEdit ? (
                   <input
                     type="text"
                     disabled
                     value={selectedComplexity?.label}
-                    placeholder="Any complexity"
+                    placeholder="độ phức tạp"
                     className="form-control"
                   />
                 ) : (
                   <RSelect
                     options={complexityOptions}
                     value={selectedComplexity}
-                    placeholder="Select complexity"
+                    placeholder="độ phức tạp"
                     onChange={(e) => {
                       setSelectedComplexity(e);
                       if (e && selectedQuality) {
@@ -236,20 +236,20 @@ const FormModal = ({
             </Col>
             <Col md="4">
               <div className="form-group">
-                <label className="form-label">Quality</label>
+                <label className="form-label">Mức độ hoàn thiện</label>
                 {!canEdit ? (
                   <input
                     type="text"
                     disabled
                     value={selectedQuality?.label}
-                    placeholder="Any quality"
+                    placeholder="mức độ hoàn thiện"
                     className="form-control"
                   />
                 ) : (
                   <RSelect
                     options={qualityOptions}
                     value={selectedQuality}
-                    placeholder="Select quality"
+                    placeholder="mức độ hoàn thiện"
                     onChange={(e) => {
                       setSelectedQuality(e);
                       if (e && selectedComplexity) {
@@ -268,7 +268,7 @@ const FormModal = ({
                   disabled={!canEdit}
                   type="number"
                   value={LOC}
-                  placeholder="Enter LOC"
+                  placeholder="Nhập LOC"
                   className="form-control"
                   onChange={(e) => {
                     if (e.target.value === "" || e.target.value >= 0) setLOC(e.target.value);
@@ -282,11 +282,11 @@ const FormModal = ({
             </Col>
             <Col size="12">
               <div className="form-group" style={{marginTop: '-30px'}}>
-                <label className="form-label">Comment</label>
+                <label className="form-label">Nhận xét</label>
                 <textarea
                   disabled={!canEdit}
                   value={comment}
-                  placeholder="Enter your comment"
+                  placeholder="nhập nhận xét"
                   className="form-control form-control-xl no-resize"
                   onChange={(e) => {
                     setComment(e.target.value);
@@ -299,7 +299,7 @@ const FormModal = ({
               {canEdit && (
                 <Button color="primary" size="md" type="submit">
                   <Icon name="check-circle" className="me-2" />
-                  Evaluate
+                  Đánh giá
                 </Button>
               )}
             </Col>

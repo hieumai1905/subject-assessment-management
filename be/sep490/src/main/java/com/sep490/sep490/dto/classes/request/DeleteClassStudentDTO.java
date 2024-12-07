@@ -12,8 +12,8 @@ public class DeleteClassStudentDTO {
     private Integer classId;
     private Integer studentId;
     public  void validateInput(){
-        ValidateUtils.checkNullOrEmpty(studentId,"StudentID");
-        ValidateUtils.checkNullOrEmpty(classId,"classId");
+        ValidateUtils.checkNullOrEmpty(studentId,"Sinh viên");
+        ValidateUtils.checkNullOrEmpty(classId,"Lớp học");
     }
 
 

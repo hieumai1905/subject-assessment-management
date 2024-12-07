@@ -280,13 +280,13 @@ export default function CriteriaListDatagrid({ subject }) {
       headerAlign: "left",
       editable: false,
     },
-    // {
-    //   field: "locEvaluation",
-    //   headerName: "LOC Eval",
-    //   type: "boolean",
-    //   width: 180,
-    //   editable: false,
-    // },
+    {
+      field: "locEvaluation",
+      headerName: "Đánh giá LOC",
+      type: "boolean",
+      width: 180,
+      editable: false,
+    },
     {
       field: "active",
       headerName: "Trạng thái",

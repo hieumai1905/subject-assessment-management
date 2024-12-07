@@ -19,15 +19,15 @@ public class UpdateRequirementRequest {
     private List<Integer> requirementIds;
 
     public void validateInput(){
-        ValidateUtils.checkNullOrEmpty(requirementIds, "Requirement ids");
+        ValidateUtils.checkNullOrEmpty(requirementIds, "Yêu cầu");
         for (Integer requirementId : requirementIds) {
-            ValidateUtils.checkNullOrEmpty(requirementId, "Requirement id");
+            ValidateUtils.checkNullOrEmpty(requirementId, "Yêu cầu");
         }
         if(status != null)
             status = ValidateUtils.checkExistedInList(Constants.RequirementStatus.REQUIREMENT_STATUSES, status,
-                    "status", Constants.RequirementStatus.REQUIREMENT_STATUSES.get(0));
-        reqTitle = ValidateUtils.checkLength(reqTitle, "Requirement title", 0, 255);
-        reqType = ValidateUtils.checkLength(reqType, "Requirement type", 0, 255);
-        note = ValidateUtils.checkLength(note, "Note", 0, Constants.DefaultValueEntity.DESCRIPTION_LENGTH);
+                    "Trạng thái", Constants.RequirementStatus.REQUIREMENT_STATUSES.get(0));
+        reqTitle = ValidateUtils.checkLength(reqTitle, "Tiêu đề", 0, 255);
+        reqType = ValidateUtils.checkLength(reqType, "Tiêu đề", 0, 255);
+        note = ValidateUtils.checkLength(note, "Ghi chú", 0, Constants.DefaultValueEntity.DESCRIPTION_LENGTH);
     }
 }

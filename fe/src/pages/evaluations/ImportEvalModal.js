@@ -77,7 +77,7 @@ export default function ImportEvalModal({ modal, setModal, evaluations, setEvalu
 
   const onSubmit = async () => {
     if (!formData || formData.length === 0) {
-      toast.error(`No data to evaluate!`, {
+      toast.error(`Không có dữ liệu để đánh giá`, {
         position: toast.POSITION.TOP_CENTER,
       });
       return false;
@@ -89,9 +89,9 @@ export default function ImportEvalModal({ modal, setModal, evaluations, setEvalu
     formData.forEach((item) => {
       let id = isNumber(item["ID"], "int");
       if (id) {
-        let complexityId = findComplexityByName(item["Complexity"]);
-        let qualityId = findQualityByName(item["Quality"]);
-        let comment = item["Comment"];
+        let complexityId = findComplexityByName(item["Độ phức tạp"]);
+        let qualityId = findQualityByName(item["Mức độ hoàn thiện"]);
+        let comment = item["Nhận xét"];
         let loc = isNumber(item["LOC"], "float");
         let reqEval = {
           reqId: id,
@@ -101,10 +101,10 @@ export default function ImportEvalModal({ modal, setModal, evaluations, setEvalu
           comment: comment,
           grade: loc,
         };
-        complexityId = findComplexityByName(item["Update complexity"]);
-        qualityId = findQualityByName(item["Update quality"]);
-        comment = item["Update comment"];
-        loc = isNumber(item["Update LOC"], "float");
+        complexityId = findComplexityByName(item["Cập nhật độ phức tạp"]);
+        qualityId = findQualityByName(item["Cập nhật mức độ hoàn thiện"]);
+        comment = item["Cập nhật nhận xét"];
+        loc = isNumber(item["Cập nhật LOC"], "float");
         let updateReqEval = {
           reqId: id,
           isUpdateEval: true,
@@ -133,7 +133,7 @@ export default function ImportEvalModal({ modal, setModal, evaluations, setEvalu
       }
     });
     if (changed && changed.length === 0) {
-      toast.error(`No data to import!`, {
+      toast.error(`Không có dữ liệu để đánh giá`, {
         position: toast.POSITION.TOP_CENTER,
       });
       setIsFetching(false);
@@ -155,7 +155,7 @@ export default function ImportEvalModal({ modal, setModal, evaluations, setEvalu
       }
     } catch (error) {
       console.error("Error evaluating requirement:", error);
-      toast.error("Error evaluating requirement", {
+      toast.error("Xảy ra lỗi trong quá trình xử lý", {
         position: toast.POSITION.TOP_CENTER,
       });
     } finally {
@@ -184,7 +184,7 @@ export default function ImportEvalModal({ modal, setModal, evaluations, setEvalu
           <Icon name="cross-sm"></Icon>
         </a>
         <div className="p-2">
-          <h5 className="title">Import Evaluations</h5>
+          <h5 className="title">Nhập đánh giá</h5>
           <div className="mt-4">
             <Row className="m-2 p-2">
               <Col sm="12" className="mb-2 text-end">
@@ -194,11 +194,11 @@ export default function ImportEvalModal({ modal, setModal, evaluations, setEvalu
                   className="text-primary"
                   onClick={() => dowloadTemplate()}
                 >
-                  <Icon name="file-download" /> Download Template
+                  <Icon name="file-download" /> Tải file mẫu
                 </a>
               </Col>
               <Col sm="12">
-                <label className="form-label">Upload Excel File*</label>
+                <label className="form-label">Nhập file excel*</label>
                 <div className="input-group">
                   <div className="input-group-prepend">
                     <span className="input-group-text">
@@ -214,11 +214,11 @@ export default function ImportEvalModal({ modal, setModal, evaluations, setEvalu
                     {isFetching ? (
                       <Button disabled color="primary">
                         <Spinner size="sm" />
-                        <span> Saving... </span>
+                        <span> Đang lưu... </span>
                       </Button>
                     ) : (
                       <Button color="primary" size="md" type="button" onClick={() => onSubmit()}>
-                        Import
+                        Nhập đánh giá
                       </Button>
                     )}
                   </li>

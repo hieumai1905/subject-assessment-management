@@ -81,7 +81,7 @@ export default function ImportStudentEvalModal({ modal, setModal, rows, setRows,
 
   const onSubmit = async () => {
     if (!formData || formData.length === 0 || !evaluations || evaluations.length === 0) {
-      toast.error(`No data to evaluate!`, {
+      toast.error(`Không có dữ liệu để đánh giá`, {
         position: toast.POSITION.TOP_CENTER,
       });
       return false;
@@ -89,21 +89,21 @@ export default function ImportStudentEvalModal({ modal, setModal, rows, setRows,
     let mileTitle = `${evaluations[0]?.milestone?.name} (${evaluations[0]?.milestone?.weight}%)`;
     let isValidTemplate = true;
     if (!isExistField(formData[0], mileTitle)) {
-      toast.error(`Invalid import template file!`, {
+      toast.error(`File không đúng định dạng`, {
         position: toast.POSITION.TOP_CENTER,
       });
       return false;
     }
     if (evaluations[0]?.criteriaNames && evaluations[0]?.criteriaNames.length > 0) {
       evaluations[0].criteriaNames.forEach((criteria) => {
-        let criteriaName = `${criteria.name} (${criteria?.weight}% of ${evaluations[0]?.milestone?.name})`;
+        let criteriaName = `${criteria.name} (${criteria?.weight}% của ${evaluations[0]?.milestone?.name})`;
         if (!isExistField(formData[0], criteriaName)) {
           isValidTemplate = false;
           return false;
         }
       });
       if (!isValidTemplate) {
-        toast.error(`Invalid import template file!`, {
+        toast.error(`File không đúng định dạng`, {
           position: toast.POSITION.TOP_CENTER,
         });
         return false;
@@ -114,13 +114,13 @@ export default function ImportStudentEvalModal({ modal, setModal, rows, setRows,
     let updatedRows = [...rows];
     formData.forEach((item, index) => {
       let email = isNullOrEmpty(item["Email"]) ? null : item["Email"];
-      let teamName = item["Team"];
+      let teamName = item["Nhóm"];
       let teamId = null;
       if (isNullOrEmpty(email)) {
         teamId = getValueByLabel(teams, teamName);
       }
       let milestoneEvalGrade = isNumber(item[mileTitle], "float");
-      let milestoneComment = item[`Comment`];
+      let milestoneComment = item[`Nhận xét`];
       let row = {
         email: email,
         teamName: teamName,
@@ -137,19 +137,19 @@ export default function ImportStudentEvalModal({ modal, setModal, rows, setRows,
       });
       if (evaluations[0]?.criteriaNames && evaluations[0]?.criteriaNames.length > 0) {
         evaluations[0].criteriaNames.forEach((criteria, idx) => {
-          let criteriaName = `${criteria.name} (${criteria?.weight}% of ${evaluations[0]?.milestone?.name})`;
+          let criteriaName = `${criteria.name} (${criteria?.weight}% của ${evaluations[0]?.milestone?.name})`;
           let grade = isNumber(item[criteriaName], "float");
           row = {
             ...row,
             [`${criteria.id}_evalGrade`]: grade,
-            [`${criteria.id}_comment`]: item[`Comment_${idx + 1}`],
+            [`${criteria.id}_comment`]: item[`Nhận xét ${criteria.name}`],
           };
           changed.push({
             teamId: teamId,
             milestoneId: evaluations[0]?.milestone?.id,
             criteriaId: criteria.id,
             email: email,
-            comment: item[`Comment_${idx + 1}`],
+            comment: item[`Nhận xét ${criteria.name}`],
             evalGrade: grade,
           });
         });
@@ -165,7 +165,7 @@ export default function ImportStudentEvalModal({ modal, setModal, rows, setRows,
     });
 
     if (changed && changed.length === 0) {
-      toast.error(`No change to import!`, {
+      toast.error(`Không có dữ liệu để đánh giá`, {
         position: toast.POSITION.TOP_CENTER,
       });
       setIsFetching(false);
@@ -191,7 +191,7 @@ export default function ImportStudentEvalModal({ modal, setModal, rows, setRows,
       }
     } catch (error) {
       console.error("Error evaluating student:", error);
-      toast.error("Error evaluating student!", {
+      toast.error("Xảy ra lỗi trong quá trình xử lý", {
         position: toast.POSITION.TOP_CENTER,
       });
     } finally {
@@ -220,7 +220,7 @@ export default function ImportStudentEvalModal({ modal, setModal, rows, setRows,
           <Icon name="cross-sm"></Icon>
         </a>
         <div className="p-2">
-          <h5 className="title">Import Evaluations</h5>
+          <h5 className="title">Nhập đánh giá sinh viên</h5>
           <div className="mt-4">
             <Row className="m-2 p-2">
               <Col sm="12" className="mb-2 text-end">
@@ -230,11 +230,11 @@ export default function ImportStudentEvalModal({ modal, setModal, rows, setRows,
                   className="text-primary"
                   onClick={() => dowloadTemplate()}
                 >
-                  <Icon name="file-download" /> Download Template
+                  <Icon name="file-download" /> Tải file mẫu
                 </a>
               </Col>
               <Col sm="12">
-                <label className="form-label">Upload Excel File*</label>
+                <label className="form-label">Nhập Excel File*</label>
                 <div className="input-group">
                   <div className="input-group-prepend">
                     <span className="input-group-text">
@@ -250,11 +250,11 @@ export default function ImportStudentEvalModal({ modal, setModal, rows, setRows,
                     {isFetching ? (
                       <Button disabled color="primary">
                         <Spinner size="sm" />
-                        <span> Saving... </span>
+                        <span> Đang lưu... </span>
                       </Button>
                     ) : (
                       <Button color="primary" size="md" type="button" onClick={() => onSubmit()}>
-                        Import
+                        Nhập
                       </Button>
                     )}
                   </li>

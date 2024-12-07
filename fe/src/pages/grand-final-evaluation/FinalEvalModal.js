@@ -236,23 +236,23 @@ const FinalEvalModal = ({
           <Icon name="cross-sm"></Icon>
         </a>
         <div className="p-4" style={{ height: "663px" }}>
-          <h3 className="title mb-2 text-center">Final Evaluation</h3>
+          <h3 className="title mb-2 text-center">Đánh giá hội đồng</h3>
           <Row className="student-info">
             <Col md="4">
               <div>
-                <strong>Student:</strong> {formData?.studentFullname || "N/A"}
+                <strong>Sinh viên:</strong> {formData?.studentFullname || "N/A"}
               </div>
             </Col>
             <Col md="4">
               <div>
-                <strong>Team:</strong> {formData?.teamTeamName || "N/A"}
+                <strong>Nhóm:</strong> {formData?.teamTeamName || "N/A"}
               </div>
             </Col>
           </Row>
           <Row className="evaluation-details mb-1">
             <Col md="6">
               <div>
-                <strong>Function:</strong> {isNullOrEmpty(formData.reqTitle) ? "N/A" : formData.reqTitle}
+                <strong>Yêu cầu:</strong> {isNullOrEmpty(formData.reqTitle) ? "N/A" : formData.reqTitle}
               </div>
             </Col>
             <Col md="6">
@@ -262,27 +262,27 @@ const FinalEvalModal = ({
             </Col>
             <Col md="4">
               <div>
-                <strong>Last Complexity:</strong> {lastEval?.complexity}
+                <strong>Độ phức tạp lần 1:</strong> {lastEval?.complexity}
               </div>
             </Col>
             <Col md="4">
               <div>
-                <strong>Last Quality:</strong> {lastEval?.quality}
+                <strong>Mức độ hoàn thiện lần 1:</strong> {lastEval?.quality}
               </div>
             </Col>
             <Col md="4">
               <div>
-                <strong>Last LOC:</strong> {lastEval?.LOC}
+                <strong>LOC lần 1:</strong> {lastEval?.LOC}
               </div>
             </Col>
             <Col md="12">
               <div className="form-group">
-                <strong>Last Comment</strong>
+                <strong>Nhận xét</strong>
                 <textarea
                   id="lcomment"
                   disabled={true}
                   value={lastEval?.comment}
-                  placeholder="Enter your comment"
+                  placeholder="nhận xét"
                   className="form-control form-control-xl no-resize"
                   aria-label="Comment"
                 />
@@ -290,7 +290,7 @@ const FinalEvalModal = ({
             </Col>
             <div>
               <Button id="Popover1" type="button" className="text-primary" onClick={togglePopover}>
-                View Update Trackings
+                Xem thông tin cập nhật theo dõi
               </Button>
 
               <Popover
@@ -314,7 +314,7 @@ const FinalEvalModal = ({
               >
                 <PopoverBody>
                   {isNullOrEmpty(formData?.updateTrackings) || formData?.updateTrackings?.length === 0 ? (
-                    <div className="p-3">No update trackings</div>
+                    <div className="p-3">Không có dữ liệu</div>
                   ) : (
                     <div style={{ width: "600px", height: "200px", overflowY: "auto", overflowX: "hidden" }}>
                       {formData?.updateTrackings?.map((item, index) => {
@@ -337,7 +337,7 @@ const FinalEvalModal = ({
             <Col md="4">
               <div className="form-group">
                 <label htmlFor="complexity" className="form-label">
-                  Complexity
+                  Độ phức tạp
                 </label>
                 {!canEdit ? (
                   <input
@@ -345,7 +345,7 @@ const FinalEvalModal = ({
                     id="complexity"
                     disabled
                     value={selectedComplexity?.label}
-                    placeholder="Any complexity"
+                    placeholder="độ phức tạp"
                     className="form-control"
                   />
                 ) : (
@@ -353,7 +353,7 @@ const FinalEvalModal = ({
                     id="complexity"
                     options={complexityOptions}
                     value={selectedComplexity}
-                    placeholder="Select complexity"
+                    placeholder="độ phức tạp"
                     onChange={(e) => {
                       setSelectedComplexity(e);
                       if (e && selectedQuality) {
@@ -368,7 +368,7 @@ const FinalEvalModal = ({
             <Col md="4">
               <div className="form-group">
                 <label htmlFor="quality" className="form-label">
-                  Quality
+                  Mức độ hoàn thiện
                 </label>
                 {!canEdit ? (
                   <input
@@ -376,7 +376,7 @@ const FinalEvalModal = ({
                     id="quality"
                     disabled
                     value={selectedQuality?.label}
-                    placeholder="Any quality"
+                    placeholder="mức độ hoàn thiện"
                     className="form-control"
                   />
                 ) : (
@@ -384,7 +384,7 @@ const FinalEvalModal = ({
                     id="quality"
                     options={qualityOptions}
                     value={selectedQuality}
-                    placeholder="Select quality"
+                    placeholder="mức độ hoàn thiện"
                     onChange={(e) => {
                       setSelectedQuality(e);
                       if (e && selectedComplexity) {
@@ -406,7 +406,7 @@ const FinalEvalModal = ({
                   disabled={!canEdit}
                   type="number"
                   value={LOC}
-                  placeholder="Enter LOC"
+                  placeholder="Nhập LOC"
                   className="form-control"
                   onChange={(e) => {
                     if (e.target.value === "" || e.target.value >= 0) setLOC(e.target.value);
@@ -421,13 +421,13 @@ const FinalEvalModal = ({
             <Col size="12">
               <div className="form-group" style={{ marginTop: "-30px" }}>
                 <label htmlFor="comment" className="form-label">
-                  Comment
+                  Nhận xét
                 </label>
                 <textarea
                   id="comment"
                   disabled={!canEdit}
                   value={comment}
-                  placeholder="Enter your comment"
+                  placeholder="nhập nhận xét"
                   className="form-control form-control-xl no-resize"
                   onChange={(e) => {
                     setComment(e.target.value);
@@ -440,7 +440,7 @@ const FinalEvalModal = ({
               {canEdit && (
                 <Button color="primary" size="md" type="submit">
                   <Icon name="check-circle" className="me-2" />
-                  Evaluate
+                  Đánh giá
                 </Button>
               )}
             </Col>

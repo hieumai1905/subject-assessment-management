@@ -53,10 +53,10 @@ const FormModal = ({ id, modal, setModal, assignments, setAssignments, modalType
       setError("evalWeight", { type: "manual", message: "Trọng số đánh giá phải lớn hơn 0" });
       return false;
     }
-    // if (expectedLoc < 0) {
-    //   setError("expectedLoc", { type: "manual", message: "Dự kiến LOC phải lớn hơn 0" });
-    //   return false;
-    // }
+    if (expectedLoc < 0) {
+      setError("expectedLoc", { type: "manual", message: "Dự kiến LOC phải lớn hơn 0" });
+      return false;
+    }
     if (displayOrder < 0) {
       setError("displayOrder", { type: "manual", message: "Thứ tự xuất hiện phải lớn hơn 0" });
       return false;
@@ -141,7 +141,7 @@ const FormModal = ({ id, modal, setModal, assignments, setAssignments, modalType
                   {errors.evalWeight && <span className="invalid">{errors.evalWeight.message}</span>}
                 </div>
               </Col>
-              {/* <Col md="6">
+              <Col md="6">
                 <div className="form-group">
                   <label className="form-label">Dự kiến LOC*</label>
                   <input
@@ -154,7 +154,7 @@ const FormModal = ({ id, modal, setModal, assignments, setAssignments, modalType
                   />
                   {errors.expectedLoc && <span className="invalid">{errors.expectedLoc.message}</span>}
                 </div>
-              </Col> */}
+              </Col>
               <Col md="6">
                 <div className="form-group">
                   <label className="form-label">Thứ tự xuất hiện</label>

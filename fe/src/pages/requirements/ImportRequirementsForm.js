@@ -76,43 +76,16 @@ export default function ImportRequirementsForm({
       const worksheet = workbook.Sheets[sheetName];
       const jsonData = XLSX.utils.sheet_to_json(worksheet);
       console.log("JSON Data:", jsonData);
-      setFormData({ ...formData, data: jsonData });
+      if(jsonData)
+        setFormData({ ...formData, data: jsonData.map(item => ({
+            reqTitle: item[`Tiêu đề`],
+            complexity: item[`Độ phức tạp`],
+            note: item[`Ghi chú`]
+          })) 
+        });
     };
 
     reader.readAsArrayBuffer(file);
-  };
-  const dowloadTemplate = async (teamId) => {
-    try {
-      const response = await authApi.post("/requirements/search", {
-        milestoneId: milestone?.id,
-        teamId: teamId,
-      });
-      console.log("search requirements:", response.data.data);
-      if (response.data.statusCode === 200) {
-        let templateData = response.data.data.requirementDTOs.map((item) => ({
-          reqTitle: item.reqTitle,
-          note: item.note,
-          complexity: item.complexityName,
-        }));
-        if (templateData.length === 0) {
-          templateData.push({
-            reqTitle: "requirement title...",
-            note: "requirement note...",
-            complexity: "medium",
-          });
-        }
-        exportToExcel(templateData, "template_import_requirements.xlsx");
-      } else {
-        toast.error(`${response.data.data}`, {
-          position: toast.POSITION.TOP_CENTER,
-        });
-      }
-    } catch (error) {
-      console.error("Error dowload template:", error);
-      toast.error("Error dowload template!", {
-        position: toast.POSITION.TOP_CENTER,
-      });
-    }
   };
 
   const nDownloadTemplate = async (teamId) => {
@@ -131,7 +104,7 @@ export default function ImportRequirementsForm({
         const workbook = new ExcelJS.Workbook();
         const worksheet = workbook.addWorksheet("Sheet 1");
 
-        worksheet.addRow(["Title", "Note", "Complexity"]);
+        worksheet.addRow(["Tiêu đề", "Độ phức tạp", "Ghi chú"]);
         // Style header row
         worksheet.getRow(1).fill = {
           type: "pattern",
@@ -154,7 +127,7 @@ export default function ImportRequirementsForm({
             complexityOpts.push(com.label);
           });
         }
-        worksheet.dataValidations.add("C2:C9999", {
+        worksheet.dataValidations.add("B2:B9999", {
           type: "list",
           allowBlank: false,
           formulae: [`"${complexityOpts.join(",")}"`],
@@ -162,8 +135,8 @@ export default function ImportRequirementsForm({
         templateData.forEach((req, index) => {
           const row = worksheet.addRow();
           row.getCell(1).value = req.reqTitle;
-          row.getCell(2).value = req.note;
-          row.getCell(3).value = req.complexity;
+          row.getCell(2).value = req.complexity;
+          row.getCell(3).value = req.note;
         });
 
         const buffer = await workbook.xlsx.writeBuffer();
@@ -205,9 +178,9 @@ export default function ImportRequirementsForm({
       setIsFetching(true);
       let teamIds = formData.teams.map((t) => t.value);
       let requirementDTOs = formData.data.map((item) => ({
-        reqTitle: item["Title"],
-        complexityId: findComplexityByName(item[`Complexity`])?.value,
-        note: item[`Note`],
+        reqTitle: item.reqTitle,
+        complexityId: findComplexityByName(item.complexity)?.value,
+        note: item.note,
       }));
       const response = await authApi.post("/requirements/add-list", {
         milestoneId: milestone?.id,
@@ -218,10 +191,10 @@ export default function ImportRequirementsForm({
       if (response.data.statusCode === 200) {
         let newData = data.filter((r) => !teamIds.includes(r.teamId) || r.status === "EVALUATED");
         console.log("bew", newData, data);
-
-        setData([...response.data.data, ...newData]);
+        let res = response.data.data.filter(item => item.teamId === currentTeam?.value);
+        setData([...res, ...newData]);
         if (setTotalItems) {
-          setTotalItems(response.data.data.length + newData.length);
+          setTotalItems(res.length + newData.length);
         }
         closeModal();
         toast.success(`Nhập yêu cầu thành công!`, {
@@ -260,7 +233,7 @@ export default function ImportRequirementsForm({
         </a>
         <div className="p-2">
           <h5 className="title">Nhập Yêu Cầu</h5>
-          <p className="text-danger">Nếu bạn nhập một bộ yêu cầu mới, bộ yêu cầu cũ sẽ bị xóa.</p>
+          <p className="text-danger">Nếu bạn nhập một bộ yêu cầu mới, bộ yêu cầu chưa được đánh giá trong cột mốc này sẽ bị xóa.</p>
           <div className="mt-4">
             <Row className="m-2 p-2">
               <Col sm="12" className="mb-2 text-end">

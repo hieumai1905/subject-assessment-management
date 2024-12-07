@@ -74,7 +74,7 @@ public class ClassService implements BaseService<Classes, Integer> {
 
         validateSemester(request.getSemesterId());
         validateTeacher(request.getSubjectId(), request.getTeacherId());
-        validateEvaluators(request.getListEvaluator(), request.getSubjectId(), request.getTeacherId());
+//        validateEvaluators(request.getListEvaluator(), request.getSubjectId(), request.getTeacherId());
 
         checkClassExistence(request.getClassCode(), request.getSemesterId(), request.getId());
 
@@ -101,7 +101,7 @@ public class ClassService implements BaseService<Classes, Integer> {
 
         validateSemester(request.getSemesterId());
         validateTeacher(request.getSubjectId(), request.getTeacherId());
-        validateEvaluators(request.getListEvaluator(), request.getSubjectId(), request.getTeacherId());
+//        validateEvaluators(request.getListEvaluator(), request.getSubjectId(), request.getTeacherId());
 
         checkClassExistence(request.getClassCode(), request.getSemesterId(), request.getId());
 
@@ -230,7 +230,8 @@ public class ClassService implements BaseService<Classes, Integer> {
         ClassUserResponeDTO classUserResponeDTO=new ClassUserResponeDTO();
         classListStudentRequest.validateInput();
         Classes classes = validateClassExistence(classListStudentRequest.getClassId());
-        deleteExistingStudentsInClass(classListStudentRequest.getClassId());
+        if(classListStudentRequest.getIsDeleteOldStudent())
+            deleteExistingStudentsInClass(classListStudentRequest.getClassId());
 
         List<ClassUserSuccessDTO> list = new ArrayList<>();
         for (CreateUserRequest request : classListStudentRequest.getList()) {
@@ -319,29 +320,16 @@ public class ClassService implements BaseService<Classes, Integer> {
 //                user.getRole().getId(),
                 pageable);
         SearchClassResponse response = new SearchClassResponse();
-        response.setClassesDTOS(
-                ConvertUtils.convertList(classes.getContent(), ClassesDTO.class)
-        );
-        for (ClassesDTO classesDTO : response.getClassesDTOS()) {
-            classesRepository.findById(classesDTO.getId()).ifPresent(classes1 -> {
-                if (classes1.getSemester() != null) {
-                    classesDTO.setSemesterName(classes1.getSemester().getName());
-                }
-                if (classes1.getTeacher() != null) {
-                    classesDTO.setTeacherName(classes1.getTeacher().getFullname());
-                }
-                if (classes1.getSubject() != null) {
-                    classesDTO.setSubjectName(classes1.getSubject().getSubjectName());
-                }
-                if(classes1.getClassesUsers() != null){
-                    List<User> evaluators = classes1.getClassesUsers().stream()
-                            .map(ClassUser::getUser)
-                            .filter(itemUser -> itemUser.getRole().getId().equals(Constants.Role.TEACHER))
-                            .toList();
-                    classesDTO.setListEvaluator(ConvertUtils.convertList(evaluators, CreateUserRequest.class));
-                }
-            });
+        List<ClassesDTO> classesDTOS = new ArrayList<>();
+        for (Classes c : classes.getContent()) {
+            ClassesDTO classesDTO = ConvertUtils.convert(c, ClassesDTO.class);
+            if(c.getTeacher() != null){
+                classesDTO.setTeacherName(c.getTeacher().getFullname());
+            }
+            classesDTOS.add(classesDTO);
         }
+
+        response.setClassesDTOS(classesDTOS);
         response.setTotalElements(classes.getTotalElements());
         response.setPageIndex(request.getPageIndex());
         response.setPageSize(request.getPageSize());
@@ -358,7 +346,6 @@ public class ClassService implements BaseService<Classes, Integer> {
             if (classUser.getUser().getRole().getId().equals(Constants.Role.TEACHER))
                 listEvaluator.add(ConvertUtils.convert(classUser.getUser(), CreateUserRequest.class));
         }
-        classesDTO.setListEvaluator(listEvaluator);
     }
 
     public Object searchStudents(SearchClassStudentRequest request) {

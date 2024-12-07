@@ -38,7 +38,7 @@ public class SettingService implements BaseService<Setting, Integer> {
         var foundSetting = settingRepository.findByNameAndSettingType(request.getName().toLowerCase(),
                 request.getSettingType(), request.getSubjectId());
         if (foundSetting != null) {
-            throw new NameAlreadyExistsException("Setting name");
+            throw new NameAlreadyExistsException("Tên cài đặt");
         }
         request.setId(null);
         var saveSetting = ConvertUtils.convert(request, Setting.class);
@@ -53,13 +53,13 @@ public class SettingService implements BaseService<Setting, Integer> {
         request.validateInput();
 
         var foundSetting = settingRepository.findById(id).orElseThrow(
-                () -> new RecordNotFoundException("Setting"));
+                () -> new RecordNotFoundException("Cài đặt"));
 
         var findByNameAndSettingTypeWithOtherId = settingRepository
                 .findByNameAndSettingTypeWithOtherId(id, request.getName().toLowerCase(),
                         request.getSettingType(), request.getSubjectId());
         if(findByNameAndSettingTypeWithOtherId != null)
-            throw new NameAlreadyExistsException("Setting name");
+            throw new NameAlreadyExistsException("Tên cài đặt");
 
         var updateSetting = settingMapper.convertUpdateSettingDtoToSetting(request, foundSetting);
         updateSetting.setId(id);
@@ -72,14 +72,14 @@ public class SettingService implements BaseService<Setting, Integer> {
     @Override
     public Object get(Integer id) {
         var foundSetting = settingRepository.findById(id).orElseThrow(
-                () -> new RecordNotFoundException("Setting"));
+                () -> new RecordNotFoundException("Cài đặt"));
         return ConvertUtils.convert(foundSetting, SettingDTO.class);
     }
 
     @Override
     public void delete(Integer id) {
         var foundSetting = settingRepository.findById(id).orElseThrow(
-                () -> new RecordNotFoundException("Setting"));
+                () -> new RecordNotFoundException("Cài đặt"));
         settingRepository.delete(foundSetting);
     }
 
@@ -118,7 +118,7 @@ public class SettingService implements BaseService<Setting, Integer> {
     public List<SettingDTO> getSemester(String semester) {
         var foundSetting = settingRepository.findSettingBySettingType(semester);
         if(foundSetting == null){
-            throw new RecordNotFoundException("Semester");
+            throw new RecordNotFoundException("Học kỳ");
         }
         return ConvertUtils.convertList(foundSetting, SettingDTO.class);
     }

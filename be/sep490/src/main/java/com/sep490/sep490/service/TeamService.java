@@ -504,21 +504,21 @@ public class TeamService implements BaseService<Milestone, Integer>{
             return response;
         }
         User currentUser = commonService.getCurrentUser();
-        Classes classes = classesRepository.findById(request.getClassId()).orElseThrow(() -> new RecordNotFoundException("Class"));
+        Classes classes = classesRepository.findById(request.getClassId()).orElseThrow(() -> new RecordNotFoundException("Lớp học"));
         List<Session> sessions = new ArrayList<>();
         if(request.getSemesterId() != null && request.getRoundId() != null){
             Setting semester = (Setting) settingRepository.findSettingBySettingTypeAndSettingId( "semester", request.getSemesterId());
             if(semester == null){
-                throw new RecordNotFoundException("Semester");
+                throw new RecordNotFoundException("Học kỳ");
             }
             Setting round = (Setting) settingRepository.findSettingBySettingTypeAndSettingId( "round", request.getRoundId());
             if(round == null){
-                throw new RecordNotFoundException("Round");
+                throw new RecordNotFoundException("Lần chấm");
             }
             sessions = sessionRepository.findBySemesterIdAndRoundId(semester.getId(), round.getId());
         }
         if(request.getSessionId() != null){
-            Session session = sessionRepository.findById(request.getSessionId()).orElseThrow(() -> new RecordNotFoundException("Session"));
+            Session session = sessionRepository.findById(request.getSessionId()).orElseThrow(() -> new RecordNotFoundException("Phiên chấm"));
             sessions.add(session);
         }
 //        List<Council> councils = councilRepository.findBySemesterIdAndRoundId(round.getId(), semester.getId());

@@ -13,7 +13,7 @@ public class EvaluateStudentForGrandFinal {
     private List<StudentEvalRequest> studentEvals;
 
     public void validateInput(){
-        ValidateUtils.checkNullOrEmpty(sessionId, "Session id");
-        ValidateUtils.checkNullOrEmpty(teamId, "Team id");
+        ValidateUtils.checkNullOrEmpty(sessionId, "Phiêm chấm");
+        ValidateUtils.checkNullOrEmpty(teamId, "Nhóm");
     }
 }

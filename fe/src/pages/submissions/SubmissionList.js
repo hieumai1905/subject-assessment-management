@@ -277,7 +277,7 @@ export default function SubmissionList() {
         let teamOptions = convertToOptions(rTeams, "id", "teamName");
         teamOptions = teamOptions?.filter((team) => team.label !== "Wish List");
         if (role !== "STUDENT") {
-          teamOptions.unshift(getAllOptions("All Teams"));
+          teamOptions.unshift(getAllOptions("Tất cả"));
         }
         if (teamOptions.length > 0) {
           let nTeamMembers = {},
@@ -453,110 +453,148 @@ export default function SubmissionList() {
               <BlockTitle page> Danh sách bài nộp</BlockTitle>
               {/* <BlockDes className="text-soft">You have total 0 submissions</BlockDes> */}
             </BlockHeadContent>
-            <BlockHeadContent></BlockHeadContent>
+            <BlockHeadContent>
+              <div className="toggle-wrap nk-block-tools-toggle">
+                <Button
+                  className={`btn-icon btn-trigger toggle-expand me-n1 ${sm ? "active" : ""}`}
+                  onClick={() => updateSm(!sm)}
+                >
+                  <Icon name="menu-alt-r"></Icon>
+                </Button>
+                <div className="toggle-expand-content" style={{ display: sm ? "block" : "none" }}>
+                  <ul className="nk-block-tools g-3">
+                    <li>
+                      <UncontrolledDropdown>
+                        <DropdownToggle tag="a" className="dropdown-toggle btn btn-white btn-dim btn-outline-light">
+                          <Icon name="filter-alt" className="d-none d-sm-inline"></Icon>
+                          <span>Bộ lọc</span>
+                          <Icon name="chevron-right" className="dd-indc"></Icon>
+                        </DropdownToggle>
+                        <DropdownMenu end className="filter-wg dropdown-menu-xxl" style={{ overflow: "visible" }}>
+                          <div className="dropdown-head">
+                            <span className="sub-title dropdown-title">Lọc bài nộp</span>
+                            <div className="dropdown">
+                              <a
+                                href="#more"
+                                onClick={(ev) => {
+                                  ev.preventDefault();
+                                }}
+                                className="btn btn-sm btn-icon"
+                              >
+                                <Icon name="more-h"></Icon>
+                              </a>
+                            </div>
+                          </div>
+                          <div className="dropdown-body dropdown-body-rg">
+                            <Row className="gx-6 gy-3">
+                              <Col md={6}>
+                                <div className="form-group">
+                                  <label className="overline-title overline-title-alt">Học kỳ</label>
+                                  {isFetching?.semester ? (
+                                    <div>
+                                      <Spinner />
+                                    </div>
+                                  ) : (
+                                    <RSelect
+                                      options={semesters}
+                                      value={filterForm.semester}
+                                      onChange={(e) => {
+                                        setFilterForm({ ...filterForm, semester: e });
+                                      }}
+                                      placeholder="Chọn học kỳ"
+                                    />
+                                  )}
+                                </div>
+                              </Col>
+                              <Col md={6}>
+                                <div className="form-group">
+                                  <label className="overline-title overline-title-alt">Môn học</label>
+                                  {isFetching?.subject ? (
+                                    <div>
+                                      <Spinner />
+                                    </div>
+                                  ) : (
+                                    <RSelect
+                                      options={subjects}
+                                      value={filterForm.subject}
+                                      onChange={(e) => {
+                                        setFilterForm({ ...filterForm, subject: e });
+                                      }}
+                                      placeholder="Chọn môn học"
+                                    />
+                                  )}
+                                </div>
+                              </Col>
+                              <Col md={6}>
+                                <div className="form-group">
+                                  <label className="overline-title overline-title-alt">Lớp</label>
+                                  {isFetching?.class ? (
+                                    <div>
+                                      <Spinner />
+                                    </div>
+                                  ) : (
+                                    <RSelect
+                                      options={classes}
+                                      value={filterForm.class}
+                                      onChange={(e) => {
+                                        setFilterForm({ ...filterForm, class: e });
+                                      }}
+                                      placeholder="Chọn lớp"
+                                    />
+                                  )}
+                                </div>
+                              </Col>
+                              <Col md={6}>
+                                <div className="form-group">
+                                  <label className="overline-title overline-title-alt">Mốc</label>
+                                  {isFetching?.milestone ? (
+                                    <div>
+                                      <Spinner />
+                                    </div>
+                                  ) : (
+                                    <RSelect
+                                      options={milestones}
+                                      value={filterForm.milestone}
+                                      onChange={(e) => {
+                                        setFilterForm({ ...filterForm, milestone: e });
+                                      }}
+                                      placeholder="Chọn mốc"
+                                    />
+                                  )}
+                                </div>
+                              </Col>
+                              <Col md={6}>
+                                {role !== "STUDENT" && (
+                                  <div className="form-group">
+                                    <label className="overline-title overline-title-alt">Nhóm</label>
+                                    {isFetching?.team ? (
+                                      <div>
+                                        <Spinner />
+                                      </div>
+                                    ) : (
+                                      <RSelect
+                                        options={teams}
+                                        value={filterForm.team}
+                                        onChange={(e) => {
+                                          setFilterForm({ ...filterForm, team: e });
+                                        }}
+                                        placeholder="Chọn nhóm"
+                                      />
+                                    )}
+                                  </div>
+                                )}
+                              </Col>
+                            </Row>
+                          </div>
+                        </DropdownMenu>
+                      </UncontrolledDropdown>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </BlockHeadContent>
           </BlockBetween>
         </BlockHead>
-        <Block>
-          <Row>
-            <Col md={2}>
-              <div className="form-group">
-                <label className="overline-title overline-title-alt">Học kỳ</label>
-                {isFetching?.semester ? (
-                  <div>
-                    <Spinner />
-                  </div>
-                ) : (
-                  <RSelect
-                    options={semesters}
-                    value={filterForm.semester}
-                    onChange={(e) => {
-                      setFilterForm({ ...filterForm, semester: e });
-                    }}
-                    placeholder="Chọn học kỳ"
-                  />
-                )}
-              </div>
-            </Col>
-            <Col md={2}>
-              <div className="form-group">
-                <label className="overline-title overline-title-alt">Môn học</label>
-                {isFetching?.subject ? (
-                  <div>
-                    <Spinner />
-                  </div>
-                ) : (
-                  <RSelect
-                    options={subjects}
-                    value={filterForm.subject}
-                    onChange={(e) => {
-                      setFilterForm({ ...filterForm, subject: e });
-                    }}
-                    placeholder="Chọn môn học"
-                  />
-                )}
-              </div>
-            </Col>
-            <Col md={3}>
-              <div className="form-group">
-                <label className="overline-title overline-title-alt">Lớp</label>
-                {isFetching?.class ? (
-                  <div>
-                    <Spinner />
-                  </div>
-                ) : (
-                  <RSelect
-                    options={classes}
-                    value={filterForm.class}
-                    onChange={(e) => {
-                      setFilterForm({ ...filterForm, class: e });
-                    }}
-                    placeholder="Chọn lớp"
-                  />
-                )}
-              </div>
-            </Col>
-            <Col md={3}>
-              <div className="form-group">
-                <label className="overline-title overline-title-alt">Cột mốc</label>
-                {isFetching?.milestone ? (
-                  <div>
-                    <Spinner />
-                  </div>
-                ) : (
-                  <RSelect
-                    options={milestones}
-                    value={filterForm.milestone}
-                    onChange={(e) => {
-                      setFilterForm({ ...filterForm, milestone: e });
-                    }}
-                    placeholder="Chọn cột mốc"
-                  />
-                )}
-              </div>
-            </Col>
-            {role != "STUDENT" && (
-              <Col md={2}>
-                <div className="form-group">
-                  <label className="overline-title overline-title-alt">Nhóm</label>
-                  {isFetching?.team ? (
-                    <div>
-                      <Spinner />
-                    </div>
-                  ) : (
-                    <RSelect
-                      options={teams}
-                      value={filterForm.team}
-                      onChange={(e) => {
-                        setFilterForm({ ...filterForm, team: e });
-                      }}
-                      placeholder="Chọn nhóm"
-                    />
-                  )}
-                </div>
-              </Col>
-            )}
-          </Row>
-        </Block>
         <Block>
           {isFetching?.requirement ? (
             <div className="d-flex justify-content-center">

@@ -20,10 +20,12 @@ public interface SubjectRepository extends BaseRepository<Subject, Integer>{
             "where (:nameOrCode is null or lower(s.subjectName) like %:nameOrCode% " +
                 "or lower(s.subjectCode) like %:nameOrCode%) " +
             "and (:managerId is null or :managerId in (select m.id from s.managers m)) " +
-            "and (:active is null or s.active = :active) ")
+            "and (:active is null or s.active = :active) " +
+            "and (:isCouncil is null or s.isCouncil = :isCouncil) ")
     Page<Subject> search(String nameOrCode,
                          Integer managerId,
                          Boolean active,
+                         Boolean isCouncil,
                          Pageable pageable);
     @Query("select s from Subject s where lower(s.subjectName) = :subjectName")
     Subject findBySubjectName(String subjectName);

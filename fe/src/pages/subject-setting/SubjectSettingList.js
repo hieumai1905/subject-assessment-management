@@ -52,6 +52,10 @@ export const SubjectSettingList = ({ subject }) => {
     type: null,
     active: null,
   });
+  const [isFetching, setIsFetching] = useState({
+    add: false,
+    edit: false,
+  });
   const [subjectSettings, setSubjectSettings] = useState([]);
   const { subjectSettingResponse, loading, error } = useQuerySubjectSetting({
     currentPage,
@@ -125,6 +129,7 @@ export const SubjectSettingList = ({ subject }) => {
       subjectId: subject?.id,
     };
     try {
+      setIsFetching({...isFetching, add: true});
       const response = await authApi.post("/setting/create", submittedData);
       console.log("create subject setting:", response.data.data);
       if (response.data.statusCode === 200) {
@@ -145,6 +150,8 @@ export const SubjectSettingList = ({ subject }) => {
       toast.error("Xảy ra lỗi khi tạo cấu hình môn học", {
         position: toast.POSITION.TOP_CENTER,
       });
+    } finally {
+      setIsFetching({...isFetching, add: false});
     }
   };
 
@@ -152,6 +159,7 @@ export const SubjectSettingList = ({ subject }) => {
   const onEditSubmit = async (sData) => {
     const { name, extValue, settingType, displayOrder, active, description } = sData;
     try {
+      setIsFetching({...isFetching, edit: true});
       const response = await authApi.put("/setting/update/" + editId, {
         id: editId,
         name: name,
@@ -196,6 +204,8 @@ export const SubjectSettingList = ({ subject }) => {
       toast.error("Xảy ra lỗi khi cập nhật cấu hình môn học", {
         position: toast.POSITION.TOP_CENTER,
       });
+    } finally {
+      setIsFetching({...isFetching, edit: false});
     }
   };
 
@@ -395,7 +405,7 @@ export const SubjectSettingList = ({ subject }) => {
                   </DataTableRow>
                   <DataTableRow size="mb">
                     <span onClick={() => handleSort("displayOrder")} className="sub-text">
-                      Mức ưu tiên {upDownArrow(sortBy === "displayOrder" ? orderBy : "")}
+                      Thứ tự ưu tiên {upDownArrow(sortBy === "displayOrder" ? orderBy : "")}
                     </span>
                   </DataTableRow>
                   <DataTableRow size="mb">
@@ -421,7 +431,7 @@ export const SubjectSettingList = ({ subject }) => {
                             <span>{item.extValue}</span>
                           </DataTableRow>
                           <DataTableRow size="mb">
-                            <span>{item.settingType}</span>
+                            <span>{settingTypeData.find(s => s.value === item.settingType)?.label}</span>
                           </DataTableRow>
                           <DataTableRow size="mb">
                             <span>{item.displayOrder}</span>
@@ -466,6 +476,7 @@ export const SubjectSettingList = ({ subject }) => {
             closeModal={closeModal}
             onSubmit={onFormSubmit}
             formErrors={formErrors}
+            isFetching={isFetching?.add}
           />
           <FormModal
             modal={modal.edit}
@@ -474,6 +485,7 @@ export const SubjectSettingList = ({ subject }) => {
             setFormData={setEditFormData}
             closeModal={closeEditModal}
             onSubmit={onEditSubmit}
+            isFetching={isFetching?.edit}
           />
           <ToastContainer />
         </Content>

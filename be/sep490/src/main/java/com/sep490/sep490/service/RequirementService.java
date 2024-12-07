@@ -113,7 +113,7 @@ public class RequirementService{
         for (Team team : teams) {
             Requirement existedByTitle = requirementRepository.checkExistedByTitle(null, team.getId(), request.getReqTitle());
             if(existedByTitle != null)
-                throw new NameAlreadyExistsException(request.getReqTitle() + " in " + team.getTeamName());
+                throw new NameAlreadyExistsException(request.getReqTitle() + " trong " + team.getTeamName());
             Requirement requirement = setBaseRequirement(request);
             requirement.setMilestone(milestone);
             requirement.setTeam(team);
