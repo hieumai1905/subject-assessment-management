@@ -1,11 +1,11 @@
 import React, { useEffect } from "react";
 import { Icon, Button, Col, RSelect } from "../../components/Component";
 // import { settingTypeList, statusList } from "./SettingData";
-import { Modal, ModalBody, Form } from "reactstrap";
+import { Modal, ModalBody, Form, Spinner } from "reactstrap";
 import { useForm } from "react-hook-form";
 import { settingTypeData } from "../../data/ConstantData";
 
-const FormModal = ({ modal, closeModal, onSubmit, formData, setFormData, modalType, formErrors }) => {
+const FormModal = ({ modal, closeModal, onSubmit, formData, setFormData, modalType, formErrors, isFetching }) => {
   useEffect(() => {
     reset(formData);
   }, [formData]);
@@ -112,7 +112,7 @@ const FormModal = ({ modal, closeModal, onSubmit, formData, setFormData, modalTy
                           }}
                         />
                         <label className="custom-control-label" htmlFor="btnRadioControl1">
-                          Hoạt Động 
+                          Hoạt Động
                         </label>
                       </div>
                     </li>
@@ -133,7 +133,7 @@ const FormModal = ({ modal, closeModal, onSubmit, formData, setFormData, modalTy
                           }}
                         />
                         <label className="custom-control-label" htmlFor="btnRadioControl5">
-                          Không Hoạt Động 
+                          Không Hoạt Động
                         </label>
                       </div>
                     </li>
@@ -154,9 +154,16 @@ const FormModal = ({ modal, closeModal, onSubmit, formData, setFormData, modalTy
               <Col size="12">
                 <ul className="text-end">
                   <li>
-                    <Button color="primary" size="md" type="submit">
-                      {modalType === "add" && "Thêm Cấu Hình"} {modalType === "edit" && "Cập Nhật Cấu Hình"}
-                    </Button>
+                    {isFetching ? (
+                      <Button disabled color="primary">
+                        <Spinner size="sm" />
+                        <span> Đang lưu... </span>
+                      </Button>
+                    ) : (
+                      <Button color="primary" size="md" type="submit">
+                        {modalType === "add" && "Thêm Cấu Hình"} {modalType === "edit" && "Cập Nhật"}
+                      </Button>
+                    )}
                   </li>
                 </ul>
               </Col>

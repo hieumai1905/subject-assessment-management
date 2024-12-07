@@ -25,7 +25,7 @@ public class SearchSettingRequest extends SearchRequestDTO {
             name = name.trim().toLowerCase();
         isSubjectSetting = isSubjectSetting != null && isSubjectSetting;
         if(isSubjectSetting && subjectId == null)
-            throw new ApiInputException("Subject id is required!");
+            throw new ApiInputException("Môn học");
 
         sortBy = SortAndOrderUtils.validateSort(sortBy, Constants.DefaultValuePage.SORT_BY, Setting.class.getDeclaredFields());
     }

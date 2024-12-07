@@ -13,13 +13,13 @@ public class AddRequirementList {
     private List<Integer> teamIds;
 
     public void validateInput(){
-        ValidateUtils.checkNullOrEmpty(milestoneId, "Milestone");
-        ValidateUtils.checkNullOrEmpty(teamIds, "Teams");
+        ValidateUtils.checkNullOrEmpty(milestoneId, "Cột mốc");
+        ValidateUtils.checkNullOrEmpty(teamIds, "Nhóm");
         for (Integer teamId : teamIds) {
-            ValidateUtils.checkNullOrEmpty(teamId, "Team id");
+            ValidateUtils.checkNullOrEmpty(teamId, "Nhóm");
         }
         for (RequirementDTO requirement : requirementDTOs) {
-            ValidateUtils.checkNullOrEmpty(requirement, "Requirement");
+            ValidateUtils.checkNullOrEmpty(requirement, "Yêu cầu");
             requirement.setStatus("TO DO");
             requirement.validateInput(true);
         }

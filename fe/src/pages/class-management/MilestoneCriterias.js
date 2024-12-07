@@ -50,7 +50,7 @@ function EditToolbar(props) {
   return (
     <GridToolbarContainer>
       <Button color="primary" startIcon={<AddIcon />} onClick={handleClick}>
-        Add criteria
+        Thêm mới
       </Button>
     </GridToolbarContainer>
   );
@@ -108,7 +108,7 @@ export default function MilestoneCriterias({ classes }) {
 
   const handleDeleteClick = (id) => () => {
     // eslint-disable-next-line no-restricted-globals
-    if (confirm("Are you sure you want to delete this criteria?") === true)
+    if (confirm("Bạn có chắc chắn muốn xóa tiêu chí này?") === true)
       setCriterias(criterias.filter((row) => row.id !== id));
   };
 
@@ -156,7 +156,7 @@ export default function MilestoneCriterias({ classes }) {
       const response = await authApi.put(url, submitForm);
       console.log(`Update criterias:`, response.data.data);
       if (response.data.statusCode === 200) {
-        toast.success(`Update criterias successfully!`, {
+        toast.success(`Cập nhật tiêu chí thành công`, {
           position: toast.POSITION.TOP_CENTER,
         });
         setReload(!reload);
@@ -169,7 +169,7 @@ export default function MilestoneCriterias({ classes }) {
       // eslint-disable-next-line no-undef
       console.error(`Error Update criterias:`, error);
       // eslint-disable-next-line no-undef
-      toast.error(`Error Update criterias!`, {
+      toast.error(`Xảy ra lỗi khi cập nhật tiêu chí`, {
         position: toast.POSITION.TOP_CENTER,
       });
     } finally {
@@ -192,10 +192,10 @@ export default function MilestoneCriterias({ classes }) {
   };
 
   const columns = [
-    { field: "criteriaName", headerName: "Name", width: 280 },
+    { field: "criteriaName", headerName: "Tên tiêu chí", width: 280 },
     {
       field: "evalWeight",
-      headerName: "Weight (%)",
+      headerName: "Tỷ trọng (%)",
       type: "number",
       width: 80,
       align: "left",
@@ -204,14 +204,14 @@ export default function MilestoneCriterias({ classes }) {
     },
     {
       field: "locEvaluation",
-      headerName: "Loc Eval",
+      headerName: "Đánh giá LOC",
       type: "boolean",
       width: 130,
       // editable: true,
     },
     {
       field: "updatedDate",
-      headerName: "Last Update",
+      headerName: "Cập nhật lần cuối",
       width: 180,
       valueFormatter: (params) => {
         return formatDate(params);
@@ -226,7 +226,7 @@ export default function MilestoneCriterias({ classes }) {
     {
       field: "actions",
       type: "actions",
-      headerName: "Actions",
+      headerName: "Hành động",
       width: 100,
       cellClassName: "actions",
       getActions: (params) => {
@@ -302,7 +302,7 @@ export default function MilestoneCriterias({ classes }) {
         }
       } catch (error) {
         console.error("Error fetching data:", error);
-        toast.error("Error search milestones!", {
+        toast.error("Xảy ra lỗi khi tìm kiếm cột mốc", {
           position: toast.POSITION.TOP_CENTER,
         });
       } finally {
@@ -338,7 +338,7 @@ export default function MilestoneCriterias({ classes }) {
         }
       } catch (error) {
         console.error("Error fetching data:", error);
-        toast.error("Error search criterias!", {
+        toast.error("Xảy ra lỗi khi tìm kiếm tiêu chí", {
           position: toast.POSITION.TOP_CENTER,
         });
       } finally {
@@ -356,7 +356,7 @@ export default function MilestoneCriterias({ classes }) {
           <div className="col-md-6">
             <BlockHeadContent>
               <div className="w-50">
-                <span className="form-label">Milestone</span>
+                <span className="form-label">Cột mốc</span>
                 <RSelect
                   options={milestones}
                   value={milestone}
@@ -372,7 +372,7 @@ export default function MilestoneCriterias({ classes }) {
               {isFetching.updateCriterias ? (
                 <Spinner color="primary" />
               ) : (
-                <Button onClick={() => onSubmit()}>Save Changes</Button>
+                <Button onClick={() => onSubmit()}>Lưu thay đổi</Button>
               )}
             </BlockHeadContent>
           </div>

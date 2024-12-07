@@ -15,7 +15,7 @@ public class EvaluationCriteriaRequest {
     private Integer assignmentId;
     private List<EvaluationCriteriaDTO> listEvaluationCriteria;
     public void validateInput(){
-        ValidateUtils.checkNullOrEmpty(listEvaluationCriteria, "List");
+        ValidateUtils.checkNullOrEmpty(listEvaluationCriteria, "Danh sách tiêu chí");
         for (EvaluationCriteriaDTO criteriaDTO : listEvaluationCriteria){
             criteriaDTO.validateInput();
         }

@@ -405,7 +405,7 @@ export const getAllOptions = (label) => {
 
 export const generateTemplate = async (sampleData, complexities, qualities, evaluationType) => {
   const workbook = new excelJs.Workbook();
-  const ws = workbook.addWorksheet("Requirement Evaluation");
+  const ws = workbook.addWorksheet("Đánh giá yêu cầu");
   const totalRows = sampleData.length + 1;
   const options2 = [];
   const options3 = [];
@@ -426,9 +426,9 @@ export const generateTemplate = async (sampleData, complexities, qualities, eval
       opt3Values.push(weight);
     });
   }
-  let headers = ["ID", "Title", "Team", "In charge", "Complexity", "Quality", "LOC", "Comment"];
+  let headers = ["ID", "Tiêu đề", "Nhóm", "Sinh viên", "Độ phức tạp", "Mức độ hoàn thiện", "LOC", "Nhận xét"];
   if (evaluationType === "Final") {
-    headers.push(...["Update complexity", "Update quality", "Update LOC", "Update comment"]);
+    headers.push(...["Cập nhật độ phức tạp", "Cập nhật mức độ hoàn thiện", "Cập nhật LOC", "Cập nhật nhận xét"]);
   }
   ws.addRow(headers);
 
@@ -605,15 +605,15 @@ export const generateTemplateStudentEval = async (sampleData) => {
   const workbook = new excelJs.Workbook();
   const ws = workbook.addWorksheet("Student Evaluation");
   const totalRows = sampleData.length + 1;
-  let header = ["FullName", "Email", "Team", "LOC -> Grade"];
+  let header = ["Họ và tên", "Email", "Nhóm", "LOC -> Điểm"];
 
   if (!isNullOrEmpty(sampleData[0]?.milestone?.name)) {
     header.push(`${sampleData[0]?.milestone?.name} (${sampleData[0]?.milestone?.weight}%)`);
-    header.push("Comment");
+    header.push("Nhận xét");
     if (sampleData[0]?.criteriaNames && sampleData[0]?.criteriaNames.length > 0) {
       sampleData[0].criteriaNames.forEach((criteria) => {
-        header.push(`${criteria.name} (${criteria?.weight}% of ${sampleData[0]?.milestone?.name})`);
-        header.push("Comment");
+        header.push(`${criteria.name} (${criteria?.weight}% của ${sampleData[0]?.milestone?.name})`);
+        header.push(`Nhận xét ${criteria.name}`);
       });
     }
   }
@@ -644,7 +644,7 @@ export const generateTemplateStudentEval = async (sampleData) => {
     formula2: 10,
     showErrorMessage: true,
     errorTitle: "Invalid grade",
-    error: "Grade must be in range 0 to 10",
+    error: "Điểm phải nằm trong đoạn từ 0 đến 10",
   };
 
   sampleData.forEach((evaluation, idx) => {

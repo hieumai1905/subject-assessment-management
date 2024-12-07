@@ -14,9 +14,9 @@ public class ImportCouncilTeamsRequest {
 
     public void validateInput(){
         isAssignedForClass = isAssignedForClass != null && isAssignedForClass;
-        ValidateUtils.checkNullOrEmpty(importedTeams, "Import data");
-        ValidateUtils.checkNullOrEmpty(semesterId, "Semester id");
-        ValidateUtils.checkNullOrEmpty(roundId, "Round id");
+        ValidateUtils.checkNullOrEmpty(importedTeams, "Dữ liệu");
+        ValidateUtils.checkNullOrEmpty(semesterId, "Học kỳ");
+        ValidateUtils.checkNullOrEmpty(roundId, "Lần chấm");
         for (ImportCouncilTeam request : importedTeams) {
             request.validateInput();
         }

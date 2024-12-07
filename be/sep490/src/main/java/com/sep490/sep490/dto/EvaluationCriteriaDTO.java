@@ -17,11 +17,11 @@ public class EvaluationCriteriaDTO {
     private Integer assignmentId;
 
     public void validateInput(){
-        ValidateUtils.checkNullOrEmpty(criteriaName, "Evaluation Criteria name");
-        criteriaName = ValidateUtils.checkLength(criteriaName, "Evaluation Criteria name", Constants.LengthCheck.MIN, Constants.LengthCheck.MAX);
+        ValidateUtils.checkNullOrEmpty(criteriaName, "Tên tiêu chí");
+        criteriaName = ValidateUtils.checkLength(criteriaName, "Tên tiêu chí", Constants.LengthCheck.MIN, Constants.LengthCheck.MAX);
 
-        ValidateUtils.checkIntegerInRange(evalWeight, "Evaluation weight", Constants.WeightRange.MIN, Constants.WeightRange.MAX);
+        ValidateUtils.checkIntegerInRange(evalWeight, "Tỷ trọng", Constants.WeightRange.MIN, Constants.WeightRange.MAX);
 
-        guides = ValidateUtils.checkLength(guides, "Guides", 0, Constants.DefaultValueEntity.DESCRIPTION_LENGTH);
+        guides = ValidateUtils.checkLength(guides, "Hướng dẫn", 0, Constants.DefaultValueEntity.DESCRIPTION_LENGTH);
     }
 }

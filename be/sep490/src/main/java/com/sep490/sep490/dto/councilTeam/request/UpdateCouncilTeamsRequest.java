@@ -16,9 +16,9 @@ public class UpdateCouncilTeamsRequest {
 
     public void validateInput(){
         isAssignedForClass = isAssignedForClass != null && isAssignedForClass;
-        ValidateUtils.checkNullOrEmpty(ids, "Assigned ids");
-        ValidateUtils.checkNullOrEmpty(semesterId, "Semester id");
-        ValidateUtils.checkNullOrEmpty(roundId, "Round id");
+        ValidateUtils.checkNullOrEmpty(ids, "Thông tin lớp/nhóm");
+        ValidateUtils.checkNullOrEmpty(semesterId, "Học kỳ");
+        ValidateUtils.checkNullOrEmpty(roundId, "Lần chấm");
 //        ValidateUtils.checkNullOrEmpty(councilId, "Council id");
 //        ValidateUtils.checkNullOrEmpty(sessionId, "Session id");
     }

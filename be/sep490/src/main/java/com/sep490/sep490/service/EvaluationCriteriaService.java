@@ -49,7 +49,7 @@ public class EvaluationCriteriaService implements BaseService<EvaluationCriteria
         request.validateInput();
 
         var findAssignment = assignmentsRepository.findById(request.getAssignmentId()).orElseThrow(
-                () -> new RecordNotFoundException("Assignment")
+                () -> new RecordNotFoundException("Bài kiểm tra")
         );
 
         List<EvaluationCriteria> evaluationCriteriaList = new ArrayList<>();
@@ -87,7 +87,7 @@ public class EvaluationCriteriaService implements BaseService<EvaluationCriteria
         for (EvaluationCriteriaDTO criteriaDTO : criteriaDTOs) {
             String criteriaName = criteriaDTO.getCriteriaName().toLowerCase();
             if (criteriaNames.contains(criteriaName)) {
-                throw new ApiInputException("Duplicate evaluation criteria name: " + criteriaName);
+                throw new ApiInputException("Trùng tên tiêu chí đánh giá: " + criteriaName);
             }
             criteriaNames.add(criteriaName);
 
@@ -99,7 +99,7 @@ public class EvaluationCriteriaService implements BaseService<EvaluationCriteria
         }
 
         if (totalCriteriaWeight != 100) {
-            throw new ApiInputException("Total evaluation criteria weight must be 100%");
+            throw new ApiInputException("Tổng tỷ trọng các tiêu chí phải bằng 100%");
         }
     }
 
@@ -141,7 +141,7 @@ public class EvaluationCriteriaService implements BaseService<EvaluationCriteria
     @Override
     public Object get(Integer id) {
         var foundEvaluationCriteria = evaluationCriteriaRepository.findById(id).orElseThrow(
-                () -> new RecordNotFoundException("Evaluation Criteria"));
+                () -> new RecordNotFoundException("Tiêu chí"));
         return ConvertUtils.convert(foundEvaluationCriteria, EvaluationCriteriaDTO.class);
     }
 

@@ -23,7 +23,6 @@ public class ClassesDTO {
     private String name;
     private String description;
     //validate: id teacher
-    private List<CreateUserRequest> listEvaluator;
     private Boolean active;
     public void validateInput(){
         ValidateUtils.checkNullOrEmpty(classCode, "Mã lớp");

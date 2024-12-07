@@ -14,7 +14,17 @@ import {
   Row,
   RSelect,
 } from "../../components/Component";
-import { Nav, NavItem, NavLink, Spinner, TabContent, TabPane } from "reactstrap";
+import {
+  DropdownMenu,
+  DropdownToggle,
+  Nav,
+  NavItem,
+  NavLink,
+  Spinner,
+  TabContent,
+  TabPane,
+  UncontrolledDropdown,
+} from "reactstrap";
 import classnames from "classnames";
 import { useNavigate, useParams } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
@@ -31,6 +41,7 @@ import GFStudentEvaluations from "./StudentEvaluations";
 import Swal from "sweetalert2";
 
 export default function GFEvaluationTabs() {
+  const [sm, updateSm] = useState(false);
   const [activeTab, setActiveTab] = useState("2");
   const [isFirst, setIsFirst] = useState(true);
   const navigate = useNavigate();
@@ -40,14 +51,14 @@ export default function GFEvaluationTabs() {
 
   const toggle = (tab) => {
     if (activeTab !== tab) {
-      if (haveChanged && role === 'TEACHER') {
+      if (haveChanged && role === "TEACHER") {
         Swal.fire({
-          title: "Message",
-          text: `You should save the changes before navigating to another tab.`,
+          title: "Thông báo",
+          text: `Bạn nên lưu thay đổi trước khi chuyển tab`,
           icon: "warning",
           showCancelButton: true,
-          confirmButtonText: "Switch tabs",
-          cancelButtonText: "Stay here",
+          confirmButtonText: "Chuyển tab",
+          cancelButtonText: "Ở lại",
         }).then(async (result) => {
           if (result.isConfirmed) {
             setActiveTab(tab);
@@ -129,7 +140,7 @@ export default function GFEvaluationTabs() {
         }
       } catch (error) {
         console.error("Error fetching data:", error);
-        toast.error("Error search setting!", {
+        toast.error("Xảy ra lỗi khi tìm kiếm học kỳ", {
           position: toast.POSITION.TOP_CENTER,
         });
       } finally {
@@ -168,7 +179,7 @@ export default function GFEvaluationTabs() {
         }
       } catch (error) {
         console.error("Error fetching data:", error);
-        toast.error("Error search subject!", {
+        toast.error("Xảy ra lỗi khi tìm kiếm môn học", {
           position: toast.POSITION.TOP_CENTER,
         });
       } finally {
@@ -222,7 +233,7 @@ export default function GFEvaluationTabs() {
       }
     } catch (error) {
       console.error("Error fetching data:", error);
-      toast.error("Error search round!", {
+      toast.error("Xảy ra lỗi khi tìm kiếm lần chấm", {
         position: toast.POSITION.TOP_CENTER,
       });
     } finally {
@@ -266,7 +277,7 @@ export default function GFEvaluationTabs() {
       }
     } catch (error) {
       console.error("Error fetching data:", error);
-      toast.error("Error search sessions!", {
+      toast.error("Xảy ra lỗi khi tìm kiếm phiên chấm", {
         position: toast.POSITION.TOP_CENTER,
       });
     } finally {
@@ -315,7 +326,7 @@ export default function GFEvaluationTabs() {
       }
     } catch (error) {
       console.error("Error fetching data:", error);
-      toast.error("Error search class!", {
+      toast.error("Xảy ra lỗi khi tìm kiếm lớp học", {
         position: toast.POSITION.TOP_CENTER,
       });
     } finally {
@@ -359,7 +370,7 @@ export default function GFEvaluationTabs() {
       }
     } catch (error) {
       console.error("Error fetching data:", error);
-      toast.error("Error search teams!", { position: toast.POSITION.TOP_CENTER });
+      toast.error("Xảy ra lỗi khi tìm kiếm nhóm", { position: toast.POSITION.TOP_CENTER });
     } finally {
       setIsFetching((prev) => ({ ...prev, team: false }));
     }
@@ -386,7 +397,7 @@ export default function GFEvaluationTabs() {
       }
     } catch (error) {
       console.error("Error fetching data:", error);
-      toast.error("Error search evaluations!", { position: toast.POSITION.TOP_CENTER });
+      toast.error("Xảy ra lỗi khi tìm kiếm đánh giá", { position: toast.POSITION.TOP_CENTER });
     } finally {
       setIsFirst(false);
       setIsFetching({ ...isFetching, studentEval: false });
@@ -416,7 +427,7 @@ export default function GFEvaluationTabs() {
       }
     } catch (error) {
       console.error("Error fetching data:", error);
-      toast.error("Error search work evaluations!", { position: toast.POSITION.TOP_CENTER });
+      toast.error("Xảy ra lỗi khi tìm kiếm đánh giá", { position: toast.POSITION.TOP_CENTER });
     } finally {
       setIsFetching({ ...isFetching, reqEval: false });
       setIsFirst(false);
@@ -493,67 +504,6 @@ export default function GFEvaluationTabs() {
     }
   }, [filterForm?.team?.value, activeTab]);
 
-  // useEffect(() => {
-  //   const fetchWorkEvaluations = async () => {
-  //     if (isFetching.team || !filterForm?.class?.value || !filterForm?.milestone?.value || activeTab !== "1") {
-  //       setIsFetching({ ...isFetching, reqEval: false });
-  //       return;
-  //     }
-  //     try {
-  //       setIsFetching({ ...isFetching, reqEval: true });
-  //       const response = await authApi.post("/evaluation/search-requirement-evaluation", {
-  //         classId: filterForm?.class?.value,
-  //         milestoneId: filterForm?.milestone?.value,
-  //         teamId: filterForm?.team?.value,
-  //       });
-  //       console.log("work evaluations:", response.data.data);
-  //       if (response.data.statusCode === 200) {
-  //         setWorkEvaluation(response.data.data?.workEvaluationResponses);
-  //         setComplexity(response.data.data?.complexities);
-  //         setQuality(response.data.data?.qualities);
-  //       } else {
-  //         toast.error(`${response.data.data}`, { position: toast.POSITION.TOP_CENTER });
-  //       }
-  //     } catch (error) {
-  //       console.error("Error fetching data:", error);
-  //       toast.error("Error search work evaluations!", { position: toast.POSITION.TOP_CENTER });
-  //     } finally {
-  //       setIsFetching({ ...isFetching, reqEval: false });
-  //     }
-  //   };
-
-  //   fetchWorkEvaluations();
-  // }, [filterForm.team, activeTab]);
-
-  // useEffect(() => {
-  //   const fetchMilestonesEvaluations = async () => {
-  //     if (!filterForm?.class?.value || activeTab !== "3") {
-  //       setIsFetching({ ...isFetching, allMileEval: false });
-  //       return;
-  //     }
-  //     try {
-  //       setIsFetching({ ...isFetching, allMileEval: true });
-  //       const response = await authApi.get(
-  //         `/evaluation/search-student-evaluation-by-class/${filterForm?.class?.value}`
-  //       );
-  //       console.log("milestone evaluations:", response.data.data);
-  //       if (response.data.statusCode === 200) {
-  //         let requirements = response.data.data;
-  //         setMilestoneEvaluations(requirements);
-  //       } else {
-  //         toast.error(`${response.data.data}`, { position: toast.POSITION.TOP_CENTER });
-  //       }
-  //     } catch (error) {
-  //       console.error("Error fetching data:", error);
-  //       toast.error("Error search evaluations!", { position: toast.POSITION.TOP_CENTER });
-  //     } finally {
-  //       setIsFetching({ ...isFetching, allMileEval: false });
-  //     }
-  //   };
-
-  //   fetchMilestonesEvaluations();
-  // }, [filterForm.class, activeTab, classes]);
-
   return (
     <>
       <Head title="Evaluation"></Head>
@@ -561,125 +511,165 @@ export default function GFEvaluationTabs() {
         <BlockHead size="sm">
           <BlockBetween>
             <BlockHeadContent>
-              <BlockTitle page>Final Evaluations</BlockTitle>
+              <BlockTitle page>Đánh giá hội đồng</BlockTitle>
               <BlockDes></BlockDes>
             </BlockHeadContent>
-            <BlockHeadContent></BlockHeadContent>
+            <BlockHeadContent>
+              <div className="toggle-wrap nk-block-tools-toggle">
+                <Button
+                  className={`btn-icon btn-trigger toggle-expand me-n1 ${sm ? "active" : ""}`}
+                  onClick={() => updateSm(!sm)}
+                >
+                  <Icon name="menu-alt-r"></Icon>
+                </Button>
+                <div className="toggle-expand-content" style={{ display: sm ? "block" : "none" }}>
+                  <ul className="nk-block-tools g-3">
+                    <li>
+                      <UncontrolledDropdown>
+                        <DropdownToggle tag="a" className="dropdown-toggle btn btn-white btn-dim btn-outline-light">
+                          <Icon name="filter-alt" className="d-none d-sm-inline"></Icon>
+                          <span>Bộ lọc</span>
+                          <Icon name="chevron-right" className="dd-indc"></Icon>
+                        </DropdownToggle>
+                        <DropdownMenu end className="filter-wg dropdown-menu-xxl" style={{ overflow: "visible" }}>
+                          <div className="dropdown-head">
+                            <span className="sub-title dropdown-title">Lọc đánh giá</span>
+                            <div className="dropdown">
+                              <a
+                                href="#more"
+                                onClick={(ev) => {
+                                  ev.preventDefault();
+                                }}
+                                className="btn btn-sm btn-icon"
+                              >
+                                <Icon name="more-h"></Icon>
+                              </a>
+                            </div>
+                          </div>
+                          <div className="dropdown-body dropdown-body-rg">
+                            <Row className=" d-flex justify-content-around">
+                              <Col size="6">
+                                <div className="form-group">
+                                  <label className="form-label">Học kỳ</label>
+                                  {isFetching?.semester ? (
+                                    <div>
+                                      <Spinner />
+                                    </div>
+                                  ) : (
+                                    <RSelect
+                                      options={semesters}
+                                      value={filterForm.semester}
+                                      onChange={(e) => setFilterForm({ ...filterForm, semester: e })}
+                                    />
+                                  )}
+                                </div>
+                              </Col>
+                              <Col size="6">
+                                <div className="form-group">
+                                  <label className="form-label">Môn học</label>
+                                  {isFetching?.subject ? (
+                                    <div>
+                                      <Spinner />
+                                    </div>
+                                  ) : (
+                                    <RSelect
+                                      options={subjects}
+                                      value={filterForm.subject}
+                                      onChange={(e) =>
+                                        setFilterForm({
+                                          ...filterForm,
+                                          subject: e,
+                                        })
+                                      }
+                                    />
+                                  )}
+                                </div>
+                              </Col>
+                              <Col size="6">
+                                <div className="form-group">
+                                  <label className="form-label">Lần chấm</label>
+                                  {isFetching?.round ? (
+                                    <div>
+                                      <Spinner />
+                                    </div>
+                                  ) : (
+                                    <RSelect
+                                      options={rounds}
+                                      value={filterForm.round}
+                                      onChange={(e) => setFilterForm({ ...filterForm, round: e })}
+                                    />
+                                  )}
+                                </div>
+                              </Col>
+                              <Col size="6">
+                                <div className="form-group">
+                                  <label className="form-label">Phiên chấm</label>
+                                  {isFetching?.session ? (
+                                    <div>
+                                      <Spinner />
+                                    </div>
+                                  ) : (
+                                    <RSelect
+                                      options={sessions}
+                                      value={filterForm.session}
+                                      onChange={(e) => {
+                                        if (
+                                          !isFetching?.class &&
+                                          !isFetching.team &&
+                                          ((!isFetching.studentEval && activeTab === "2") ||
+                                            (activeTab === "1" && !isFetching.reqEval))
+                                        ) {
+                                          setFilterForm({ ...filterForm, session: e });
+                                        }
+                                      }}
+                                    />
+                                  )}
+                                </div>
+                              </Col>
+                              <Col size="6">
+                                <div className="form-group">
+                                  <label className="form-label">Lớp học</label>
+                                  {isFetching?.class ? (
+                                    <div>
+                                      <Spinner />
+                                    </div>
+                                  ) : (
+                                    <RSelect
+                                      options={classes}
+                                      value={filterForm.class}
+                                      onChange={(e) => setFilterForm({ ...filterForm, class: e })}
+                                    />
+                                  )}
+                                </div>
+                              </Col>
+                              <Col size="6">
+                                <div className="form-group">
+                                  <label className="form-label">Nhóm</label>
+                                  {isFetching?.team ? (
+                                    <div>
+                                      <Spinner />
+                                    </div>
+                                  ) : (
+                                    <RSelect
+                                      options={teams}
+                                      value={filterForm.team}
+                                      onChange={(e) => setFilterForm({ ...filterForm, team: e })}
+                                    />
+                                  )}
+                                </div>
+                              </Col>
+                            </Row>
+                          </div>
+                        </DropdownMenu>
+                      </UncontrolledDropdown>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </BlockHeadContent>
           </BlockBetween>
         </BlockHead>
-        <Row className=" d-flex justify-content-around">
-          <Col size="3">
-            <div className="form-group">
-              <label className="form-label">Semester</label>
-              {isFetching?.semester ? (
-                <div>
-                  <Spinner />
-                </div>
-              ) : (
-                <RSelect
-                  options={semesters}
-                  value={filterForm.semester}
-                  onChange={(e) => setFilterForm({ ...filterForm, semester: e })}
-                />
-              )}
-            </div>
-          </Col>
-          <Col size="3">
-            <div className="form-group">
-              <label className="form-label">Subject</label>
-              {isFetching?.subject ? (
-                <div>
-                  <Spinner />
-                </div>
-              ) : (
-                <RSelect
-                  options={subjects}
-                  value={filterForm.subject}
-                  onChange={(e) =>
-                    setFilterForm({
-                      ...filterForm,
-                      subject: e,
-                    })
-                  }
-                />
-              )}
-            </div>
-          </Col>
-          <Col size="3">
-            <div className="form-group">
-              <label className="form-label">Round</label>
-              {isFetching?.round ? (
-                <div>
-                  <Spinner />
-                </div>
-              ) : (
-                <RSelect
-                  options={rounds}
-                  value={filterForm.round}
-                  onChange={(e) => setFilterForm({ ...filterForm, round: e })}
-                />
-              )}
-            </div>
-          </Col>
-        </Row>
-        <Row className="mt-3 d-flex justify-content-around">
-          <Col size="3">
-            <div className="form-group">
-              <label className="form-label">Session</label>
-              {isFetching?.session ? (
-                <div>
-                  <Spinner />
-                </div>
-              ) : (
-                <RSelect
-                  options={sessions}
-                  value={filterForm.session}
-                  onChange={(e) => {
-                    if (
-                      !isFetching?.class &&
-                      !isFetching.team &&
-                      ((!isFetching.studentEval && activeTab === "2") || (activeTab === "1" && !isFetching.reqEval))
-                    ) {
-                      setFilterForm({ ...filterForm, session: e });
-                    }
-                  }}
-                />
-              )}
-            </div>
-          </Col>
-          <Col size="3">
-            <div className="form-group">
-              <label className="form-label">Class</label>
-              {isFetching?.class ? (
-                <div>
-                  <Spinner />
-                </div>
-              ) : (
-                <RSelect
-                  options={classes}
-                  value={filterForm.class}
-                  onChange={(e) => setFilterForm({ ...filterForm, class: e })}
-                />
-              )}
-            </div>
-          </Col>
-          <Col size="3">
-            <div className="form-group">
-              <label className="form-label">Team</label>
-              {isFetching?.team ? (
-                <div>
-                  <Spinner />
-                </div>
-              ) : (
-                <RSelect
-                  options={teams}
-                  value={filterForm.team}
-                  onChange={(e) => setFilterForm({ ...filterForm, team: e })}
-                />
-              )}
-            </div>
-          </Col>
-        </Row>
+
         {true && (
           <>
             <Nav tabs>
@@ -706,7 +696,7 @@ export default function GFEvaluationTabs() {
                     toggle("2");
                   }}
                 >
-                  Milestones
+                  Theo cột mốc
                 </NavLink>
               </NavItem>
               <NavItem>
@@ -719,7 +709,7 @@ export default function GFEvaluationTabs() {
                     toggle("1");
                   }}
                 >
-                  LOC
+                  Theo yêu cầu
                 </NavLink>
               </NavItem>
             </Nav>
@@ -764,7 +754,7 @@ export default function GFEvaluationTabs() {
               </TabPane>
               <TabPane tabId="3">
                 {activeTab === "3" ? (
-                  <>No data available</>
+                  <>Không có dữ liệu</>
                 ) : (
                   // <EvaluationsByMilestones
                   //   evaluations={milestoneEvaluations}
@@ -780,7 +770,7 @@ export default function GFEvaluationTabs() {
         )}
         {role === "STUDENT" && (
           <Block>
-            <>No data available</>
+            <>Không có dữ liệu</>
             {/* <ViewStudentEval
               data={milestoneEvaluations}
               classId={filterForm?.class?.value}

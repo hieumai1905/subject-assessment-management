@@ -16,13 +16,13 @@ public class UpdateMilestoneRequest {
     private String note;
 
     public void validateInput(){
-        ValidateUtils.checkNullOrEmpty(title, "Title");
-        title = ValidateUtils.checkLength(title, "Title", 1, 255);
+        ValidateUtils.checkNullOrEmpty(title, "Tiêu đề");
+        title = ValidateUtils.checkLength(title, "Tiêu đề", 1, 255);
 //        ValidateUtils.checkNullOrEmpty(startDate, "Start date");
         startDate = new Date();
-        ValidateUtils.checkNullOrEmpty(dueDate, "Due date");
-        ValidateUtils.checkBeforeCurrentDate(dueDate,"Due date");
-        note = ValidateUtils.checkLength(note, "Note",
+        ValidateUtils.checkNullOrEmpty(dueDate, "Ngày hết hạn");
+        ValidateUtils.checkBeforeCurrentDate(dueDate,"Ngày hết hạn");
+        note = ValidateUtils.checkLength(note, "Ghi chú",
                 Constants.DefaultValueEntity.MIN_LENGTH, Constants.DefaultValueEntity.DESCRIPTION_LENGTH);
     }
 }

@@ -81,7 +81,7 @@ function CustomToolbar({ rows, columns, columnsGroups, evaluations }) {
           <Spinner />
         ) : (
           <>
-            <FileDownloadIcon /> Xuất File
+            <FileDownloadIcon /> Export File
           </>
         )}
       </div>

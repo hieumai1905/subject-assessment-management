@@ -13,7 +13,7 @@ public class ChangePassRequest {
     private String confirmPass;
 
     public void validateInput(){
-        ValidateUtils.checkNullOrEmpty(oldPass, "Password");
-        ValidateUtils.checkNullOrEmpty(newPass, "Password");
+        ValidateUtils.checkNullOrEmpty(oldPass, "Mật khẩu");
+        ValidateUtils.checkNullOrEmpty(newPass, "Mật khẩu");
     }
 }

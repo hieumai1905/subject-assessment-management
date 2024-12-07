@@ -62,7 +62,7 @@ const ViewStudentWorkEval = ({ modal, setModal, complexities, qualities, evaluat
             }}
           >
             <Icon name="file-text" style={{ marginRight: "8px", color: "#666" }} />
-            Work Evaluation
+            Đánh giá yêu cầu
           </h4>
           <Button
             close
@@ -92,7 +92,7 @@ const ViewStudentWorkEval = ({ modal, setModal, complexities, qualities, evaluat
             }}
           >
             <Icon name="info" style={{ marginRight: "8px", color: "#777" }} />
-            <h6>No work evaluation available in {mileTitle}</h6>
+            <h6>Không có dữ liệu trong {mileTitle}</h6>
           </div>
         ) : (
           <>
@@ -107,12 +107,12 @@ const ViewStudentWorkEval = ({ modal, setModal, complexities, qualities, evaluat
               }}
             >
               <Icon name="user" style={{ marginRight: "8px", color: "#666" }} />
-              Student: {evaluations[0]?.studentFullname}, Team: {evaluations[0]?.teamTeamName} in {mileTitle}
+              Sinh viên: {evaluations[0]?.studentFullname}, Nhóm: {evaluations[0]?.teamTeamName} trong {mileTitle}
             </h5>
             <div
               className="mt-3"
               style={{
-                maxHeight: "400px",
+                maxHeight: "450px",
                 overflowY: "auto",
                 overflowX: "hidden", // Disable horizontal scrollbar
                 paddingRight: "12px",
@@ -123,7 +123,7 @@ const ViewStudentWorkEval = ({ modal, setModal, complexities, qualities, evaluat
               <Form className="row gy-3" onSubmit={handleSubmit(onSubmit)}>
                 <Row>
                   {evaluations.map((item, idx) => (
-                    <Col md="12" key={idx} className="mb-3">
+                    <Col md="12" key={idx} className="mt-4">
                       {" "}
                       {/* Đổi Col md="6" thành md="12" để chiếm hết chiều rộng */}
                       <div
@@ -156,32 +156,32 @@ const ViewStudentWorkEval = ({ modal, setModal, complexities, qualities, evaluat
                           }}
                         >
                           <Icon name="layers" style={{ marginRight: "8px", color: "#888" }} />
-                          {idx + 1}. Function: {item.reqTitle}
+                          {idx + 1}. {item.reqTitle}
                         </h6>
                         {item.requirementEval && (
                           <div className="ms-2 mb-2" style={{ fontSize: "0.95rem", color: "#555" }}>
                             <div style={{ display: "flex", alignItems: "center", marginBottom: "5px" }}>
                               <Icon name="check-circle" style={{ marginRight: "6px", color: "#5cb85c" }} />
-                              <span style={{ fontWeight: "600", color: "#333" }}>Complexity:</span>{" "}
+                              <span style={{ fontWeight: "600", color: "#333" }}>Độ phức tạp:</span>{" "}
                               <span style={{ marginLeft: "4px", color: "#000" }}>
                                 {complexities.find((c) => c.id === item?.requirementEval?.complexityId)?.name}
                               </span>
                             </div>
                             <div style={{ display: "flex", alignItems: "center", marginBottom: "5px" }}>
                               <Icon name="check-circle" style={{ marginRight: "6px", color: "#5cb85c" }} />
-                              <span style={{ fontWeight: "600", color: "#333" }}>Quality:</span>{" "}
+                              <span style={{ fontWeight: "600", color: "#333" }}>Mức độ hoàn thiện:</span>{" "}
                               <span style={{ marginLeft: "4px", color: "#000" }}>
                                 {qualities.find((c) => c.id === item?.requirementEval?.qualityId)?.name}
                               </span>
                             </div>
                             <div style={{ display: "flex", alignItems: "center" }}>
                               <Icon name="check-circle" style={{ marginRight: "6px", color: "#5cb85c" }} />
-                              <span style={{ fontWeight: "600", color: "#333" }}>LOC Grade:</span>{" "}
+                              <span style={{ fontWeight: "600", color: "#333" }}>LOC:</span>{" "}
                               <span style={{ marginLeft: "4px", color: "#000" }}>{item?.requirementEval?.grade}</span>
                             </div>
                             <div className="mt-1" style={{ fontSize: "0.9rem", color: "#666" }}>
                               <Icon name="message-square" style={{ marginRight: "6px", color: "#999" }} />
-                              Comment: {item?.requirementEval?.comment || "No comment"}
+                              Nhận xét: {item?.requirementEval?.comment || "Không có"}
                             </div>
                           </div>
                         )}
@@ -199,26 +199,26 @@ const ViewStudentWorkEval = ({ modal, setModal, complexities, qualities, evaluat
                           >
                             <Icon name="refresh-cw" style={{ marginRight: "6px", color: "#5bc0de" }} />
                             <div style={{ display: "flex", alignItems: "center", marginBottom: "5px" }}>
-                              <span style={{ fontWeight: "600", color: "#333" }}>Complexity:</span>{" "}
+                              <span style={{ fontWeight: "600", color: "#333" }}>Độ phức tạp:</span>{" "}
                               <span style={{ marginLeft: "4px", color: "#000" }}>
                                 {complexities.find((c) => c.id === item?.updateRequirementEval?.complexityId)?.name}
                               </span>
                             </div>
                             <div style={{ display: "flex", alignItems: "center", marginBottom: "5px" }}>
-                              <span style={{ fontWeight: "600", color: "#333" }}>Quality:</span>{" "}
+                              <span style={{ fontWeight: "600", color: "#333" }}>Mức độ hoàn thiện:</span>{" "}
                               <span style={{ marginLeft: "4px", color: "#000" }}>
                                 {qualities.find((c) => c.id === item?.updateRequirementEval?.qualityId)?.name}
                               </span>
                             </div>
                             <div style={{ display: "flex", alignItems: "center" }}>
-                              <span style={{ fontWeight: "600", color: "#333" }}>LOC Grade:</span>{" "}
+                              <span style={{ fontWeight: "600", color: "#333" }}>LOC:</span>{" "}
                               <span style={{ marginLeft: "4px", color: "#000" }}>
                                 {item?.updateRequirementEval?.grade}
                               </span>
                             </div>
                             <div className="mt-1" style={{ fontSize: "0.9rem", color: "#666" }}>
                               <Icon name="message-square" style={{ marginRight: "6px", color: "#999" }} />
-                              Comment: {item?.updateRequirementEval?.comment || "No comment"}
+                              Nhận xét: {item?.updateRequirementEval?.comment || "Không có"}
                             </div>
                           </div>
                         )}

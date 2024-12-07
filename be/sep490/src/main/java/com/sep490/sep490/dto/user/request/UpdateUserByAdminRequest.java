@@ -15,6 +15,6 @@ public class UpdateUserByAdminRequest {
     private String note;
 
     public void validateInput(){
-        ValidateUtils.checkIntegerInRange(roleId, "Role Id", 1, 4);
+        ValidateUtils.checkIntegerInRange(roleId, "Vai trò", 1, 4);
     }
 }

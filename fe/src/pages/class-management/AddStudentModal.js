@@ -80,6 +80,7 @@ const AddStudentModal = ({
       const response = await authApi.post("/class/import-student-list", {
         classId: classes.id,
         list: studentCodes,
+        isDeleteOldStudent: false
       });
       console.log("rr", response);
       if (response.data.statusCode === 200) {

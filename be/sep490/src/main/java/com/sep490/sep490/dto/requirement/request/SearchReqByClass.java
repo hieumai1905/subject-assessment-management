@@ -19,7 +19,7 @@ public class SearchReqByClass extends SearchRequestDTO {
 
     public void validateInput(){
         super.validateInput();
-        ValidateUtils.checkNullOrEmpty(classId, "classId");
+        ValidateUtils.checkNullOrEmpty(classId, "Lớp học");
         if(title != null){
             title = title.trim().toLowerCase();
         }

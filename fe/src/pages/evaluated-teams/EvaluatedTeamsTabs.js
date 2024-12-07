@@ -163,6 +163,7 @@ export default function EvaluatedTeamsTabs() {
           pageSize: 9999,
           pageIndex: 1,
           active: true,
+          isCouncil: true
         });
         console.log("subject:", response.data.data);
         if (response.data.statusCode === 200) {
@@ -256,7 +257,7 @@ export default function EvaluatedTeamsTabs() {
       if (response.data.statusCode === 200) {
         let classList = convertToOptions(response.data.data, "id", "name");
         if (activeTab === "1") {
-          classList.unshift(getAllOptions("All classes"));
+          classList.unshift(getAllOptions("Tất cả"));
         }
         setFilterForm({
           ...filterForm,
@@ -296,7 +297,7 @@ export default function EvaluatedTeamsTabs() {
       console.log("teams:", response.data.data);
       if (response.data.statusCode === 200) {
         let teams = convertToOptions(response.data.data, "id", "name");
-        teams.unshift(getAllOptions("All teams"));
+        teams.unshift(getAllOptions("Tất cả"));
         if (teams && teams.length > 0) {
           setFilterForm({ ...filterForm, team: teams[0] });
         }

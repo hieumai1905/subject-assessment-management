@@ -11,7 +11,7 @@ public class StudentEvalSearchRequest {
     private Integer teamId;
     private Integer milestoneId;
     public void validateInput(){
-        ValidateUtils.checkNullOrEmpty(classId, "Class id");
-        ValidateUtils.checkNullOrEmpty(milestoneId, "Milestone id");
+        ValidateUtils.checkNullOrEmpty(classId, "Lớp học");
+        ValidateUtils.checkNullOrEmpty(milestoneId, "Cột mốc");
     }
 }

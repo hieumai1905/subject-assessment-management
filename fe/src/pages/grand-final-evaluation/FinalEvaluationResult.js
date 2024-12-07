@@ -99,16 +99,16 @@ function CustomToolbar({ rows, columns, columnsGroups, evaluations }) {
 
 const columns = (evaluations) => [
   { field: "id", headerName: "", width: 70, checkboxSelection: true },
-  { field: "classCode", headerName: "Class Code", width: 150 },
-  { field: "sessionName", headerName: "Session", width: 150 },
-  { field: "teamName", headerName: "Team", width: 150 },
-  { field: "status", headerName: "Status", width: 150 },
-  { field: "fullname", headerName: "Student", width: 200 },
-  { field: "avgGrade", headerName: "Gr", width: 100 },
+  { field: "classCode", headerName: "Mã lớp", width: 150 },
+  { field: "sessionName", headerName: "Phiên đánh giá", width: 150 },
+  { field: "teamName", headerName: "Nhóm", width: 150 },
+  { field: "status", headerName: "Trạng thái", width: 150 },
+  { field: "fullname", headerName: "Học sinh", width: 200 },
+  { field: "avgGrade", headerName: "Điểm trung bình", width: 100 },
   ...(evaluations[0]?.gradeEvaluators || [])
     .map((_, idx) => [
-      { field: `evaluator${idx}`, headerName: `Evaluator ${idx + 1}`, width: 200 },
-      { field: `grade${idx}`, headerName: `GR ${idx + 1}`, width: 100 },
+      { field: `evaluator${idx}`, headerName: `Giảng viên ${idx + 1}`, width: 200 },
+      { field: `grade${idx}`, headerName: `Điểm ${idx + 1}`, width: 100 },
     ])
     .flat(),
 ];
@@ -143,6 +143,7 @@ export default function FinalEvaluationResult() {
   const [columnVisibilityModel, setColumnVisibilityModel] = React.useState({
     id: false,
   });
+  const [sm, updateSm] = React.useState(false);
   const [evaluations, setEvaluations] = React.useState([]);
   const [isFetching, setIsFetching] = React.useState({
     semester: true,
@@ -213,7 +214,7 @@ export default function FinalEvaluationResult() {
         }
       } catch (error) {
         console.error("Error fetching data:", error);
-        toast.error("Error search setting!", {
+        toast.error("Xảy ra lỗi khi tìm kiếm học kỳ", {
           position: toast.POSITION.TOP_CENTER,
         });
       } finally {
@@ -233,6 +234,7 @@ export default function FinalEvaluationResult() {
           pageSize: 9999,
           pageIndex: 1,
           active: true,
+          isCouncil: true,
         });
         console.log("subject:", response.data.data);
         if (response.data.statusCode === 200) {
@@ -252,7 +254,7 @@ export default function FinalEvaluationResult() {
         }
       } catch (error) {
         console.error("Error fetching data:", error);
-        toast.error("Error search subject!", {
+        toast.error("Xảy ra lỗi khi tìm kiếm môn học", {
           position: toast.POSITION.TOP_CENTER,
         });
       } finally {
@@ -306,7 +308,7 @@ export default function FinalEvaluationResult() {
       }
     } catch (error) {
       console.error("Error fetching data:", error);
-      toast.error("Error search round!", {
+      toast.error("Xảy ra lỗi khi tìm kiếm lần chấm", {
         position: toast.POSITION.TOP_CENTER,
       });
     } finally {
@@ -353,7 +355,7 @@ export default function FinalEvaluationResult() {
       }
     } catch (error) {
       console.error("Error fetching data:", error);
-      toast.error("Error search class!", {
+      toast.error("Xảy ra lỗi khi tìm kiếm lớp học", {
         position: toast.POSITION.TOP_CENTER,
       });
     } finally {
@@ -396,7 +398,7 @@ export default function FinalEvaluationResult() {
       }
     } catch (error) {
       console.error("Error fetching data:", error);
-      toast.error("Error search teams!", { position: toast.POSITION.TOP_CENTER });
+      toast.error("Xảy ra lỗi khi tìm kiếm nhóm", { position: toast.POSITION.TOP_CENTER });
     } finally {
       setIsFetching((prev) => ({ ...prev, team: false }));
     }
@@ -424,7 +426,7 @@ export default function FinalEvaluationResult() {
       }
     } catch (error) {
       console.error("Error fetching data:", error);
-      toast.error("Error search evaluations!", { position: toast.POSITION.TOP_CENTER });
+      toast.error("Xảy ra lỗi khi tìm kiếm kết quả đánh giá", { position: toast.POSITION.TOP_CENTER });
     } finally {
       setIsFirst(false);
       setIsFetching({ ...isFetching, studentEval: false });
@@ -491,17 +493,18 @@ export default function FinalEvaluationResult() {
   };
   const handleReject = () => {
     if (selectedRows.length === 0) {
-      toast.error("Please select at least one student!", {
+      toast.error("Vui lòng chọn ít nhất một học sinh", {
         position: toast.POSITION.TOP_CENTER,
       });
       return;
     }
     Swal.fire({
-      title: "Are you sure?",
-      text: `Are you sure you want to reject evaluations of those students?`,
+      title: "Bạn có chắc chắn?",
+      text: `Bạn có chắc chắn từ chối kết quả đánh giá của những học sinh đã chọn`,
       icon: "warning",
       showCancelButton: true,
-      confirmButtonText: "Yes, reject it!",
+      confirmButtonText: "Thực hiện",
+      cancelButtonText: "Hủy",
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
@@ -526,7 +529,7 @@ export default function FinalEvaluationResult() {
             });
             setEvaluations(updatedEvaluations);
             setSelectedRows([]);
-            toast.success("Reject successfully", {
+            toast.success("Thực hiện thành công", {
               position: toast.POSITION.TOP_CENTER,
             });
           } else {
@@ -536,7 +539,7 @@ export default function FinalEvaluationResult() {
           }
         } catch (error) {
           console.error("Error reject evaluation:", error);
-          toast.error("Error reject evaluation!", {
+          toast.error("Xảy ra lỗi trong quá trình xử lý", {
             position: toast.POSITION.TOP_CENTER,
           });
         } finally {
@@ -548,7 +551,7 @@ export default function FinalEvaluationResult() {
 
   const handleExport = () => {
     if (evaluations.length === 0) {
-      toast.error("No data available to export!", {
+      toast.error("Không có dữ liệu để xuất file", {
         position: toast.POSITION.TOP_CENTER,
       });
       return;
@@ -572,130 +575,170 @@ export default function FinalEvaluationResult() {
 
   return (
     <>
-      <Head title="Submission List" />
+      <Head title="Kết quả đánh giá" />
       <Content>
         <BlockHead size="sm">
           <BlockBetween>
             <BlockHeadContent>
-              <BlockTitle page> Final Evaluation Results</BlockTitle>
+              <BlockTitle page>Kết quả đánh giá hội đồng</BlockTitle>
             </BlockHeadContent>
-            <BlockHeadContent></BlockHeadContent>
+            <BlockHeadContent>
+              <div className="toggle-wrap nk-block-tools-toggle">
+                <Button
+                  className={`btn-icon btn-trigger toggle-expand me-n1 ${sm ? "active" : ""}`}
+                  onClick={() => updateSm(!sm)}
+                >
+                  <Icon name="menu-alt-r"></Icon>
+                </Button>
+                <div className="toggle-expand-content" style={{ display: sm ? "block" : "none" }}>
+                  <ul className="nk-block-tools g-3">
+                    <li>
+                      <UncontrolledDropdown>
+                        <DropdownToggle tag="a" className="dropdown-toggle btn btn-white btn-dim btn-outline-light">
+                          <Icon name="filter-alt" className="d-none d-sm-inline"></Icon>
+                          <span>Bộ lọc</span>
+                          <Icon name="chevron-right" className="dd-indc"></Icon>
+                        </DropdownToggle>
+                        <DropdownMenu end className="filter-wg dropdown-menu-xxl" style={{ overflow: "visible" }}>
+                          <div className="dropdown-head">
+                            <span className="sub-title dropdown-title">Lọc kết quả đánh giá</span>
+                            <div className="dropdown">
+                              <a
+                                href="#more"
+                                onClick={(ev) => {
+                                  ev.preventDefault();
+                                }}
+                                className="btn btn-sm btn-icon"
+                              >
+                                <Icon name="more-h"></Icon>
+                              </a>
+                            </div>
+                          </div>
+                          <div className="dropdown-body dropdown-body-rg">
+                            <Row className="gx-6 gy-3">
+                              <Col md={6}>
+                                <div className="form-group">
+                                  <label className="overline-title overline-title-alt">Học kỳ</label>
+                                  {isFetching?.semester ? (
+                                    <div>
+                                      <Spinner />
+                                    </div>
+                                  ) : (
+                                    <RSelect
+                                      options={semesters}
+                                      value={filterForm.semester}
+                                      onChange={(e) => {
+                                        setFilterForm({ ...filterForm, semester: e });
+                                      }}
+                                      placeholder="Chọn học kỳ"
+                                    />
+                                  )}
+                                </div>
+                              </Col>
+                              <Col md={6}>
+                                <div className="form-group">
+                                  <label className="overline-title overline-title-alt">Môn học</label>
+                                  {isFetching?.subject ? (
+                                    <div>
+                                      <Spinner />
+                                    </div>
+                                  ) : (
+                                    <RSelect
+                                      options={subjects}
+                                      value={filterForm.subject}
+                                      onChange={(e) => {
+                                        setFilterForm({ ...filterForm, subject: e });
+                                      }}
+                                      placeholder="Chọn môn học"
+                                    />
+                                  )}
+                                </div>
+                              </Col>
+                              <Col md={6}>
+                                <div className="form-group">
+                                  <label className="overline-title overline-title-alt">Lần chấm</label>
+                                  {isFetching?.round ? (
+                                    <div>
+                                      <Spinner />
+                                    </div>
+                                  ) : (
+                                    <RSelect
+                                      options={rounds}
+                                      value={filterForm.round}
+                                      onChange={(e) => {
+                                        setFilterForm({ ...filterForm, round: e });
+                                      }}
+                                      placeholder="Chọn lần chấm"
+                                    />
+                                  )}
+                                </div>
+                              </Col>
+                              <Col md={6}>
+                                <div className="form-group">
+                                  <label className="overline-title overline-title-alt">Lớp</label>
+                                  {isFetching?.class ? (
+                                    <div>
+                                      <Spinner />
+                                    </div>
+                                  ) : (
+                                    <RSelect
+                                      options={classes}
+                                      value={filterForm.class}
+                                      onChange={(e) => {
+                                        setFilterForm({ ...filterForm, class: e });
+                                      }}
+                                      placeholder="Chọn lớp"
+                                    />
+                                  )}
+                                </div>
+                              </Col>
+                              <Col md={6}>
+                                <div className="form-group">
+                                  <label className="overline-title overline-title-alt">Nhóm</label>
+                                  {isFetching?.team ? (
+                                    <div>
+                                      <Spinner />
+                                    </div>
+                                  ) : (
+                                    <RSelect
+                                      options={teams}
+                                      value={filterForm.team}
+                                      onChange={(e) => {
+                                        setFilterForm({ ...filterForm, team: e });
+                                      }}
+                                      placeholder="Chọn nhóm"
+                                    />
+                                  )}
+                                </div>
+                              </Col>
+                            </Row>
+                          </div>
+                        </DropdownMenu>
+                      </UncontrolledDropdown>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </BlockHeadContent>
           </BlockBetween>
         </BlockHead>
         <Block>
-          <Row>
-            <Col md={2}>
-              <div className="form-group">
-                <label className="overline-title overline-title-alt">Semester</label>
-                {isFetching?.semester ? (
-                  <div>
-                    <Spinner />
-                  </div>
-                ) : (
-                  <RSelect
-                    options={semesters}
-                    value={filterForm.semester}
-                    onChange={(e) => {
-                      setFilterForm({ ...filterForm, semester: e });
-                    }}
-                    placeholder="Any Semester"
-                  />
-                )}
-              </div>
-            </Col>
-            <Col md={2}>
-              <div className="form-group">
-                <label className="overline-title overline-title-alt">Subject</label>
-                {isFetching?.subject ? (
-                  <div>
-                    <Spinner />
-                  </div>
-                ) : (
-                  <RSelect
-                    options={subjects}
-                    value={filterForm.subject}
-                    onChange={(e) => {
-                      setFilterForm({ ...filterForm, subject: e });
-                    }}
-                    placeholder="Any subject"
-                  />
-                )}
-              </div>
-            </Col>
-            <Col md={2}>
-              <div className="form-group">
-                <label className="overline-title overline-title-alt">Round</label>
-                {isFetching?.round ? (
-                  <div>
-                    <Spinner />
-                  </div>
-                ) : (
-                  <RSelect
-                    options={rounds}
-                    value={filterForm.round}
-                    onChange={(e) => {
-                      setFilterForm({ ...filterForm, round: e });
-                    }}
-                    placeholder="Any round"
-                  />
-                )}
-              </div>
-            </Col>
-            <Col md={3}>
-              <div className="form-group">
-                <label className="overline-title overline-title-alt">Class</label>
-                {isFetching?.class ? (
-                  <div>
-                    <Spinner />
-                  </div>
-                ) : (
-                  <RSelect
-                    options={classes}
-                    value={filterForm.class}
-                    onChange={(e) => {
-                      setFilterForm({ ...filterForm, class: e });
-                    }}
-                    placeholder="Any class"
-                  />
-                )}
-              </div>
-            </Col>
-            <Col md={3}>
-              <div className="form-group">
-                <label className="overline-title overline-title-alt">Team</label>
-                {isFetching?.team ? (
-                  <div>
-                    <Spinner />
-                  </div>
-                ) : (
-                  <RSelect
-                    options={teams}
-                    value={filterForm.team}
-                    onChange={(e) => {
-                      setFilterForm({ ...filterForm, team: e });
-                    }}
-                    placeholder="Any team"
-                  />
-                )}
-              </div>
-            </Col>
-          </Row>
           {evaluations && evaluations.length > 0 && (
             <Row>
               <div className="text-end mt-4 mb-2">
                 <Button className="btn btn-primary me-3" onClick={handleExport}>
-                  Export
+                  Xuất file
                 </Button>
-                {(role === "TEACHER") && (
+                {role === "TEACHER" && (
                   <>
                     {isFetching?.rejected ? (
                       <Button disabled color="danger">
                         <Spinner size="sm" />
-                        <span> Rejecting... </span>
+                        <span>Đang thực hiện...</span>
                       </Button>
                     ) : (
                       <Button className="btn btn-danger me-3" onClick={handleReject}>
-                        Reject
+                        Từ chối
                       </Button>
                     )}
                   </>

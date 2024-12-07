@@ -17,15 +17,15 @@ public class SubjectSettingDTO {
     private String note;
     private Integer subjectId;
     public void validateInput(){
-        ValidateUtils.checkNullOrEmpty(name, "Subject Setting name");
-        name = ValidateUtils.checkLength(name, "Subject Setting name", 1, 255);
-        note = ValidateUtils.checkLength(note, "Subject Setting note", 0, 255);
+        ValidateUtils.checkNullOrEmpty(name, "Tên");
+        name = ValidateUtils.checkLength(name, "Tên", 1, 255);
+        note = ValidateUtils.checkLength(note, "Ghi chú", 0, 255);
 
-        ValidateUtils.checkNullOrEmpty(settingType, "Subject Setting type");
-        settingType = ValidateUtils.checkLength(settingType, "Subject Setting type", 1, 255);
+        ValidateUtils.checkNullOrEmpty(settingType, "Loại cấu hình");
+        settingType = ValidateUtils.checkLength(settingType, "Loại cấu hình", 1, 255);
 
-        ValidateUtils.checkLength(extValue, "External value", 1, 255);
+        ValidateUtils.checkLength(extValue, "Giá trị", 1, 255);
 
-        ValidateUtils.checkIntegerInRange(displayOrder, "Display order", 0, Integer.MAX_VALUE);
+        ValidateUtils.checkIntegerInRange(displayOrder, "Thứ tự hiện thị", 0, Integer.MAX_VALUE);
     }
 }

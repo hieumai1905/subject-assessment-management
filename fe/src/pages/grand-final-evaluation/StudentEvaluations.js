@@ -113,7 +113,7 @@ function CustomToolbar({ evaluations, columnVisibilityModel, setColumnVisibility
       await generateTemplateStudentEval(evaluations);
     } catch (error) {
       console.log("err export:", error);
-      toast.error(`Fail to export evaluation!`, {
+      toast.error(`Xảy ra lỗi khi xuất file`, {
         position: toast.POSITION.TOP_CENTER,
       });
     } finally {
@@ -348,18 +348,18 @@ export default function GFStudentEvaluations({
       if (evaluations === undefined || evaluations === null || evaluations.length === 0) setColumns([]);
       let hasCriterias = evaluations[0]?.criteriaNames && evaluations[0]?.criteriaNames.length > 0;
       const baseColumns = [
-        { field: "fullname", headerName: "Full Name", width: 150 },
+        { field: "fullname", headerName: "Họ và tên", width: 150 },
         {
           field: "email",
           headerName: "Email",
           width: 240,
           // flex: hasCriterias ? 1 : undefined,
         },
-        { field: `teamName`, headerName: "Team", width: 150 },
+        { field: `teamName`, headerName: "Nhóm", width: 150 },
         {
           field: "milestoneEvalGrade",
           headerName: isNullOrEmpty(evaluations[0]?.milestone?.name)
-            ? "No milestone"
+            ? "Không có dữ liệu"
             : `${evaluations[0]?.milestone?.name} (${evaluations[0]?.milestone?.weight}%)`,
           width: hasCriterias ? undefined : 240,
           flex: hasCriterias ? 1 : undefined,
@@ -371,7 +371,7 @@ export default function GFStudentEvaluations({
               disabled={!canEdit}
               type="number"
               value={params.value || ""}
-              placeholder="Enter grade"
+              placeholder="Nhập điểm"
               onChange={(e) =>
                 params.api.setEditCellValue({ id: params.id, field: params.field, value: e.target.value })
               }
@@ -381,7 +381,7 @@ export default function GFStudentEvaluations({
         },
         {
           field: "milestoneComment",
-          headerName: "Comment",
+          headerName: "Nhận xét",
           width: 20,
           renderHeader: () => (
             <span title="Comment">
@@ -412,7 +412,7 @@ export default function GFStudentEvaluations({
           }
           criteriaColumns.push({
             field: `${criteria.id}_evalGrade`,
-            headerName: `${criteria.name} (${criteria?.weight}% of ${evaluations[0]?.milestone?.name})`,
+            headerName: `${criteria.name} (${criteria?.weight}% của ${evaluations[0]?.milestone?.name})`,
             // width: 100,
             flex: 1,
             editable: canEdit,
@@ -428,7 +428,7 @@ export default function GFStudentEvaluations({
                 disabled={!canEdit}
                 type="number"
                 value={params.value || ""}
-                placeholder="Enter grade"
+                placeholder="Nhập điểm"
                 onChange={(e) =>
                   params.api.setEditCellValue({ id: params.id, field: params.field, value: e.target.value })
                 }
@@ -444,7 +444,7 @@ export default function GFStudentEvaluations({
           });
           criteriaColumns.push({
             field: `${criteria.id}_comment`,
-            headerName: "Comment",
+            headerName: "Nhận xét",
             width: 20,
             renderHeader: () => (
               <span title="Comment">
@@ -545,7 +545,7 @@ export default function GFStudentEvaluations({
       }
     } catch (error) {
       console.error("Error evaluating student:", error);
-      toast.error("Error evaluating student", {
+      toast.error("Xảy ra lỗi trong quá trình xử lý", {
         position: toast.POSITION.TOP_CENTER,
       });
     } finally {
@@ -784,7 +784,7 @@ export default function GFStudentEvaluations({
       }
     } catch (error) {
       console.error("Error fetching data:", error);
-      toast.error("Error search submissions!", { position: toast.POSITION.TOP_CENTER });
+      toast.error("Xảy ra lỗi khi tìm kiếm bài nộp", { position: toast.POSITION.TOP_CENTER });
     } finally {
       setIsFetchingSubmit(false);
     }
@@ -798,7 +798,7 @@ export default function GFStudentEvaluations({
   return (
     <>
       <ToastContainer />
-      <Head title="Student Evaluation" />
+      <Head title="Đánh giá hội đồng" />
       {loadings || isCustome?.row || isCustome?.column ? (
         <div className="d-flex justify-content-center">
           <Spinner style={{ width: "3rem", height: "3rem" }} />
@@ -815,7 +815,7 @@ export default function GFStudentEvaluations({
                     setAnchorElSubmit(e.currentTarget);
                   }}
                 >
-                  View Submit
+                  Xem bài nộp
                 </Button>
                 <Popover
                   open={openSubmit}
@@ -839,14 +839,14 @@ export default function GFStudentEvaluations({
                   {isFetchingSubmit ? (
                     <div style={{ padding: "10px" }}>
                       <Spinner size="sm" />
-                      <span> Loading... </span>
+                      <span> Đang tải... </span>
                     </div>
                   ) : (
                     <div style={{ padding: "20px" }}>
-                      {(!submissions || submissions.length === 0) && <p>No submissions</p>}
+                      {(!submissions || submissions.length === 0) && <p>Không có dữ liệu</p>}
                       {submissions.map((submission, index) => (
                         <div className="ms-3 mt-3" key={index}>
-                          <p>Submit At: {formatDate(submission.submitAt)}</p>
+                          <p>Nộp lúc: {formatDate(submission.submitAt)}</p>
                           {!isNullOrEmpty(submission.submitFile) && (
                             <p>
                               File:{" "}
@@ -857,7 +857,7 @@ export default function GFStudentEvaluations({
                           )}
                           {!isNullOrEmpty(submission.submitLink) && (
                             <p>
-                              Link:{" "}
+                              Đường dẫn:{" "}
                               <a href={submission.submitLink} target="_blank">
                                 {shortenString(submission.submitLink, 50)}
                               </a>
@@ -865,7 +865,7 @@ export default function GFStudentEvaluations({
                           )}
                           {!isNullOrEmpty(submission.note) && (
                             <p style={{ maxWidth: "400px" }}>
-                              Note: <span>{submission.note}</span>
+                              Ghi chú: <span>{submission.note}</span>
                             </p>
                           )}
                         </div>
@@ -885,18 +885,18 @@ export default function GFStudentEvaluations({
                       setModal({ importEval: true });
                     }}
                   >
-                    Import
+                    Nhập
                   </Button>
                 </div>
                 <div>
                   {isFetching ? (
                     <Button disabled color="primary">
                       <Spinner size="sm" />
-                      <span> Saving... </span>
+                      <span> Đang lưu... </span>
                     </Button>
                   ) : (
                     <Button color="primary" onClick={() => handleSaveChanges()}>
-                      Save changes
+                      Lưu thay đổi
                     </Button>
                   )}
                 </div>
@@ -942,13 +942,13 @@ export default function GFStudentEvaluations({
           >
             <div style={{ padding: 10, display: "flex", flexDirection: "column", gap: 10 }}>
               <p className="fw-bold">
-                Comment for {studentComment?.fullname} in {studentComment?.title}
+                Nhận xét cho {studentComment?.fullname} trong {studentComment?.title}
               </p>
               <TextareaAutosize
                 readOnly={!canEdit}
                 minRows={3}
                 maxRows={5}
-                placeholder="Enter comment"
+                placeholder="nhận xét"
                 style={{ width: 370, overflow: "auto" }}
                 value={comment}
                 onChange={handleCommentChange}
@@ -956,7 +956,7 @@ export default function GFStudentEvaluations({
               <div className="d-flex justify-content-end">
                 {canEdit && (
                   <Button variant="contained" color="primary" onClick={handleSave}>
-                    Save
+                    Lưu
                   </Button>
                 )}
               </div>

@@ -207,38 +207,6 @@ public class StudentEvaluationService{
         return criteriaDTO;
     }
 
-//    private void addTeamEvaluation(List<EvaluationResultDTO> results, EvaluationResultDTO dto) {
-//        EvaluationResultDTO teamEvalDTO = new EvaluationResultDTO();
-//        teamEvalDTO.setMilestone(dto.getMilestone());
-//        teamEvalDTO.setTeam(dto.getTeam());
-//        TeamEvaluation teamEvaluation = checkExistTeamEval(dto, null);
-//        if(teamEvaluation != null){
-//            teamEvalDTO.setComment(teamEvaluation.getComment());
-//            teamEvalDTO.setEvalGrade(teamEvaluation.getEvalGrade());
-//        }
-//        if(dto.getCriteriaNames() != null && dto.getCriteriaNames().length > 0){
-//            BaseEvaluationDTO[] criteriaArr = new BaseEvaluationDTO[dto.getCriteriaNames().length];
-//            Float[] gradeArr = new Float[dto.getCriteriaNames().length];
-//            String[] commentArr = new String[dto.getCriteriaNames().length];
-//            for (int i = 0; i < dto.getCriteriaNames().length; i++) {
-//                TeamEvaluation teamEvaluationByCriteria = checkExistTeamEval(dto,
-//                        dto.getCriteriaNames()[i].getId());
-//                criteriaArr[i] = dto.getCriteriaNames()[i];
-//                if(teamEvaluationByCriteria != null){
-//                    gradeArr[i] = teamEvaluationByCriteria.getEvalGrade();
-//                    commentArr[i] = teamEvaluationByCriteria.getComment();
-//                }else{
-//                    gradeArr[i] = null;
-//                    commentArr[i] = null;
-//                }
-//            }
-//            teamEvalDTO.setCriteriaNames(criteriaArr);
-//            teamEvalDTO.setEvalGrades(gradeArr);
-//            teamEvalDTO.setComments(commentArr);
-//        }
-//        results.add(teamEvalDTO);
-//    }
-
     private TeamEvaluation checkExistTeamEval(EvaluationResultDTO dto, Integer criteriaId, Integer evaluatorId, Integer councilTeamId) {
         return teamEvaluationRepository.search(
                 dto.getMilestone().getId(),
@@ -419,7 +387,7 @@ public class StudentEvaluationService{
                     return criteria;
             }
         }
-        throw new RecordNotFoundException("Criteria");
+        throw new RecordNotFoundException("Tiêu chí");
     }
 
     private User checkExistUser(String email) {
@@ -436,11 +404,11 @@ public class StudentEvaluationService{
 
     private Milestone checkExistMilestone(Integer milestoneId) {
         return milestoneRepository.findById(milestoneId)
-                .orElseThrow(() -> new RecordNotFoundException("Milestone"));
+                .orElseThrow(() -> new RecordNotFoundException("Cột mốc"));
     }
 
     public Object searchByClass(Integer classId) {
-        Classes classes = classesRepository.findById(classId).orElseThrow(() -> new RecordNotFoundException("Class"));
+        Classes classes = classesRepository.findById(classId).orElseThrow(() -> new RecordNotFoundException("Lớp học"));
         User user = commonService.getCurrentUser();
         if(user.getRole().getId().equals(Constants.Role.STUDENT)){
             return getClassStudentEvaluation(user, classes);
@@ -515,19 +483,6 @@ public class StudentEvaluationService{
             results.add(dto);
         }
 
-//        List<Object[]> rawResults = customStudentEvaluationRepository.searchStudentEvaluationByMilestone(classId);
-//        for (Object[] result : rawResults) {
-//            if(result[0] == null)
-//                continue;
-//            EvaluationResultDTO dto = new EvaluationResultDTO();
-//            dto.setFullname((String)result[0]);
-//            dto.setEmail((String) result[1]);
-//            dto.setMilestones(ConvertUtils.jsonToObjectList((String) result[2], "\\|", BaseEvaluationDTO.class));
-//            dto.setEvalGrades(ConvertUtils.stringToArray((String)result[3], "\\|", Float.class));
-//            dto.setComments(ConvertUtils.stringToArray((String)result[4], "\\|", String.class));
-//            results.add(dto);
-//        }
-
         return results;
     }
 
@@ -553,7 +508,7 @@ public class StudentEvaluationService{
 
             StudentEvaluationResponse finalResult = new StudentEvaluationResponse();
             finalResult.setId(-1);
-            finalResult.setTitle("Final Result");
+            finalResult.setTitle("Tổng kết");
             finalResult.setWeight(100);
 //            Optional<Milestone> mile = milestones.stream()
 //                    .filter(m -> Constants.TypeAssignments.GRAND_FINAL.equals(m.getTypeEvaluator()))
@@ -642,86 +597,6 @@ public class StudentEvaluationService{
         return studentEval;
     }
 
-
-//    private Object getClassStudentEvaluation(User user, Classes classes) {
-//        List<StudentEvaluationResponse> responses = new ArrayList<>();
-//        List<Milestone> milestones = classes.getMilestones();
-//        if(milestones != null && milestones.size() > 0) {
-//            float total = 0;
-//            boolean isPass = true;
-//            StudentEvaluationResponse finalResult = new StudentEvaluationResponse();
-//            finalResult.setId(-1);
-//            finalResult.setTitle("Final Result");
-//            finalResult.setWeight(100);
-//            Milestone grandFinal = null;
-//            Optional<Milestone> mile = milestones.stream()
-//                    .filter(m -> Constants.TypeAssignments.GRAND_FINAL.equals(m.getTypeEvaluator()))
-//                    .findFirst();
-//            milestones = milestones.stream()
-//                    .filter(m -> !Constants.TypeAssignments.GRAND_FINAL.equals(m.getTypeEvaluator()))
-//                    .sorted(Comparator.comparingInt(Milestone::getDisplayOrder))
-//                    .toList();
-//            if (mile.isPresent()) {
-//                grandFinal = mile.get();
-//            }
-////            milestones = milestones.stream().sorted(Comparator.comparingInt(Milestone::getDisplayOrder)).toList();
-//            HashMap<String, Float> studentLOCMap = new HashMap<>();
-////            setStudentLOCMap(user, milestones, studentLOCMap);
-//            for (Milestone milestone : milestones) {
-//                StudentEvaluationResponse studentEval = new StudentEvaluationResponse();
-//                studentEval.setId(milestone.getId());
-//                studentEval.setTitle(milestone.getTitle());
-//                studentEval.setWeight(milestone.getEvalWeight());
-//                //studentEval.setTotalLOC(studentLOCMap.get(milestone.getId()+user.getEmail()));
-//                HashMap<Integer, StudentEvaluationResponse> criteriaEvalMap = new HashMap<>();
-//                if(milestone.getStudentEvaluations() != null){
-//                    List<StudentEvaluation> studentEvaluations = milestone.getStudentEvaluations().stream()
-//                            .filter(item -> item.getEvaluator() == null).toList();
-//                    for (StudentEvaluation studentEvaluation : studentEvaluations) {
-//                        if(studentEvaluation.getUser().getId().equals(user.getId())){
-//                            if(studentEvaluation.getCriteria() == null){
-//                                studentEval.setTotalLOC(studentEvaluation.getTotalLOC());
-//                                studentEval.setEvalGrade(studentEvaluation.getEvalGrade());
-//                                studentEval.setComment(studentEvaluation.getComment());
-//                            } else{
-//                                StudentEvaluationResponse studentCriteriaEval = new StudentEvaluationResponse();
-//                                studentCriteriaEval.setId(studentEvaluation.getCriteria().getId());
-//                                studentCriteriaEval.setTitle(studentEvaluation.getCriteria().getCriteriaName());
-//                                studentCriteriaEval.setWeight(studentEvaluation.getCriteria().getEvalWeight());
-//                                studentCriteriaEval.setEvalGrade(studentEvaluation.getEvalGrade());
-//                                studentCriteriaEval.setComment(studentEvaluation.getComment());
-//                                criteriaEvalMap.put(studentEvaluation.getCriteria().getId(), studentCriteriaEval);
-//                            }
-//                        }
-//                    }
-//                }
-//                if(milestone.getMilestoneCriteriaList() != null){
-//                    for (MilestoneCriteria milestoneCriteria : milestone.getMilestoneCriteriaList()) {
-//                        if(criteriaEvalMap.get(milestoneCriteria.getId()) == null){
-//                            StudentEvaluationResponse studentCriteriaEval = new StudentEvaluationResponse();
-//                            studentCriteriaEval.setId(milestoneCriteria.getId());
-//                            studentCriteriaEval.setTitle(milestoneCriteria.getCriteriaName());
-//                            studentCriteriaEval.setWeight(milestoneCriteria.getEvalWeight());
-//                            criteriaEvalMap.put(milestoneCriteria.getId(), studentCriteriaEval);
-//                        }
-//                    }
-//                }
-//                if (studentEval.getEvalGrade() != null && studentEval.getEvalGrade() > 0) {
-//                    total += studentEval.getEvalGrade() * studentEval.getWeight() / 100;
-//                } else {
-//                    isPass = false;
-//                }
-//                studentEval.setCriteriaList(criteriaEvalMap.values().stream().toList());
-//                responses.add(studentEval);
-//            }
-//            BigDecimal rounded = new BigDecimal(total).setScale(2, RoundingMode.HALF_UP);
-//            finalResult.setEvalGrade(rounded.floatValue());
-//            finalResult.setStatus((isPass && total >= 5) ? "Pass" : "Not Pass");
-//            responses.add(finalResult);
-//        }
-//        return responses;
-//    }
-
     private void setStudentLOCMap(User user, List<Milestone> milestones, HashMap<String, Float> studentLOCMap) {
         List<Object[]> totalLocs = customWorkEvaluationRepository
                 .getTotalLocByMilestoneAndStudent(
@@ -742,8 +617,8 @@ public class StudentEvaluationService{
         if(request.getSessionId() == null || request.getTeamId() == null){
             return results;
         }
-        Team team = teamRepository.findById(request.getTeamId()).orElseThrow(() -> new RecordNotFoundException("Team"));
-        Session session = sessionRepository.findById(request.getSessionId()).orElseThrow(() -> new RecordNotFoundException("Session"));
+        Team team = teamRepository.findById(request.getTeamId()).orElseThrow(() -> new RecordNotFoundException("Nhóm"));
+        Session session = sessionRepository.findById(request.getSessionId()).orElseThrow(() -> new RecordNotFoundException("Phiên đánh giá"));
         CouncilTeam councilTeam = councilTeamRepository.findByTeamIdAndSessionId(
             team.getId(),
             session.getId()
@@ -756,7 +631,7 @@ public class StudentEvaluationService{
                 .filter(item -> item.getEvaluationType().equals(Constants.TypeAssignments.GRAND_FINAL))
                 .findFirst().orElse(null);
         if(milestone == null)
-            return "This class don't have grand final milestone";
+            return "Lớp học này không có cột mốc đánh giá hội đồng";
         addTeamEval(team, milestone, results, currentUser.getId(), councilTeam.getId());
         List<StudentEvaluation> studentEvaluations = milestone.getStudentEvaluations();
         HashMap<String, EvaluationResultDTO> gradeCommentMap = new HashMap<>();
@@ -785,10 +660,10 @@ public class StudentEvaluationService{
 
         //with 2nd round only get member rejected in previous round
         if(session.getSubjectSettingId() != null && session.getSemesterId() != null){
-            Setting round = settingRepository.findById(session.getSubjectSettingId()).orElseThrow(() -> new RecordNotFoundException("Round"));
+            Setting round = settingRepository.findById(session.getSubjectSettingId()).orElseThrow(() -> new RecordNotFoundException("Lần chấm"));
             Setting semester = (Setting) settingRepository.findSettingBySettingTypeAndSettingId( "semester", session.getSemesterId());
             if(semester == null){
-                throw new RecordNotFoundException("Semester");
+                throw new RecordNotFoundException("Học kỳ");
             }
             Setting lastRound = null;
 
@@ -841,22 +716,22 @@ public class StudentEvaluationService{
     @Transactional
     public Object evaluateStudentForGrandFinal(EvaluateStudentForGrandFinal request) {
         if(request == null || request.getStudentEvals().isEmpty())
-            return "No data to evaluate!";
+            return "Không có dữ liệu để đánh giá";
         User evaluator = commonService.getCurrentUser();
-        Team fTeam = teamRepository.findById(request.getTeamId()).orElseThrow(() -> new RecordNotFoundException("Team"));
-        Session session = sessionRepository.findById(request.getSessionId()).orElseThrow(() -> new RecordNotFoundException("Session"));
+        Team fTeam = teamRepository.findById(request.getTeamId()).orElseThrow(() -> new RecordNotFoundException("Nhóm"));
+        Session session = sessionRepository.findById(request.getSessionId()).orElseThrow(() -> new RecordNotFoundException("Phiên đánh giá"));
         CouncilTeam councilTeam = councilTeamRepository.findByTeamIdAndSessionId(
                 fTeam.getId(),
                 session.getId()
         );
         if(councilTeam == null){
-            throw new ConflictException("This team don't have a council team to conduct evaluations!");
+            throw new ConflictException("Nhóm này không có hội đồng đánh giá");
         }
         Milestone milestone = fTeam.getClasses().getMilestones().stream()
                 .filter(item -> item.getEvaluationType().equals(Constants.TypeAssignments.GRAND_FINAL))
                 .findFirst().orElse(null);
         if(milestone == null){
-            return "This class don't have grand final milestone!";
+            return "Lớp này không có cột mốc đánh giá hội đồng";
         }
         HashMap<Integer, MilestoneCriteria> criteriaHashMap = new HashMap<>();
         List<StudentEvaluation> studentEvaluations = new ArrayList<>();
@@ -881,7 +756,7 @@ public class StudentEvaluationService{
         }
         studentEvaluationRepository.saveAll(studentEvaluations);
         teamEvaluationRepository.saveAll(teamEvaluations);
-        return "Evaluate successfully!";
+        return "Đánh giá thành công";
     }
 
     public Object searchTotalEvalForGrandFinal(SearchEvalForGrandFinal request) {
@@ -890,16 +765,16 @@ public class StudentEvaluationService{
             if(request.getTeamId() == null || request.getSemesterId() == null || request.getRoundId() == null){
                 return response;
             }
-            Team team = teamRepository.findById(request.getTeamId()).orElseThrow(() -> new RecordNotFoundException("Team"));
+            Team team = teamRepository.findById(request.getTeamId()).orElseThrow(() -> new RecordNotFoundException("Nhóm"));
             List<Session> sessions = new ArrayList<>();
             if(request.getSemesterId() != null && request.getRoundId() != null){
                 Setting semester = (Setting) settingRepository.findSettingBySettingTypeAndSettingId( "semester", request.getSemesterId());
                 if(semester == null){
-                    throw new RecordNotFoundException("Semester");
+                    throw new RecordNotFoundException("Học kỳ");
                 }
                 Setting round = (Setting) settingRepository.findSettingBySettingTypeAndSettingId( "round", request.getRoundId());
                 if(round == null){
-                    throw new RecordNotFoundException("Round");
+                    throw new RecordNotFoundException("Lần chấm");
                 }
                 sessions = sessionRepository.findBySemesterIdAndRoundId(semester.getId(), round.getId());
             }
@@ -972,10 +847,10 @@ public class StudentEvaluationService{
     @Transactional
     public Object updateStatus(UpdateCouncilTeamStatus request) {
         request.validateInput();
-        CouncilTeam councilTeam = councilTeamRepository.findById(request.getCouncilTeamId()).orElseThrow(() -> new RecordNotFoundException("Council Team"));
+        CouncilTeam councilTeam = councilTeamRepository.findById(request.getCouncilTeamId()).orElseThrow(() -> new RecordNotFoundException("Hội đồng chấm"));
         councilTeam.setStatus(request.getStatus());
         List<StudentEvaluation> studentEvaluations = new ArrayList<>();
-        Milestone milestone = milestoneRepository.findById(request.getMilestoneId()).orElseThrow(() -> new RecordNotFoundException("Milestone"));
+        Milestone milestone = milestoneRepository.findById(request.getMilestoneId()).orElseThrow(() -> new RecordNotFoundException("Cột mốc"));
         List<MilestoneCriteria> milestoneCriteria = milestone.getMilestoneCriteriaList();
         for (Integer studentId : request.getStudentIds()) {
             List<StudentEvaluation> studentEvals = studentEvaluationRepository.findByStudentIdAndCouncilTeamWithoutEvaluator(
@@ -1023,6 +898,6 @@ public class StudentEvaluationService{
         }
         councilTeamRepository.save(councilTeam);
         studentEvaluationRepository.saveAll(studentEvaluations);
-        return "Update successfully";
+        return "Cập nhật thành công";
     }
 }

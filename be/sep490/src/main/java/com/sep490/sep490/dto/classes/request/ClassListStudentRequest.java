@@ -13,12 +13,14 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ClassListStudentRequest {
     private Integer classId;
+    private Boolean isDeleteOldStudent;
     private List<CreateUserRequest> list;
 
 
     public void validateInput(){
-        ValidateUtils.checkNullOrEmpty(classId,"classId");
-        ValidateUtils.checkNullOrEmpty(list,"list student");
-
+        ValidateUtils.checkNullOrEmpty(classId,"Lớp học");
+        ValidateUtils.checkNullOrEmpty(list,"Danh sách học sinh");
+        if(isDeleteOldStudent == null)
+            isDeleteOldStudent = true;
     }
 }

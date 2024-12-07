@@ -265,19 +265,19 @@ export default function RequirementEvaluations({
         { field: "id", headerName: "ID", width: 50 },
         {
           field: "reqTitle",
-          headerName: "Title",
+          headerName: "Tiêu đề",
           width: 200,
         },
-        { field: `milestoneTitle`, headerName: "Milestone", width: 150 },
-        { field: `teamTeamName`, headerName: "Team", width: 100 },
+        { field: `milestoneTitle`, headerName: "Cột mốc", width: 150 },
+        { field: `teamTeamName`, headerName: "Nhóm", width: 100 },
         {
           field: `studentFullname`,
-          headerName: "In charge",
+          headerName: "Sinh viên",
           width: 150,
         },
         {
           field: "status",
-          headerName: "Status",
+          headerName: "Trạng thái",
           width: 150,
           // editable: canEdit,
         },
@@ -291,7 +291,7 @@ export default function RequirementEvaluations({
         },
         {
           field: "update_loc",
-          headerName: "Update LOC",
+          headerName: "LOC cập nhật",
           width: 120,
           // editable: canEdit,
           type: "number",
@@ -300,7 +300,7 @@ export default function RequirementEvaluations({
         {
           field: "actions",
           type: "actions",
-          headerName: "Actions",
+          headerName: "Hành động",
           width: 200,
           cellClassName: "actions",
           getActions: ({ row }) => {
@@ -347,7 +347,7 @@ export default function RequirementEvaluations({
     let foundEvaluation = evaluations.find((item) => item.id === id);
     if (foundEvaluation) {
       if (!foundEvaluation?.studentId) {
-        toast.error(`The requirement must have assignee to evaluate!`, {
+        toast.error(`Chỉ những yêu cầu đã được giao mới được đánh giá`, {
           position: toast.POSITION.TOP_CENTER,
         });
         return false;
@@ -363,7 +363,7 @@ export default function RequirementEvaluations({
     let foundEvaluation = evaluations.find((item) => item.id === id);
     if (foundEvaluation) {
       if (!foundEvaluation?.studentId) {
-        toast.error(`The requirement must have assignee to evaluate!`, {
+        toast.error(`Chỉ những yêu cầu đã được giao mới được đánh giá`, {
           position: toast.POSITION.TOP_CENTER,
         });
         return false;
@@ -527,7 +527,7 @@ export default function RequirementEvaluations({
       }
     } catch (error) {
       console.error("Error evaluating requirement:", error);
-      toast.error("Error evaluating requirement", {
+      toast.error("Xảy ra lỗi trong quá trình xử lý", {
         position: toast.POSITION.TOP_CENTER,
       });
     } finally {
@@ -569,7 +569,7 @@ export default function RequirementEvaluations({
       }
     } catch (error) {
       console.error("Error fetching data:", error);
-      toast.error("Error search submissions!", { position: toast.POSITION.TOP_CENTER });
+      toast.error("Xảy ra lỗi khi tìm kiếm bài nộp", { position: toast.POSITION.TOP_CENTER });
     } finally {
       setIsFetchingSubmit(false);
     }
@@ -583,7 +583,7 @@ export default function RequirementEvaluations({
   return (
     <>
       <ToastContainer />
-      <Head title="Final Work Evaluation" />
+      <Head title="Đánh giá hội đồng" />
       {loadings ? (
         <div className="d-flex justify-content-center">
           <Spinner style={{ width: "3rem", height: "3rem" }} />
@@ -600,7 +600,7 @@ export default function RequirementEvaluations({
                     setAnchorElSubmit(e.currentTarget);
                   }}
                 >
-                  View Submit
+                  Xem bài nộp
                 </Button>
                 <Popover
                   open={openSubmit}
@@ -624,14 +624,14 @@ export default function RequirementEvaluations({
                   {isFetchingSubmit ? (
                     <div style={{ padding: "10px" }}>
                       <Spinner size="sm" />
-                      <span> Loading... </span>
+                      <span> Đang tải... </span>
                     </div>
                   ) : (
                     <div style={{ padding: "20px" }}>
-                      {(!submissions || submissions.length === 0) && <p>No submissions</p>}
+                      {(!submissions || submissions.length === 0) && <p>Không có dữ liệu</p>}
                       {submissions.map((submission, index) => (
                         <div className="ms-3 mt-3" key={index}>
-                          <p>Submit At: {formatDate(submission.submitAt)}</p>
+                          <p>Nộp lúc: {formatDate(submission.submitAt)}</p>
                           {!isNullOrEmpty(submission.submitFile) && (
                             <p>
                               File:{" "}
@@ -642,7 +642,7 @@ export default function RequirementEvaluations({
                           )}
                           {!isNullOrEmpty(submission.submitLink) && (
                             <p>
-                              Link:{" "}
+                              Đường dẫn:{" "}
                               <a href={submission.submitLink} target="_blank">
                                 {shortenString(submission.submitLink, 50)}
                               </a>
@@ -650,7 +650,7 @@ export default function RequirementEvaluations({
                           )}
                           {!isNullOrEmpty(submission.note) && (
                             <p style={{maxWidth: '400px'}}>
-                              Note:{" "}
+                              Ghi chú:{" "}
                               <span>
                                 {submission.note}
                               </span>
@@ -673,18 +673,18 @@ export default function RequirementEvaluations({
                       setModal({ importEval: true });
                     }}
                   >
-                    Import
+                    Nhập
                   </Button>
                 </div>
                 <div>
                   {isFetching ? (
                     <Button disabled color="primary">
                       <Spinner size="sm" />
-                      <span> Saving... </span>
+                      <span> Đang lưu... </span>
                     </Button>
                   ) : (
                     <Button color="primary" onClick={() => handleSaveChanges()}>
-                      Save changes
+                      Lưu thay đổi
                     </Button>
                   )}
                 </div>

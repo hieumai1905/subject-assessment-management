@@ -11,6 +11,6 @@ public class ImportCouncilTeam {
     private Integer councilId;
     private Integer sessionId;
     public void validateInput(){
-        ValidateUtils.checkNullOrEmpty(id, "Class id or team id");
+        ValidateUtils.checkNullOrEmpty(id, "Lớp học/Nhóm");
     }
 }

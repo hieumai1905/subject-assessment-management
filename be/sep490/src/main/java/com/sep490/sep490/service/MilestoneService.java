@@ -271,16 +271,16 @@ public class MilestoneService implements BaseService<Milestone, Integer>{
     }
 
     public Object changeMilestoneStatus(Integer id, Boolean active){
-        ValidateUtils.checkNullOrEmpty(id, "Milestone id");
+        ValidateUtils.checkNullOrEmpty(id, "Cột mốc");
         Milestone foundMilestone = milestoneRepository.findById(id).orElseThrow(
-                () -> new RecordNotFoundException("Milestone"));
+                () -> new RecordNotFoundException("Cột mốc"));
         for (Milestone milestone : foundMilestone.getClasses().getMilestones()){
             if(active && milestone.getActive()){
-                throw new ConflictException("Please close " +  milestone.getTitle() + " before open " + foundMilestone.getTitle());
+                throw new ConflictException("Vui lòng đóng " +  milestone.getTitle() + " trước khi mở " + foundMilestone.getTitle());
             }
         }
         if (!active && !isCompleteValidEvaluation(foundMilestone)) {
-            throw new ConflictException("Please complete student evaluation for milestone " + foundMilestone.getTitle() + " before closing.");
+            throw new ConflictException("Vui lòng hoàn thành đánh giá trước khi đóng " + foundMilestone.getTitle());
         }
 
         foundMilestone.setActive(active);

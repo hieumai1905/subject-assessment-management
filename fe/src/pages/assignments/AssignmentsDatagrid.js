@@ -161,13 +161,13 @@ export default function AssignmentsDatagrid({ assignments, setAssignments, subje
       headerAlign: "left",
       editable: false,
     },
-    // {
-    //   field: "expectedLoc",
-    //   headerName: "Dự kiến LOC",
-    //   type: "number",
-    //   width: 160,
-    //   editable: false,
-    // },
+    {
+      field: "expectedLoc",
+      headerName: "Dự kiến LOC",
+      type: "number",
+      width: 160,
+      editable: false,
+    },
     {
       field: "evaluationType",
       headerName: "Loại đánh giá",

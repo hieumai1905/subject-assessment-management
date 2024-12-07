@@ -9,7 +9,7 @@ const FormModal = ({ id, modal, setModal, modalType, criterias, setCriterias, up
   const ininialCriteria = {
     criteriaName: '',
     evalWeight: 1,
-    locEvaluation: criterias.find(item => item.locEvaluation && item.id !== id) !== undefined ? 'Không hoạt động' : 'Hoạt động',
+    locEvaluation: criterias.find(item => item.locEvaluation && item.id !== id) !== undefined ? 'InActive' : 'Active',
     active: 'Active',
     guides: '',
   };
@@ -51,7 +51,7 @@ const FormModal = ({ id, modal, setModal, modalType, criterias, setCriterias, up
       id: id,
       criteriaName: sData.criteriaName,
       evalWeight: sData.evalWeight,
-      locEvaluation: sData.locEvaluation === "Hoạt động",
+      locEvaluation: sData.locEvaluation === "Active",
       active: sData.active === "Active",
       guides: sData.guides, 
     };
@@ -124,7 +124,7 @@ const FormModal = ({ id, modal, setModal, modalType, criterias, setCriterias, up
                   {errors.evalWeight && <span className="invalid">{errors.evalWeight.message}</span>}
                 </div>
               </Col>
-              {/* <Col md="6">
+              <Col md="6">
               <div className="form-group">
                   <label className="form-label">Đánh giá LOC</label>
                   <br />
@@ -140,8 +140,8 @@ const FormModal = ({ id, modal, setModal, modalType, criterias, setCriterias, up
                           className="custom-control-input"
                           name="btnRadioControlLOC"
                           id="btnRadioControl1LOC"
-                          defaultChecked={formData.locEvaluation === "Hoạt động"}
-                          value={"Hoạt động"}
+                          defaultChecked={formData.locEvaluation === "Active"}
+                          value={"Active"}
                           onClick={(e) => {
                             setFormData({ ...formData, locEvaluation: e.target.value });
                           }}
@@ -161,8 +161,8 @@ const FormModal = ({ id, modal, setModal, modalType, criterias, setCriterias, up
                           className="custom-control-input"
                           name="btnRadioControlLOC"
                           id="btnRadioControl5LOC"
-                          defaultChecked={formData.locEvaluation === "Không hoạt động"}
-                          value={"Không hoạt động"}
+                          defaultChecked={formData.locEvaluation === "InActive"}
+                          value={"InActive"}
                           onClick={(e) => {
                             setFormData({ ...formData, locEvaluation: e.target.value });
                           }}
@@ -174,7 +174,7 @@ const FormModal = ({ id, modal, setModal, modalType, criterias, setCriterias, up
                     </li>
                   </ul>
                 </div>
-              </Col> */}
+              </Col>
               <Col md="6">
                 <div className="form-group">
                   <label className="form-label">Trạng thái</label>

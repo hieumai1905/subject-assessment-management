@@ -142,14 +142,14 @@ export default function ImportStudentEvalModal({ modal, setModal, rows, setRows,
           row = {
             ...row,
             [`${criteria.id}_evalGrade`]: grade,
-            [`${criteria.id}_comment`]: item[`Nhận xét ${idx + 1}`],
+            [`${criteria.id}_comment`]: item[`Nhận xét ${criteria.name}`],
           };
           changed.push({
             teamId: teamId,
             milestoneId: evaluations[0]?.milestone?.id,
             criteriaId: criteria.id,
             email: email,
-            comment: item[`Nhận xét ${idx + 1}`],
+            comment: item[`Nhận xét ${criteria.name}`],
             evalGrade: grade,
           });
         });

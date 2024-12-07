@@ -60,7 +60,7 @@ const ViewStudentWorkGrandFinal = ({ modal, setModal, complexities, qualities, e
             }}
           >
             <Icon name="file-text" style={{ marginRight: "10px", color: "#0056B3" }} />
-            Work Evaluation - Final
+            Đánh giá yêu cầu lần cuối
           </h4>
           <Button
             close
@@ -90,7 +90,7 @@ const ViewStudentWorkGrandFinal = ({ modal, setModal, complexities, qualities, e
             }}
           >
             <Icon name="info" style={{ marginRight: "10px", color: "#777" }} />
-            <h6>No work evaluation available in {mileTitle}</h6>
+            <h6>Không có dữ liệu trong {mileTitle}</h6>
           </div>
         ) : (
           <>
@@ -105,12 +105,12 @@ const ViewStudentWorkGrandFinal = ({ modal, setModal, complexities, qualities, e
               }}
             >
               <Icon name="user" style={{ marginRight: "10px", color: "#0056B3" }} />
-              Student: {evaluations[0]?.studentFullname} in {mileTitle}
+              Sinh viên: {evaluations[0]?.studentFullname} trong {mileTitle}
             </h5>
             <div
               className="mt-4"
               style={{
-                maxHeight: "400px",
+                maxHeight: "450px",
                 overflowY: "auto",
                 overflowX: "hidden",
                 paddingRight: "15px",
@@ -121,7 +121,7 @@ const ViewStudentWorkGrandFinal = ({ modal, setModal, complexities, qualities, e
               <Form className="row gy-3" onSubmit={handleSubmit(onSubmit)}>
                 <Row>
                   {evaluations.map((item, idx) => (
-                    <Col md="12" key={idx} className="mb-4">
+                    <Col md="12" key={idx} className="mt-5">
                       <div
                         style={{
                           border: "1px solid #dee2e6",
@@ -152,7 +152,7 @@ const ViewStudentWorkGrandFinal = ({ modal, setModal, complexities, qualities, e
                           }}
                         >
                           <Icon name="layers" style={{ marginRight: "10px", color: "#0056B3" }} />
-                          {idx + 1}. Function: {item.reqTitle}
+                          {idx + 1}. {item.reqTitle}
                         </h6>
                         {item.gradeEvaluatorList && item.gradeEvaluatorList.length > 0 ? (
                           item.gradeEvaluatorList.map((evaluator, evIdx) => (
@@ -169,27 +169,27 @@ const ViewStudentWorkGrandFinal = ({ modal, setModal, complexities, qualities, e
                             >
                               <div style={{ display: "flex", alignItems: "center", marginBottom: "8px" }}>
                                 <Icon name="user" style={{ marginRight: "8px", color: "#0056B3" }} />
-                                <span style={{ fontWeight: "600", color: "#333" }}>Evaluator:</span>{" "}
+                                <span style={{ fontWeight: "600", color: "#333" }}>Người đánh giá:</span>{" "}
                                 <span style={{ marginLeft: "6px", color: "#000" }}>{evaluator.fullname}</span>
                               </div>
                               <div style={{ display: "flex", alignItems: "center", marginBottom: "8px" }}>
                                 <Icon name="check-circle" style={{ marginRight: "8px", color: "#0056B3" }} />
-                                <span style={{ fontWeight: "600", color: "#333" }}>Complexity:</span>{" "}
+                                <span style={{ fontWeight: "600", color: "#333" }}>Độ phức tạp:</span>{" "}
                                 <span style={{ marginLeft: "6px", color: "#000" }}>{evaluator.complexityName}</span>
                               </div>
                               <div style={{ display: "flex", alignItems: "center", marginBottom: "8px" }}>
                                 <Icon name="check-circle" style={{ marginRight: "8px", color: "#0056B3" }} />
-                                <span style={{ fontWeight: "600", color: "#333" }}>Quality:</span>{" "}
+                                <span style={{ fontWeight: "600", color: "#333" }}>Mức độ hoàn thiện:</span>{" "}
                                 <span style={{ marginLeft: "6px", color: "#000" }}>{evaluator.qualityName}</span>
                               </div>
                               <div style={{ display: "flex", alignItems: "center" }}>
                                 <Icon name="check-circle" style={{ marginRight: "8px", color: "#0056B3" }} />
-                                <span style={{ fontWeight: "600", color: "#333" }}>Grade:</span>{" "}
+                                <span style={{ fontWeight: "600", color: "#333" }}>Điểm:</span>{" "}
                                 <span style={{ marginLeft: "6px", color: "#000" }}>{evaluator.grade}</span>
                               </div>
                               <div className="mt-1" style={{ width: "100%" }}>
-                                <span className="fw-bold me-1">Comment:</span>{" "}
-                                {evaluator?.comment || "No comment"}
+                                <span className="fw-bold me-1">Nhận xét:</span>{" "}
+                                {evaluator?.comment || "Không có"}
                               </div>
                             </div>
                           ))
@@ -197,7 +197,7 @@ const ViewStudentWorkGrandFinal = ({ modal, setModal, complexities, qualities, e
                           <div className="ms-2 mb-3" style={{ fontSize: "1rem", color: "#555" }}>
                             <div className="mt-2" style={{ fontSize: "0.95rem", color: "#666" }}>
                               <Icon name="message-square" style={{ marginRight: "8px", color: "#999" }} />
-                              No evaluators available
+                              Không có dữ liệu
                             </div>
                           </div>
                         )}

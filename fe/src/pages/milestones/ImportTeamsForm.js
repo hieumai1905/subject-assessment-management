@@ -44,7 +44,16 @@ export default function ImportTeamsForm({
       const worksheet = workbook.Sheets[sheetName];
       const jsonData = XLSX.utils.sheet_to_json(worksheet);
       console.log("JSON Data:", jsonData);
-      setFormData(jsonData);
+      if(jsonData){
+        setFormData(jsonData.map(item => ({
+          code: item[`Mã học sinh`],
+          fullname: item[`Họ và tên`],
+          email: item[`Email`],
+          isLeader: item[`Nhóm trưởng`],
+          teamName: item[`Tên nhóm`],
+          topicName: item[`Chủ đề`],
+        })));
+      }
     };
 
     reader.readAsArrayBuffer(file);
@@ -59,13 +68,13 @@ export default function ImportTeamsForm({
       console.log("search student:", response.data.data.classUserSuccessDTOS);
       if (response.data.statusCode === 200) {
         response.data.data = response.data.data.classUserSuccessDTOS.map((item) => ({
-          code: item.code,
-          fullname: item.fullname,
+          [`Mã học sinh`]: item.code,
+          [`Họ và tên`]: item.fullname,
           // gender: item.gender,
-          email: item.email,
-          isLeader: "",
-          teamName: "",
-          topicName: "",
+          [`Email`]: item.email,
+          [`Nhóm trưởng`]: "",
+          [`Tên nhóm`]: "",
+          [`Chủ đề`]: "",
         }));
         exportToExcel(response.data.data, "template_import_teams.xlsx");
       } else {

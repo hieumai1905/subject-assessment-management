@@ -77,9 +77,9 @@ public class WorkEvaluationService {
     public Object searchWorkEvaluation(StudentEvalSearchRequest request){
         request.validateInput();
         SearchWorkEvalResponse response = new SearchWorkEvalResponse();
-        Classes classes = classesRepository.findById(request.getClassId()).orElseThrow(() -> new RecordNotFoundException("Class"));
+        Classes classes = classesRepository.findById(request.getClassId()).orElseThrow(() -> new RecordNotFoundException("Lớp học"));
         Milestone milestone = milestoneRepository.findById(request.getMilestoneId())
-                .orElseThrow(() -> new RecordNotFoundException("Milestone"));
+                .orElseThrow(() -> new RecordNotFoundException("Cột mốc"));
         boolean isFinalEval = milestone.getEvaluationType().equals(Constants.TypeAssignments.FINAL);
 
         List<SettingDTO> complexities = new ArrayList<>();
@@ -243,7 +243,7 @@ public class WorkEvaluationService {
     @Transactional
     public Object evaluateRequirement(Integer milestoneId, List<EvaluateRequirementRequest> request) {
         if(request == null || request.size() == 0)
-            return "No data to evaluate!";
+            return "Không có dữ liệu để đánh giá";
         List<WorkEvaluation> workEvaluations = new ArrayList<>();
         List<Requirement> requirements = new ArrayList<>();
         Milestone milestone = checkExistMilestone(milestoneId);
@@ -316,11 +316,11 @@ public class WorkEvaluationService {
 //            }
 //            studentEvaluationRepository.saveAll(studentEvaluations);
 //        }
-        return "Evaluate successfully!";
+        return "Đánh giá thành công";
     }
 
     private Milestone checkExistMilestone(Integer milestoneId) {
-        return milestoneRepository.findById(milestoneId).orElseThrow(() -> new RecordNotFoundException("Milestone"));
+        return milestoneRepository.findById(milestoneId).orElseThrow(() -> new RecordNotFoundException("Cột mốc"));
     }
 
     private void saveStudentEvaluation(Float loc, Float grade, Milestone milestone, MilestoneCriteria criteria,
@@ -518,7 +518,7 @@ public class WorkEvaluationService {
 
     private User checkExistStudent(Requirement requirement) {
         if(requirement.getStudent() == null)
-            throw new ConflictException("The requirement must have assignee to evaluate!");
+            throw new ConflictException("Chỉ những yêu cầu đã được giao mới được đánh giá");
         return requirement.getStudent();
     }
 
@@ -533,7 +533,7 @@ public class WorkEvaluationService {
 
     private Requirement checkExistRequirement(Integer reqId) {
         return requirementRepository.findById(reqId)
-                .orElseThrow(() -> new RecordNotFoundException("Requirement"));
+                .orElseThrow(() -> new RecordNotFoundException("Yêu cầu"));
     }
 
     public Object searchReqEvalForGrandFinal(SearchEvalForGrandFinal request) {
@@ -545,8 +545,8 @@ public class WorkEvaluationService {
         if(request.getSessionId() == null || request.getTeamId() == null){
             return response;
         }
-        Team team = teamRepository.findById(request.getTeamId()).orElseThrow(() -> new RecordNotFoundException("Team"));
-        Session session = sessionRepository.findById(request.getSessionId()).orElseThrow(() -> new RecordNotFoundException("Session"));
+        Team team = teamRepository.findById(request.getTeamId()).orElseThrow(() -> new RecordNotFoundException("Nhóm"));
+        Session session = sessionRepository.findById(request.getSessionId()).orElseThrow(() -> new RecordNotFoundException("Phiên chấm"));
         CouncilTeam councilTeam = councilTeamRepository.findByTeamIdAndSessionId(
                 team.getId(),
                 session.getId()
@@ -559,7 +559,7 @@ public class WorkEvaluationService {
                 .filter(item -> item.getEvaluationType().equals(Constants.TypeAssignments.GRAND_FINAL))
                 .findFirst().orElse(null);
         if(milestone == null){
-            return "This class don't have grand final milestone!";
+            return "Lớp học này không có cột mốc đánh giá hội đồng";
         }
         if(currentUser.getRole().getId().equals(Constants.Role.STUDENT)){
             return getWorkEvalForStudentInGrandFinal(milestone, currentUser, request.getTeamId(), councilTeam);
@@ -583,10 +583,10 @@ public class WorkEvaluationService {
         //with 2nd round only get member rejected in previous round
         List<Requirement> requirements = new ArrayList<>();
         if(session.getSubjectSettingId() != null && session.getSemesterId() != null){
-            Setting round = settingRepository.findById(session.getSubjectSettingId()).orElseThrow(() -> new RecordNotFoundException("Round"));
+            Setting round = settingRepository.findById(session.getSubjectSettingId()).orElseThrow(() -> new RecordNotFoundException("Lần chấm"));
             Setting semester = (Setting) settingRepository.findSettingBySettingTypeAndSettingId( "semester", session.getSemesterId());
             if(semester == null){
-                throw new RecordNotFoundException("Semester");
+                throw new RecordNotFoundException("Học kỳ");
             }
             Setting lastRound = null;
             if (round.getSubject() != null && round.getSubject().getSubjectSettings() != null) {
@@ -746,16 +746,16 @@ public class WorkEvaluationService {
     public Object evaluateReqForGrandFinal(EvaluateReqForGrandFinal request) {
         request.validateInput();
         if(request.getEvalRequirements().size() == 0)
-            return "No data to evaluate!";
+            return "Không có dữ liệu để đánh giá";
         User evaluator = commonService.getCurrentUser();
-        Team team = teamRepository.findById(request.getTeamId()).orElseThrow(() -> new RecordNotFoundException("Team"));
-        Session session = sessionRepository.findById(request.getSessionId()).orElseThrow(() -> new RecordNotFoundException("Session"));
+        Team team = teamRepository.findById(request.getTeamId()).orElseThrow(() -> new RecordNotFoundException("Nhóm"));
+        Session session = sessionRepository.findById(request.getSessionId()).orElseThrow(() -> new RecordNotFoundException("Phiên chấm"));
         CouncilTeam councilTeam = councilTeamRepository.findByTeamIdAndSessionId(
                 team.getId(),
                 session.getId()
         );
         if(councilTeam == null){
-            return "This team don't have a council team to conduct evaluations!";
+            return "Nhóm này chưa có hội đồng đánh giá";
         }
         List<WorkEvaluation> workEvaluations = new ArrayList<>();
         List<Requirement> requirements = new ArrayList<>();
@@ -763,7 +763,7 @@ public class WorkEvaluationService {
                 .filter(item -> item.getEvaluationType().equals(Constants.TypeAssignments.GRAND_FINAL))
                 .findFirst().orElse(null);
         if(milestone == null){
-            return "This class don't have grand final milestone!";
+            return "Lớp học này không có cột mốc đánh giá hội đồng";
         }
         MilestoneCriteria criteria = milestone.getMilestoneCriteriaList().stream()
                 .filter(MilestoneCriteria::getLocEvaluation)
@@ -801,7 +801,7 @@ public class WorkEvaluationService {
             studentEvaluationRepository.saveAll(studentEvaluations);
             log.info("Student Eval: " + studentEvaluations.toString());
         }
-        return "Evaluate successfully!";
+        return "Đánh giá thành công";
     }
 
 }

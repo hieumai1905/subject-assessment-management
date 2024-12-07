@@ -43,13 +43,13 @@ public class SubjectService implements BaseService<Subject, Integer>{
         var foundSubjectsBySubjectCode = subjectRepository
                 .findBySubjectCode(request.getSubjectCode().toLowerCase().trim());
         if (foundSubjectsBySubjectCode != null) {
-            throw new NameAlreadyExistsException("Subject Code");
+            throw new NameAlreadyExistsException("Mã môn học");
         }
 
         var foundSubjectBySubjectName = subjectRepository
                 .findBySubjectName(request.getSubjectName().toLowerCase().trim());
         if (foundSubjectBySubjectName != null) {
-            throw new NameAlreadyExistsException("Subject Name");
+            throw new NameAlreadyExistsException("Tên môn học");
         }
 
         List<User> managers = new ArrayList<>();
@@ -72,10 +72,10 @@ public class SubjectService implements BaseService<Subject, Integer>{
         User foundUser = null;
         if(managerId != null){
             foundUser = userRepository.findById(managerId).orElseThrow(
-                    () -> new RecordNotFoundException("User"));
+                    () -> new RecordNotFoundException("Quản lý"));
 
             if(!foundUser.getRole().getName().equals(Constants.Role.ROLE_MANAGER)){
-                throw new ConflictException("User must be manager");
+                throw new ConflictException(foundUser.getFullname() + " không phải là quản lý");
             }
         }
         return foundUser;
@@ -102,19 +102,19 @@ public class SubjectService implements BaseService<Subject, Integer>{
         request.validateInput();
 
         var foundSubject = subjectRepository.findById(id).orElseThrow(
-                () -> new RecordNotFoundException("Subject"));
+                () -> new RecordNotFoundException("Môn học"));
         //Check subject code trung voi subject code khac trong Db
         Subject foundSubjectByCode = subjectRepository
                 .findBySubjectCodeAndOtherId(request.getSubjectCode().toLowerCase().trim(), request.getId());
         if(foundSubjectByCode != null){
-            throw new NameAlreadyExistsException("Subject Code");
+            throw new NameAlreadyExistsException("Mã môn học");
         }
 
         //Check subject name trung voi subject name khac trong Db
         Subject foundSubjectByName = subjectRepository
                 .findBySubjectNameAndOtherId(request.getSubjectName().toLowerCase().trim(), request.getId());
         if(foundSubjectByName != null){
-            throw new NameAlreadyExistsException("Subject Name");
+            throw new NameAlreadyExistsException("Tên môn học");
         }
 
         List<User> managers = new ArrayList<>();
@@ -141,13 +141,14 @@ public class SubjectService implements BaseService<Subject, Integer>{
     public Object get(Integer id) {
         log.info("get subject with id: " + id);
         var foundSubject = subjectRepository.findById(id).orElseThrow(
-                () -> new RecordNotFoundException("Subject"));
+                () -> new RecordNotFoundException("Môn học"));
 
         SubjectDTO subjectDTO = new SubjectDTO();
         subjectDTO.setId(foundSubject.getId());
         subjectDTO.setSubjectCode(foundSubject.getSubjectCode());
         subjectDTO.setSubjectName(foundSubject.getSubjectName());
         subjectDTO.setActive(foundSubject.getActive());
+        subjectDTO.setIsCouncil(foundSubject.getIsCouncil());
         subjectDTO.setDescription(foundSubject.getDescription());
         setSubjectUsers(subjectDTO, foundSubject.getManagers());
 
@@ -157,7 +158,7 @@ public class SubjectService implements BaseService<Subject, Integer>{
     @Override
     public void delete(Integer id) {
         var foundSubject = subjectRepository.findById(id).orElseThrow(
-                () -> new RecordNotFoundException("Subject"));
+                () -> new RecordNotFoundException("Môn học"));
         foundSubject.getManagers().clear();
         foundSubject.getTeachers().clear();
         foundSubject.getSubjectSettings().clear();
@@ -182,6 +183,7 @@ public class SubjectService implements BaseService<Subject, Integer>{
                 request.getNameOrCode(),
                 request.getManagerId(),
                 request.getActive(),
+                request.getIsCouncil(),
                 pageable
         );
 
@@ -213,7 +215,7 @@ public class SubjectService implements BaseService<Subject, Integer>{
         var request = (SubjectTeacherDTO) objectRequest;
         request.validateInput();
         var foundSubject = subjectRepository.findById(request.getSubjectId()).orElseThrow(
-                () -> new RecordNotFoundException("Subject"));
+                () -> new RecordNotFoundException("Môn học"));
 
         List<User> teachers = new ArrayList<>();
         if(request.getTeacherIds() != null){
@@ -224,17 +226,17 @@ public class SubjectService implements BaseService<Subject, Integer>{
         foundSubject.setTeachers(teachers);
 
         subjectRepository.save(foundSubject);
-        return "Update teacher successful!!!";
+        return "Cập nhật thành công";
     }
 
     private User validateTeacher(Integer teacherId){
         User foundUser = null;
         if(teacherId != null){
             foundUser = userRepository.findById(teacherId).orElseThrow(
-                    () -> new RecordNotFoundException("User"));
+                    () -> new RecordNotFoundException("Giảng viên"));
 
             if(!foundUser.getRole().getName().equals(Constants.Role.ROLE_TEACHER)){
-                throw new ConflictException("User must be teacher");
+                throw new ConflictException(foundUser.getFullname() + " không phải là giảng viên");
             }
         }
         return foundUser;

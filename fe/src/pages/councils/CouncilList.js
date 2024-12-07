@@ -117,6 +117,7 @@ export default function CouncilList() {
           pageSize: 9999,
           pageIndex: 1,
           active: true,
+          isCouncil: true
         });
         console.log("subject:", response.data.data);
         if (response.data.statusCode === 200) {

@@ -9,8 +9,8 @@ public class AssignRequirementRequest {
     Integer requirementId;
     Integer teamId;
     public void validateInput(){
-        ValidateUtils.checkNullOrEmpty(memberId, "Member id");
-        ValidateUtils.checkNullOrEmpty(requirementId, "Requirement id");
-        ValidateUtils.checkNullOrEmpty(teamId, "Team id");
+        ValidateUtils.checkNullOrEmpty(memberId, "Sinh viên");
+        ValidateUtils.checkNullOrEmpty(requirementId, "Yêu cầu");
+        ValidateUtils.checkNullOrEmpty(teamId, "Nhóm");
     }
 }

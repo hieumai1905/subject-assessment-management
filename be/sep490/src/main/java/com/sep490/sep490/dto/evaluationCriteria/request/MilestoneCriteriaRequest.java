@@ -18,8 +18,8 @@ public class MilestoneCriteriaRequest {
     private String note;
 
     public void validateInput(){
-        note = ValidateUtils.checkLength(criteriaName, "Milestone Criteria Name", 0, Constants.DefaultValueEntity.DESCRIPTION_LENGTH);
-        ValidateUtils.checkNullOrEmpty(evalWeight, "Evaluation Weight");
-        ValidateUtils.checkIntegerInRange(evalWeight, "Evaluation Weight", 1, 100);
+        note = ValidateUtils.checkLength(criteriaName, "Tên tiêu chí", 0, Constants.DefaultValueEntity.DESCRIPTION_LENGTH);
+        ValidateUtils.checkNullOrEmpty(evalWeight, "Tỷ trọng");
+        ValidateUtils.checkIntegerInRange(evalWeight, "Tỷ trọng", 1, 100);
     }
 }

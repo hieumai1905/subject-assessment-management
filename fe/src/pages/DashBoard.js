@@ -77,7 +77,7 @@ const OngoingGradeChart = ({ data }) => {
     labels: labels,
     datasets: [
       {
-        label: "Number of Students",
+        label: "Số sinh viên",
         data: numbers,
         backgroundColor: "#ff63a5",
         borderColor: "#ff63a5",
@@ -98,7 +98,7 @@ const OngoingGradeChart = ({ data }) => {
     plugins: {
       title: {
         display: true,
-        text: "Ongoing Grade", // Tiêu đề cho biểu đồ
+        text: "Điểm quá trình", // Tiêu đề cho biểu đồ
       },
     },
   };
@@ -140,7 +140,7 @@ const AvgRequirementsChart = ({ data }) => {
     plugins: {
       title: {
         display: true,
-        text: "Average Requirements/Member Statistics", // Tiêu đề cho biểu đồ
+        text: "Trung bình yêu cầu/sinh viên", // Tiêu đề cho biểu đồ
       },
     },
   };
@@ -151,7 +151,7 @@ const AvgRequirementsChart = ({ data }) => {
 
 const OngoingPassFailDoughnut = ({ data }) => {
   const chartData = {
-    labels: ["Ongoing Passed", "Ongoing Failed"],
+    labels: ["Đánh giá quá trình - Đạt", "Đánh giá quá trình - Không đạt"],
     datasets: [
       {
         data: [data.passed, data.failed],
@@ -192,7 +192,7 @@ const OngoingPassFailDoughnut = ({ data }) => {
           },
           title: {
             display: true,
-            text: "Ongoing Passed/Failed", // Chart title
+            text: "Đánh giá quá trình Đạt/Không đạt", // Chart title
           },
         },
       }}
@@ -210,7 +210,7 @@ const AvgGradesByMilestonesChart = ({ data }) => {
     labels: labels,
     datasets: [
       {
-        label: "Average Grade",
+        label: "Điểm trung bình",
         data: avgGrades,
         backgroundColor: "#6576ff", // Màu xanh đậm
         borderColor: "#6576ff", // Đường viền màu xanh đậm
@@ -230,7 +230,7 @@ const AvgGradesByMilestonesChart = ({ data }) => {
     plugins: {
       title: {
         display: true,
-        text: "Average Grades by Milestones",
+        text: "Điểm trung bình từng giai đoạn",
       },
     },
   };
@@ -247,16 +247,16 @@ const TopLOCGradeTable = ({ data }) => {
     <DataTableBody className="border-top">
       <DataTableHead>
         <DataTableRow>
-          <span>User name</span>
+          <span>Sinh viên</span>
         </DataTableRow>
         <DataTableRow>
-          <span>Class</span>
+          <span>Lớp học</span>
         </DataTableRow>
         <DataTableRow>
-          <span>Last milestone</span>
+          <span>Cột mốc</span>
         </DataTableRow>
         <DataTableRow>
-          <span>#Reqs</span>
+          <span>Số yêu cầu</span>
         </DataTableRow>
         <DataTableRow>
           <span>LOC</span>
@@ -294,13 +294,13 @@ const TopClassGradeTable = ({ data }) => {
     <DataTableBody className="border-top">
       <DataTableHead>
         <DataTableRow>
-          <span>Class</span>
+          <span>Lớp học</span>
         </DataTableRow>
         <DataTableRow>
-          <span>Teacher</span>
+          <span>Giảng viên</span>
         </DataTableRow>
         <DataTableRow>
-          <span>Eval. Grade</span>
+          <span>Điểm đánh giá</span>
         </DataTableRow>
       </DataTableHead>
       {data.map((item, index) => (
@@ -330,7 +330,7 @@ const Dashboard = () => {
   const [subjects, setSubjects] = useState([]);
   const [isFetching, setIsFetching] = useState({
     semester: true,
-    subjects: true,
+    subject: true,
     data: true,
   });
 
@@ -366,7 +366,7 @@ const Dashboard = () => {
         }
       } catch (error) {
         console.error("Error fetching data:", error);
-        toast.error("Error search setting!", {
+        toast.error("Xảy ra lỗi khi tìm kiếm học kỳ", {
           position: toast.POSITION.TOP_CENTER,
         });
       } finally {
@@ -403,7 +403,7 @@ const Dashboard = () => {
         }
       } catch (error) {
         console.error("Error fetching data:", error);
-        toast.error("Error search subject!", {
+        toast.error("Xảy ra lỗi khi tìm kiếm môn học", {
           position: toast.POSITION.TOP_CENTER,
         });
       } finally {
@@ -435,7 +435,7 @@ const Dashboard = () => {
         }
       } catch (error) {
         console.error("Error fetching data:", error);
-        toast.error("Error search statistic!", {
+        toast.error("Xảy ra lỗi khi thống kê", {
           position: toast.POSITION.TOP_CENTER,
         });
       } finally {
@@ -458,7 +458,7 @@ const Dashboard = () => {
         <BlockHead size="lg">
           <Row style={styles.filterRow}>
             <Col md="6" style={styles.selectContainer}>
-              <label className="form-label">Semester</label>
+              <label className="form-label">Học kỳ</label>
               {isFetching?.semester ? (
                 <Spinner />
               ) : (
@@ -470,7 +470,7 @@ const Dashboard = () => {
               )}
             </Col>
             <Col md="6" style={styles.selectContainer}>
-              <label className="form-label">Subject</label>
+              <label className="form-label">Môn học</label>
               {isFetching?.subject ? (
                 <Spinner />
               ) : (

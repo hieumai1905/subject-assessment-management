@@ -15,13 +15,13 @@ public class EvaluateRequirementRequest {
     private Boolean isUpdateEval;
 
     public void validateInput(){
-        ValidateUtils.checkNullOrEmpty(reqId, "Requirement id");
+        ValidateUtils.checkNullOrEmpty(reqId, "Yêu cầu");
         if(grade != null && grade < 0){
-            throw new ApiInputException("Grade must be >= 0!");
+            throw new ApiInputException("Điểm LOC >= 0!");
         }
         if(isUpdateEval == null)
             isUpdateEval = false;
-        comment = ValidateUtils.checkLength(comment, "Comment", Constants.DefaultValueEntity.MIN_LENGTH,
+        comment = ValidateUtils.checkLength(comment, "Nhận xét", Constants.DefaultValueEntity.MIN_LENGTH,
                 Constants.DefaultValueEntity.DESCRIPTION_LENGTH);
     }
 }
