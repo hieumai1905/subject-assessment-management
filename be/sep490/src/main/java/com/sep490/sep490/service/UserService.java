@@ -78,13 +78,13 @@ public class UserService implements BaseService<User, Integer> {
         List<String> emailDomains = settingRepository.findBySettingType(Constants.SettingType.EMAIL).stream().map(Setting::getName).toList();
         var subEmailRequest = StringUtils.substringAfter(request.getEmail(), "@");
         if (!emailDomains.contains(subEmailRequest)){
-            throw new ConflictException("Email domain doesn't match!");
+            throw new ConflictException("Tên miền email không phù hợp");
         }
         // Find user by username
-        var foundUserByUsername = userRepository.findByUsername(request.getUsername());
-        if (foundUserByUsername != null) {
-            throw new NameAlreadyExistsException("Username");
-        }
+//        var foundUserByUsername = userRepository.findByUsername(request.getUsername());
+//        if (foundUserByUsername != null) {
+//            throw new NameAlreadyExistsException("Username");
+//        }
         // Find user by email
         var foundUserByEmail = userRepository.findFirstByEmail(request.getEmail());
         if (foundUserByEmail != null) {
@@ -92,7 +92,7 @@ public class UserService implements BaseService<User, Integer> {
         }
         // Validate password
         if (request.getPassword().length() < 8) {
-            throw new ConflictException("Length of password must be >= 8!");
+            throw new ConflictException("Độ dài mật khẩu phải >= 8 ký tự");
         }
         request.setId(null);
         // Map and save user
@@ -168,14 +168,8 @@ public class UserService implements BaseService<User, Integer> {
         List<String> emailDomains = settingRepository.findBySettingType(Constants.SettingType.EMAIL).stream().map(Setting::getName).toList();
         var subEmailRequest = StringUtils.substringAfter(request.getEmail(), "@");
         if (!emailDomains.contains(subEmailRequest)){
-            throw new ConflictException("Email domain doesn't match!");
+            throw new ConflictException("Tên miền email không hợp lệ");
         }
-        // Find user by username
-//        var username = StringUtils.substringBefore(request.getEmail(), "@");
-//        var foundUserByUsername = userRepository.findByUsername(request.getEmail());
-//        if (foundUserByUsername != null) {
-//            throw new NameAlreadyExistsException("Username");
-//        }
         // Find user by email
         var foundUserByEmail = userRepository.findFirstByEmail(request.getEmail());
         if (foundUserByEmail != null) {
@@ -326,7 +320,7 @@ public class UserService implements BaseService<User, Integer> {
     @Override
     public Object get(Integer id) {
         var foundUser = userRepository.findById(id).orElseThrow(
-                () -> new RecordNotFoundException("User"));
+                () -> new RecordNotFoundException("Người dùng"));
 //        var role = settingRepository.findById(foundUser.getId()).orElseThrow(
 //                () -> new RecordNotFoundException("Role"));
         return ConvertUtils.convert(foundUser, UserDTO.class);
