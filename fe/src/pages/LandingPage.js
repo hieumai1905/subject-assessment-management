@@ -408,11 +408,10 @@ const LandingPage = () => {
 
           <FooterColumn>
             <h4>Liên Hệ Với Chúng Tôi</h4>
-            <p>Email: support@swpevaluationsystem.com</p>
+            <p>Email: support@evaluationsystem.com</p>
             <p>Điện thoại: 024 7300 1866</p>
             <p>
-              Địa chỉ: Khu Giáo dục và Đào tạo – Khu Công nghệ cao Hòa Lạc – Km29 Đại lộ Thăng Long, H. Thạch Thất, TP.
-              Hà Nội
+              Địa chỉ: 3 Đ. Cầu Giấy, Ngọc Khánh, Đống Đa, Hà Nội
             </p>
           </FooterColumn>
 

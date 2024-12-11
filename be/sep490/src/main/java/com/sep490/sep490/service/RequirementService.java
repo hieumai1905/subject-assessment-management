@@ -12,6 +12,7 @@ import com.sep490.sep490.dto.UpdateTrackingDTO;
 import com.sep490.sep490.dto.requirement.request.*;
 import com.sep490.sep490.dto.requirement.response.SearchRequirementResponse;
 import com.sep490.sep490.entity.*;
+import com.sep490.sep490.service.*;
 import com.sep490.sep490.mapper.SubmissionMapper;
 import com.sep490.sep490.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -41,6 +42,7 @@ public class RequirementService{
     private final SettingRepository settingRepository;
     private final CommonService commonService;
     private final FirebaseStorageService firebaseStorageService;
+    private final FileIoService fileIoService;
     private final ImgurService imgurService;
     private final ClassesRepository classesRepository;
     private final TeamEvaluationRepository teamEvaluationRepository;
@@ -261,56 +263,6 @@ public class RequirementService{
 //                : Constants.RequirementStatus.REQUIREMENT_STATUSES.get(0));
         return requirement;
     }
-//    @Transactional
-//    public Object submitWork(SubmitRequirementRequest request, MultipartFile file) {
-//        request.validateInput(file);
-//        String submission = request.getLink();
-//        if(request.getSubmitType().equals("file")){
-//            submission = firebaseStorageService.uploadFile(file);
-//        }
-//        User currentUser = commonService.getCurrentUser();
-//        List<Requirement> requirements = new ArrayList<>();
-//        for (Integer requirementId : request.getRequirementIds()) {
-//            Requirement requirement = requirementRepository.findById(requirementId)
-//                    .orElseThrow(() -> new RecordNotFoundException("Requirement"));
-//            if(requirement.getStatus().equals(Constants.RequirementStatus.REQUIREMENT_STATUSES.get(4))){
-//                throw new ConflictException("You can't submit work waiting for approval requirements!");
-//            }
-//            User user = requirement.getStudent();
-//            if(user == null){
-//                throw new ConflictException("You only can submit assigned requirement!");
-//            }else if(currentUser.getRole().getId().equals(Constants.Role.STUDENT)
-//                && !currentUser.getId().equals(user.getId())){
-//                throw new ConflictException("You can't submit work for another member's requirements!");
-//            }
-//            if (requirement.getWorkEvaluations().isEmpty()){
-//                Milestone milestone = requirement.getMilestone();
-//                Date currentDate = new Date();
-//                boolean isLate = milestone.getDueDate() != null && milestone.getDueDate().before(currentDate);
-//                requirement.setSubmitType(request.getSubmitType());
-//                requirement.setSubmission(submission);
-//                requirement.setNote(request.getNote());
-//                requirement.setStatus(isLate ? "SUBMIT LATE" : Constants.RequirementStatus.REQUIREMENT_STATUSES.get(2));
-//                requirement.setStudent(user);
-//            }
-//            else {
-//                UpdateTracking updateTracking = new UpdateTracking();
-//                updateTracking.setRequirement(requirement);
-//                updateTracking.setSubmitType(request.getSubmitType());
-//                updateTracking.setStudent(user);
-//                updateTracking.setSubmission(submission);
-//                updateTracking.setNote(request.getNote());
-//                if(requirement.getUpdateTrackings() == null)
-//                    requirement.setUpdateTrackings(new ArrayList<>());
-//                requirement.getUpdateTrackings().add(updateTracking);
-//            }
-//
-//            requirements.add(requirement);
-//        }
-//        requirementRepository.saveAll(requirements);
-//        return ConvertUtils.convertList(requirements, RequirementDTO.class);
-//    }
-//
 
     @Transactional
     public Object submitWork(SubmitRequirementRequest request, MultipartFile file) {
@@ -326,7 +278,7 @@ public class RequirementService{
         }
         String submitFile = "";
         if(file != null) {
-            submitFile = imgurService.uploadImageToImgur(file);
+            submitFile = fileIoService.uploadFileToBin(file);
             ValidateUtils.checkLength(submitFile, "Tên tệp", 0, 750);
         }
         List<Requirement> requirements = new ArrayList<>();

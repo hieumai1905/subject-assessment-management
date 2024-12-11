@@ -67,19 +67,6 @@ spring:
           starttls:
             enable: true
 
-#Set up test using mail trap
-#  mail:
-#    host: sandbox.smtp.mailtrap.io
-#    port: 2525
-#    username: 193e618d37d403
-#    password: 8e296428cc8ad0
-#    properties:
-#      mail:
-#        smtp:
-#          auth: true
-#          starttls:
-#            enable: true
-
   data:
     jpa:
       repositories:
@@ -95,3 +82,6 @@ myvalue:
     send-to-mail: ${SEND_TO_MAIL:http://localhost:8080/auth/verified-account?email=}
     login-url: ${LOGIN_URL:http://localhost:3000/auth-login}
 
+filebin:
+  api:
+    url: https://filebin.net

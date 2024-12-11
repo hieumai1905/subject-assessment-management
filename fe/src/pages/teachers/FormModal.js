@@ -73,34 +73,39 @@ const FormModal = ({ modal, closeModal, onSubmit, formData, setFormData, modalTy
                   {errors.email && <span className="invalid">{errors.email.message}</span>}
                 </div>
               </Col>
-              <Col sm="6">
-                <label className="form-label">Ảnh đại diện</label>
-                <div className="input-group">
-                  <div className="input-group-prepend">
-                    <span className="input-group-text">
-                      <Icon name="upload" />
-                    </span>
+              {modalType == "edit" && (
+                <Col sm="6">
+                  <label className="form-label">Ảnh đại diện</label>
+                  <div className="input-group">
+                    <div className="input-group-prepend">
+                      <span className="input-group-text">
+                        <Icon name="upload" />
+                      </span>
+                    </div>
+                    <Input
+                      type="file"
+                      id="customFile"
+                      accept="image/*"
+                      onChange={(e) => setFormData({ ...formData, avatar: e.target.files[0] })}
+                      className="form-control"
+                    />
                   </div>
-                  <Input
-                    type="file"
-                    id="customFile"
-                    onChange={(e) => setFormData({ ...formData, avatar: e.target.files[0] })}
-                    className="form-control"
-                  />
-                </div>
-              </Col>
-              <Col md="6">
-                <div className="form-group">
-                  <label className="form-label">Số điện thoại</label>
-                  <input
-                    type="text"
-                    value={formData.mobile}
-                    placeholder="Nhập số điện thoại"
-                    onChange={(e) => setFormData({ ...formData, mobile: e.target.value })}
-                    className="form-control"
-                  />
-                </div>
-              </Col>
+                </Col>
+              )}
+              {modalType == "edit" && (
+                <Col md="6">
+                  <div className="form-group">
+                    <label className="form-label">Số điện thoại</label>
+                    <input
+                      type="text"
+                      value={formData.mobile}
+                      placeholder="Nhập số điện thoại"
+                      onChange={(e) => setFormData({ ...formData, mobile: e.target.value })}
+                      className="form-control"
+                    />
+                  </div>
+                </Col>
+              )}
               <Col md="6">
                 <div className="form-group">
                   <label className="form-label">Giới tính</label>
