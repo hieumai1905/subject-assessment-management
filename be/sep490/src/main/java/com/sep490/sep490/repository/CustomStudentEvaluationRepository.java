@@ -105,7 +105,7 @@ public interface CustomStudentEvaluationRepository extends JpaRepository<Milesto
             "        (sum(se.eval_grade) / count(m.id)) AS average_grade\n" +
             "    FROM student_evaluation se \n" +
 //            "    JOIN users u ON se.user_id = u.id AND u.role_id = 4\n" +
-            "    JOIN milestone m ON se.milestone_id = m.id AND m.type_evaluator <> 'Grand Final'\n" +
+            "    JOIN milestone m ON se.milestone_id = m.id AND m.evaluation_type <> 'Grand Final'\n" +
             "    JOIN classes c ON c.id = m.class_id\n" +
             "    WHERE c.semester_id = :semesterId \n" +
             "    AND c.subject_id = :subjectId AND c.active = true \n" +

@@ -65,7 +65,7 @@ public interface RequirementRepository extends  BaseRepository<Requirement, Inte
 
     @Query(value = "select ROUND((count(r.id)  * 1.0 / count(distinct r.student_id)), 2) as num_req, s.name, m.display_order from requirement r\n" +
             "join setting s on s.id = r.complexity_id " +
-            "join milestone m on m.id = r.milestone_id and m.type_evaluator <> 'Grand Final' \n" +
+            "join milestone m on m.id = r.milestone_id and m.evaluation_type <> 'Grand Final' \n" +
             "join classes c on m.class_id = c.id " +
             "where r.student_id is not null and r.complexity_id is not null\n" +
             "and c.subject_id = :subjectId and c.semester_id = :semesterId AND c.active = true \n" +

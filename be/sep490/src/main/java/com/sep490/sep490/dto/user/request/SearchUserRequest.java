@@ -13,6 +13,7 @@ public class SearchUserRequest extends SearchRequestDTO {
     private String keyWord;
     private String roleName;
     private Boolean active;
+    private Boolean isIncludeManager;
     private String status;
     private String sortBy;
 
@@ -23,6 +24,8 @@ public class SearchUserRequest extends SearchRequestDTO {
             keyWord = keyWord.trim().toLowerCase();
         if(roleName != null)
             roleName = roleName.trim().toLowerCase();
+        if(isIncludeManager == null)
+            isIncludeManager = false;
 
         sortBy = SortAndOrderUtils.validateSort(sortBy, Constants.DefaultValuePage.SORT_BY, User.class.getDeclaredFields());
     }

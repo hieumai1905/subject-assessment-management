@@ -107,7 +107,6 @@ export const fullRequirementStatuses = [
   },
 ];
 
-
 export const requiremntLevels = [
   {
     value: "Easy",
@@ -129,14 +128,19 @@ export const bulkActionOptions = [
 ];
 
 export const evaluationTypes = [
-  { value: "Normal", label: "Thông thường"},
-  { value: "Final", label: "Cuối kỳ"},
-  { value: "Grand Final", label: "Hội đồng"},
-]
+  { value: "Normal", label: "Thông thường" },
+  { value: "Final", label: "Cuối kỳ" },
+  { value: "Grand Final", label: "Hội đồng" },
+];
 
 export const roleArr = [
-  { value: "STUDENT", label: "Sinh viên"},
-  { value: "TEACHER", label: "Giảng viên"},
-  { value: "MANAGER", label: "Quản lý"},
-  { value: "ADMIN", label: "Quản trị viên"}
-]
+  { value: "STUDENT", label: "Sinh viên" },
+  { value: "TEACHER", label: "Giảng viên" },
+  { value: "MANAGER", label: "Quản lý" },
+  { value: "ADMIN", label: "Quản trị viên" },
+];
+
+export const teacherRoles = [
+  { value: "3", label: "Giảng viên" },
+  { value: "2", label: "Quản lý bộ môn" },
+];

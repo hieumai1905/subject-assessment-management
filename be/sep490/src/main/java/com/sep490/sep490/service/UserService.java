@@ -357,6 +357,7 @@ public class UserService implements BaseService<User, Integer> {
                 request.getRoleName(),
                 request.getStatus(),
                 request.getActive(),
+                request.getIsIncludeManager(),
                 pageable
         );
 

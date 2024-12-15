@@ -22,8 +22,8 @@ public interface TeamRepository extends BaseRepository<Team, Integer>{
     @Query("delete from Team t where t.milestone.id = :milestoneId")
     void deleteByMilestoneId(Integer milestoneId);
 
-    @Query("select t from Team t where lower(t.teamName) = lower(:teamName) and t.milestone.id = :milestoneId")
-    Team findByTeamName(String teamName, Integer milestoneId);
+    @Query("select t from Team t where lower(t.teamName) = lower(:teamName) and t.classes.id = :classId")
+    Team findByTeamName(String teamName, Integer classId);
 
     @Query("select t from Team t where lower(t.teamName) = lower(:teamName) " +
             "and t.classes.id = :classId and t.id <> :id")

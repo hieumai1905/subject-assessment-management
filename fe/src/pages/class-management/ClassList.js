@@ -59,7 +59,7 @@ export const ClassList = () => {
     subject: null,
     active: null,
   });
-  const [isFetching, setIsFetching] = useState(true);
+  const [isFetching, setIsFetching] = useState(false);
   const [isLoading, setIsLoading] = useState({
     add: false,
     edit: false,
@@ -81,8 +81,20 @@ export const ClassList = () => {
           sortBy: "displayOrder",
           orderBy: "ASC",
         });
+        console.log('semester: ', response.data.data);
         if (response.data.statusCode === 200) {
           setSemesters(convertToOptions(response.data.data.settingDTOS, "id", "name"));
+          if (response.data.data.totalElements > 0) {
+            let fsemester = {
+              value: response.data.data.settingDTOS[0]?.id,
+              label: response.data.data.settingDTOS[0]?.name,
+            };
+            setFilterForm({
+              ...filterForm,
+              semester: fsemester,
+            });
+            setSearch({...search, semester: fsemester});
+          }
         } else {
           toast.error(`${response.data.data}`, {
             position: toast.POSITION.TOP_CENTER,
@@ -107,8 +119,17 @@ export const ClassList = () => {
           pageIndex: 1,
           active: true,
         });
+        console.log('subject: ', response.data.data);
         if (response.data.statusCode === 200) {
           setSubjects(convertToOptions(response.data.data.subjects, "id", "subjectCode"));
+          if (response.data.data.totalElements > 0){
+            let fsubject = {
+              value: response.data.data.subjects[0]?.id,
+              label: response.data.data.subjects[0]?.subjectCode,
+            };
+            setFilterForm({...filterForm, subject: fsubject});
+            setSearch({...search, subject: fsubject});
+          }
         } else {
           toast.error(`${response.data.data}`, {
             position: toast.POSITION.TOP_CENTER,
@@ -126,6 +147,12 @@ export const ClassList = () => {
   useEffect(() => {
     const fetchTeachers = async () => {
       if (subjects.length === 0) return;
+      if (!filterForm?.semester?.value || !filterForm?.subject?.value) {
+        setData([]);
+        setTotalElements(0);
+        setIsFetching(false);
+        return false;
+      }
       try {
         const response = await authApi.post("/user/search", {
           pageSize: 9999,
@@ -151,6 +178,12 @@ export const ClassList = () => {
   useEffect(() => {
     const fetchData = async () => {
       if (teacherList.length === 0) return;
+      if (!filterForm?.semester?.value || !filterForm?.subject?.value) {
+        setData([]);
+        setTotalElements(0);
+        setIsFetching(false);
+        return false;
+      }
       try {
         setIsFetching(true);
         const response = await authApi.post("/class/search", {
@@ -597,7 +630,7 @@ export const ClassList = () => {
                 <div className="d-flex justify-content-center align-items-center" style={{ height: "200px" }}>
                   <Spinner color="primary" />
                 </div>
-              ) : data.length > 0 ? (
+              ) : data?.length > 0 ? (
                 data.map((item) => {
                   return (
                     <DataTableItem key={item.id} className="nk-tb-item">

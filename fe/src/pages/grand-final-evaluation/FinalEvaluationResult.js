@@ -102,7 +102,19 @@ const columns = (evaluations) => [
   { field: "classCode", headerName: "Mã lớp", width: 150 },
   { field: "sessionName", headerName: "Phiên đánh giá", width: 150 },
   { field: "teamName", headerName: "Nhóm", width: 150 },
-  { field: "status", headerName: "Trạng thái", width: 150 },
+  {
+    field: "status",
+    headerName: "Trạng thái",
+    width: 150,
+    renderCell: (params) => {
+      const translations = {
+        Evaluated: "Đã đánh giá",
+        Evaluating: "Đang đánh giá",
+        Reject: "Từ chối"
+      };
+      return translations[params.value] || "N/A";
+    },
+  },
   { field: "fullname", headerName: "Học sinh", width: 200 },
   { field: "avgGrade", headerName: "Điểm trung bình", width: 100 },
   ...(evaluations[0]?.gradeEvaluators || [])

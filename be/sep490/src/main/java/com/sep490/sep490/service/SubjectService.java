@@ -33,6 +33,7 @@ public class SubjectService implements BaseService<Subject, Integer>{
 
     private final SubjectRepository subjectRepository;
     private final UserRepository userRepository;
+    private final CommonService commonService;
 
     @Override
     public Object create(Object objectRequest) {
@@ -188,6 +189,7 @@ public class SubjectService implements BaseService<Subject, Integer>{
         );
 
         List<SubjectDTO> subjectDTOS = new ArrayList<>();
+        Long totalRecords = subjects.getTotalElements();
         for (Subject s : subjects.getContent()) {
             SubjectDTO subjectDTO = new SubjectDTO();
             subjectDTO.setId(s.getId());
@@ -196,13 +198,16 @@ public class SubjectService implements BaseService<Subject, Integer>{
             subjectDTO.setActive(s.getActive());
             subjectDTO.setDescription(s.getDescription());
             setSubjectUsers(subjectDTO, s.getManagers());
-
-            subjectDTOS.add(subjectDTO);
+            if(canSearch(s)){
+                subjectDTOS.add(subjectDTO);
+            } else {
+                totalRecords--;
+            }
         }
 
         SearchSubjectResponse response = new SearchSubjectResponse();
         response.setSubjects(subjectDTOS);
-        response.setTotalElements(subjects.getTotalElements());
+        response.setTotalElements(totalRecords);
         response.setPageIndex(request.getPageIndex());
         response.setPageSize(request.getPageSize());
         response.setOrderBy(request.getOrderBy());
@@ -210,6 +215,20 @@ public class SubjectService implements BaseService<Subject, Integer>{
 
         return response;
     }
+
+    private boolean canSearch(Subject s) {
+        User currentUser = commonService.getCurrentUser();
+        return switch (currentUser.getRole().getId()) {
+            case 1 -> true;
+            case 2 -> s.getManagers().stream().anyMatch(item -> item.getId().equals(currentUser.getId()));
+            case 3 -> s.getTeachers().stream().anyMatch(item -> item.getId().equals(currentUser.getId()));
+            case 4 -> s.getClasses().stream()
+                    .flatMap(item -> item.getClassesUsers().stream())
+                    .anyMatch(csu -> csu.getUser().getId().equals(currentUser.getId()));
+            default -> false;
+        };
+    }
+
 
     public Object updateSubjectTeachers(Object objectRequest) {
         var request = (SubjectTeacherDTO) objectRequest;

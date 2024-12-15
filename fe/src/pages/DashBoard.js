@@ -16,6 +16,7 @@ import authApi from "../utils/ApiAuth";
 import { convertToOptions, isNullOrEmpty } from "../utils/Utils";
 import { Chart, CategoryScale, LinearScale, BarElement, ArcElement, Tooltip, Filler, Legend } from "chart.js";
 import { toast, ToastContainer } from "react-toastify";
+import Head from "../layout/head/Head";
 
 Chart.register(CategoryScale, LinearScale, BarElement, ArcElement, Tooltip, Filler, Legend);
 
@@ -148,7 +149,6 @@ const AvgRequirementsChart = ({ data }) => {
   return <Bar data={chartData} options={options} />;
 };
 
-
 const OngoingPassFailDoughnut = ({ data }) => {
   const chartData = {
     labels: ["Đánh giá quá trình - Đạt", "Đánh giá quá trình - Không đạt"],
@@ -201,10 +201,9 @@ const OngoingPassFailDoughnut = ({ data }) => {
   );
 };
 
-
 const AvgGradesByMilestonesChart = ({ data }) => {
   const labels = data.map((item) => item.grade);
-  const avgGrades = data.map((item) => isNullOrEmpty(item.avgGrade) ? 0 : item.avgGrade.toFixed(2));
+  const avgGrades = data.map((item) => (isNullOrEmpty(item.avgGrade) ? 0 : item.avgGrade.toFixed(2)));
 
   const chartData = {
     labels: labels,
@@ -415,7 +414,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      if (!filterForm?.semester || !filterForm?.subject) {
+      if (!filterForm?.semester?.value || !filterForm?.subject?.value) {
         setData({});
         setIsFetching({ ...isFetching, data: false });
         return false;
@@ -446,91 +445,94 @@ const Dashboard = () => {
   }, [filterForm.subject, filterForm.semester]);
 
   return (
-    <Content>
-      <div style={styles.dashboard}>
-        <BlockHeadContent className="mb-3">
-          <BlockTitle page>Hệ thống đánh giá</BlockTitle>
-          {/* <BlockDes className="text-soft">
+    <>
+      <Head title="Thống kê"/>
+      <Content>
+        <div style={styles.dashboard}>
+          <BlockHeadContent className="mb-3">
+            <BlockTitle page>Hệ thống đánh giá</BlockTitle>
+            {/* <BlockDes className="text-soft">
             <p>Welcome to SES</p>
           </BlockDes> */}
-        </BlockHeadContent>
+          </BlockHeadContent>
 
-        <BlockHead size="lg">
-          <Row style={styles.filterRow}>
-            <Col md="6" style={styles.selectContainer}>
-              <label className="form-label">Học kỳ</label>
-              {isFetching?.semester ? (
-                <Spinner />
-              ) : (
-                <RSelect
-                  options={semesters}
-                  value={filterForm.semester}
-                  onChange={(e) => setFilterForm({ ...filterForm, semester: e })}
-                />
-              )}
+          <BlockHead size="lg">
+            <Row style={styles.filterRow}>
+              <Col md="6" style={styles.selectContainer}>
+                <label className="form-label">Học kỳ</label>
+                {isFetching?.semester ? (
+                  <Spinner />
+                ) : (
+                  <RSelect
+                    options={semesters}
+                    value={filterForm.semester}
+                    onChange={(e) => setFilterForm({ ...filterForm, semester: e })}
+                  />
+                )}
+              </Col>
+              <Col md="6" style={styles.selectContainer}>
+                <label className="form-label">Môn học</label>
+                {isFetching?.subject ? (
+                  <Spinner />
+                ) : (
+                  <RSelect
+                    options={subjects}
+                    value={filterForm.subject}
+                    onChange={(e) =>
+                      setFilterForm({
+                        ...filterForm,
+                        subject: e,
+                      })
+                    }
+                  />
+                )}
+              </Col>
+            </Row>
+          </BlockHead>
+
+          <Row className="g-4" style={styles.chartRow}>
+            <Col md="6" style={styles.chartContainer}>
+              <OngoingGradeChart data={data.gradeDistributionList || []} />
             </Col>
-            <Col md="6" style={styles.selectContainer}>
-              <label className="form-label">Môn học</label>
-              {isFetching?.subject ? (
-                <Spinner />
-              ) : (
-                <RSelect
-                  options={subjects}
-                  value={filterForm.subject}
-                  onChange={(e) =>
-                    setFilterForm({
-                      ...filterForm,
-                      subject: e,
-                    })
-                  }
-                />
-              )}
+            <Col md="6" style={styles.chartContainer}>
+              <OngoingPassFailDoughnut
+                data={{
+                  passed:
+                    data.ongoingPassFailList
+                      ?.filter((item) => item.isPassed)
+                      .reduce((acc, cur) => acc + cur.numberOfStudent, 0) || 0,
+                  failed:
+                    data.ongoingPassFailList
+                      ?.filter((item) => !item.isPassed)
+                      .reduce((acc, cur) => acc + cur.numberOfStudent, 0) || 0,
+                }}
+              />
             </Col>
           </Row>
-        </BlockHead>
 
-        <Row className="g-4" style={styles.chartRow}>
-          <Col md="6" style={styles.chartContainer}>
-            <OngoingGradeChart data={data.gradeDistributionList || []} />
-          </Col>
-          <Col md="6" style={styles.chartContainer}>
-            <OngoingPassFailDoughnut
-              data={{
-                passed:
-                  data.ongoingPassFailList
-                    ?.filter((item) => item.isPassed)
-                    .reduce((acc, cur) => acc + cur.numberOfStudent, 0) || 0,
-                failed:
-                  data.ongoingPassFailList
-                    ?.filter((item) => !item.isPassed)
-                    .reduce((acc, cur) => acc + cur.numberOfStudent, 0) || 0,
-              }}
-            />
-          </Col>
-        </Row>
+          <Row className="g-4" style={styles.chartRow}>
+            <Col md="6" style={styles.chartContainer}>
+              <AvgRequirementsChart data={data.avgRequirementsList || []} />
+            </Col>
+            <Col md="6" style={styles.chartContainer}>
+              <AvgGradesByMilestonesChart data={data.avgGradeList || []} />
+            </Col>
+          </Row>
 
-        <Row className="g-4" style={styles.chartRow}>
-          <Col md="6" style={styles.chartContainer}>
-            <AvgRequirementsChart data={data.avgRequirementsList || []} />
-          </Col>
-          <Col md="6" style={styles.chartContainer}>
-            <AvgGradesByMilestonesChart data={data.avgGradeList || []} />
-          </Col>
-        </Row>
-
-        <Row className="g-4" style={styles.tableRow}>
-          <Col md="6" style={styles.tableContainer}>
-            <h6>Top Student's LOC</h6>
-            <TopLOCGradeTable data={data.topLOCGradeList || []} />
-          </Col>
-          <Col md="6" style={styles.tableContainer}>
-            <h6>Top Class Grades</h6>
-            <TopClassGradeTable data={data.classAvgGradeList || []} />
-          </Col>
-        </Row>
-        <ToastContainer />
-      </div>
-    </Content>
+          <Row className="g-4" style={styles.tableRow}>
+            <Col md="6" style={styles.tableContainer}>
+              <h6>Top Student's LOC</h6>
+              <TopLOCGradeTable data={data.topLOCGradeList || []} />
+            </Col>
+            <Col md="6" style={styles.tableContainer}>
+              <h6>Top Class Grades</h6>
+              <TopClassGradeTable data={data.classAvgGradeList || []} />
+            </Col>
+          </Row>
+          <ToastContainer />
+        </div>
+      </Content>
+    </>
   );
 };
 

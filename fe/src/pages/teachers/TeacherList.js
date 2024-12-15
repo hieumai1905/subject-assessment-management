@@ -26,7 +26,7 @@ import authApi from "../../utils/ApiAuth";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { addFirstAndDeleteLast, findItemValue, upDownArrow } from "../../utils/Utils";
-import { statusList } from "../../data/ConstantData";
+import { statusList, teacherRoles } from "../../data/ConstantData";
 
 export const TeacherList = () => {
   const [sm, updateSm] = useState(false);
@@ -62,6 +62,7 @@ export const TeacherList = () => {
           keyWord: search.name,
           roleName: "TEACHER",
           active: search?.active === null ? null : search?.active?.value,
+          isIncludeManager: true,
           sortBy: sortBy,
           orderBy: orderBy,
         });
@@ -91,6 +92,7 @@ export const TeacherList = () => {
     email: "",
     note: "",
     gender: "Nam",
+    roleId: "3",
   });
   const [editFormData, setEditFormData] = useState({
     fullname: "",
@@ -106,6 +108,7 @@ export const TeacherList = () => {
       email: "",
       note: "",
       gender: "Nam",
+      roleId: "3",
     });
     setFormError({});
   };
@@ -122,13 +125,13 @@ export const TeacherList = () => {
 
   // submit function to add a new item
   const onFormSubmit = async (sData) => {
-    const { fullname, email, note, gender } = sData;
+    const { fullname, email, note, gender, roleId } = sData;
     const submittedData = {
       fullname: fullname,
       email: email,
       note: note,
       gender: gender,
-      roleId: 3,
+      roleId: roleId,
     };
 
     try {
@@ -416,8 +419,8 @@ export const TeacherList = () => {
                   </span>
                 </DataTableRow>
                 <DataTableRow size="mb">
-                  <span onClick={() => handleSort("mobile")} className="sub-text">
-                    Số điện thoại {upDownArrow(sortBy === "mobile" ? orderBy : "")}
+                  <span className="sub-text">
+                    Vai trò 
                   </span>
                 </DataTableRow>
                 <DataTableRow size="mb">
@@ -443,7 +446,7 @@ export const TeacherList = () => {
                           <span>{item.email}</span>
                         </DataTableRow>
                         <DataTableRow size="mb">
-                          <span>{item.mobile}</span>
+                          <span>{teacherRoles.find((s) => s.value == item?.roleId)?.label}</span>
                         </DataTableRow>
                         <DataTableRow size="mb">
                           <Badge color={item.active ? "success" : "danger"}>

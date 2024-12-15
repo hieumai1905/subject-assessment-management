@@ -204,7 +204,7 @@ export default function EvaluationsByMilestones({ evaluations, setEvaluations, l
                   <input
                     disabled={true}
                     type="number"
-                    value={params.value || ""}
+                    value={params.value ?? ""}
                     style={{
                       width: "100%",
                       border: "none",
