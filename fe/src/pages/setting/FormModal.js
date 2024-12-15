@@ -58,8 +58,8 @@ const FormModal = ({ modal, closeModal, onSubmit, formData, setFormData, modalTy
                     <label className="form-label">Loại Cài Đặt*</label>
                     <RSelect
                       {...register("settingType", { required: "Trường này là bắt buộc" })}
-                      options={settingTypeList}
-                      value={[{ value: formData.settingType, label: formData.settingType }]}
+                      options={settingTypeList.filter(s => s.value !== "Role")}
+                      value={settingTypeList.find(s => s.value === formData?.settingType)}
                       onChange={(e) => setFormData({ ...formData, settingType: e.value })}
                     />
                     {errors.settingType && <span className="invalid text-danger">{errors.settingType.message}</span>}

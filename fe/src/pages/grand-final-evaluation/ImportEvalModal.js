@@ -61,7 +61,7 @@ export default function ImportEvalModal({ modal, setModal, evaluations, setEvalu
   };
 
   const dowloadTemplate = async () => {
-    await generateTemplate(evaluations, complexities, qualities, typeEvaluator);
+    await generateTemplate(evaluations, complexities, qualities, "Final");
   };
 
   const findComplexityByName = (name) => {

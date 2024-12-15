@@ -30,10 +30,11 @@ public interface UserRepository extends BaseRepository<User, Integer>{
     @Query("select u from User u where (:keyWord is null or lower(u.fullname) like %:keyWord% " +
             "   or lower(u.username) like %:keyWord% or lower(u.email) like %:keyWord% " +
             "   or lower(u.mobile) like %:keyWord% or lower(u.code) like %:keyWord%) " +
-            "and (:roleName is null or lower(u.role.name) = :roleName) " +
+            "and (:roleName is null or (:isIncludeManager = false and lower(u.role.name) = :roleName) " +
+            "   or (:isIncludeManager = true and (u.role.name = 'TEACHER' or u.role.name = 'MANAGER'))) " +
             "and (:status is null or :status = u.status)" +
             "and (:active is null or :active = u.active)")
-    Page<User> search(String keyWord, String roleName, String status, Boolean active, Pageable pageable);
+    Page<User> search(String keyWord, String roleName, String status, Boolean active, Boolean isIncludeManager, Pageable pageable);
 
     @Query("SELECT u FROM User u JOIN FETCH u.role WHERE u.role.id = :id")
     List<Object> findUserByRoleId(Integer id);

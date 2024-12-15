@@ -56,7 +56,7 @@ public class TeamService implements BaseService<Milestone, Integer>{
         request.validateInput();
 //        Milestone milestone = checkExistMilestone(request.getMilestoneId());
         Classes classes = checkExistClass(request.getClassId());
-        Team findByName = teamRepository.findByTeamName(request.getTeamName(), request.getMilestoneId());
+        Team findByName = teamRepository.findByTeamName(request.getTeamName(), request.getClassId());
         if(findByName != null)
             throw new NameAlreadyExistsException("Tên nhóm");
         Team saveTeam = new Team();
@@ -86,7 +86,7 @@ public class TeamService implements BaseService<Milestone, Integer>{
 
     private Milestone checkExistMilestone(Integer milestoneId) {
         return milestoneRepository.findById(milestoneId).orElseThrow(
-                () -> new RecordNotFoundException("Milestone")
+                () -> new RecordNotFoundException("Cột mốc")
         );
     }
 
@@ -102,7 +102,7 @@ public class TeamService implements BaseService<Milestone, Integer>{
         TeamDTO request = (TeamDTO) requestObject;
         request.validateInput();
         Team saveTeam = teamRepository.findById(id).orElseThrow(
-                () -> new RecordNotFoundException("Team")
+                () -> new RecordNotFoundException("Nhóm")
         );
 //        Milestone milestone = checkExistMilestone(request.getMilestoneId());
         Classes classes = checkExistClass(request.getClassId());
@@ -145,28 +145,7 @@ public class TeamService implements BaseService<Milestone, Integer>{
         var classes = classesRepository.findById(request.getClassId()).orElseThrow(
                 () -> new RecordNotFoundException("Lớp học")
         );
-//        List<Milestone> milestones = milestone.getClasses().getMilestones().stream()
-//                .sorted(Comparator.comparing(Milestone::getDisplayOrder))
-//                .toList();
         boolean isCurrentMilestone = true;
-//        if((milestone.getTeams() == null || milestone.getTeams().size() == 0) && milestones.size() > 1){
-//            int lastMilestoneId = milestones.get(0).getId(), index = -1;
-//            for (int i = 1; i < milestones.size(); i++) {
-//                if(milestone.getId().equals(milestones.get(i).getId())){
-//                    index = i-1;
-//                    break;
-//                }
-//            }
-//            while (index >= 0){
-//                if(milestones.get(index).getTeams() != null && milestones.get(index).getTeams().size() > 0){
-//                    lastMilestoneId = milestones.get(index).getId();
-//                    break;
-//                }
-//                index--;
-//            }
-//            request.setMilestoneId(lastMilestoneId);
-//            isCurrentMilestone = false;
-//        }
         List<User> students = new ArrayList<>(classes.getClassesUsers().stream()
                 .map(ClassUser::getUser)
                 .filter(user -> user.getRole().getId().equals(Constants.Role.STUDENT)).toList());

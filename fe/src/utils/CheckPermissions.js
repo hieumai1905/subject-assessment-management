@@ -41,7 +41,10 @@ export const canAccess = (role, path) => {
   }
 
   if (role === "MANAGER" || role === "TEACHER") {
-    const restrictedUrlsForManagerAndTeacher = ["subject-manage", "setting-list", "user-list"];
+    const restrictedUrlsForManagerAndTeacher = ["setting-list", "user-list"];
+    if(role === "TEACHER"){
+      restrictedUrlsForManagerAndTeacher.push("subject-manage");
+    }
     return (
       !restrictedUrlsForManagerAndTeacher.some((item) => path.indexOf(item) !== -1) &&
       (path.includes("/dash-board") || canAccessUrl.some((item) => path.indexOf(item) !== -1))

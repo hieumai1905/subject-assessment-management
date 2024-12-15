@@ -370,7 +370,7 @@ export default function GFStudentEvaluations({
             <input
               disabled={!canEdit}
               type="number"
-              value={params.value || ""}
+              value={params.value ?? ""}
               placeholder="Nhập điểm"
               onChange={(e) =>
                 params.api.setEditCellValue({ id: params.id, field: params.field, value: e.target.value })
@@ -427,7 +427,7 @@ export default function GFStudentEvaluations({
               <input
                 disabled={!canEdit}
                 type="number"
-                value={params.value || ""}
+                value={params.value ?? ""}
                 placeholder="Nhập điểm"
                 onChange={(e) =>
                   params.api.setEditCellValue({ id: params.id, field: params.field, value: e.target.value })

@@ -378,7 +378,7 @@ export default function StudentEvaluations({
             <input
               disabled={!canEdit}
               type="number"
-              value={params.value || ""}
+              value={params.value ?? ""}
               placeholder="Nhập điểm"
               onChange={(e) =>
                 params.api.setEditCellValue({ id: params.id, field: params.field, value: e.target.value })
@@ -436,7 +436,7 @@ export default function StudentEvaluations({
               <input
                 disabled={!canEdit}
                 type="number"
-                value={params.value || ""}
+                value={params.value ?? ""}
                 placeholder="Nhập điểm"
                 onChange={(e) =>
                   params.api.setEditCellValue({ id: params.id, field: params.field, value: e.target.value })
@@ -718,30 +718,6 @@ export default function StudentEvaluations({
     return criteria.weight / 100;
   };
 
-  const handleCopyLocGrade = (dstField) => {
-    if (!evaluations || evaluations.length === 0) return;
-
-    let updateRows = [...rows];
-    let allUpdateChanges = [...changedFields];
-
-    updateRows.forEach((row) => {
-      if (!row.email) return false;
-
-      let newGrade = parseFloat(((row.totalLoc * 10) / evaluations[0]?.milestone?.expectedLoc).toFixed(2));
-      newGrade = Math.min(10, newGrade);
-      let newRow = {
-        ...row,
-        [`${dstField}`]: newGrade,
-      };
-
-      const { newRow: updatedRow, updateChanges } = processRowUpdate(newRow, row);
-      allUpdateChanges = [...allUpdateChanges, ...updateChanges];
-      updateRows = updateRows.map((r) => (r.id === updatedRow.id ? updatedRow : r));
-    });
-
-    setChangedFields(allUpdateChanges);
-    setRows(updateRows);
-  };
   const [anchorElSubmit, setAnchorElSubmit] = React.useState(null);
   const handlePopoverSubmitClose = () => {
     setAnchorElSubmit(null);

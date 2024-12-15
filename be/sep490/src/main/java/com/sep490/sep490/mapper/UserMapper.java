@@ -28,7 +28,8 @@ public class UserMapper {
         oldUser.setAvatar_url(request.getAvatar_url());
         oldUser.setUsername(oldUser.getUsername());
         oldUser.setId(oldUser.getId());
-        oldUser.setNote(oldUser.getNote());
+        oldUser.setNote(request.getNote());
+        oldUser.setActive(request.getActive());
         return oldUser;
     }
 

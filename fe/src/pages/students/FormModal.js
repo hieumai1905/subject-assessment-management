@@ -85,6 +85,7 @@ const FormModal = ({ modal, closeModal, onSubmit, formData, setFormData, modalTy
                     <Input
                       type="file"
                       id="customFile"
+                      accept=".jpg, .jpeg, .png"
                       onChange={(e) => setFormData({ ...formData, avatar: e.target.files[0] })}
                       className="form-control"
                     />
@@ -96,7 +97,7 @@ const FormModal = ({ modal, closeModal, onSubmit, formData, setFormData, modalTy
                   <div className="form-group">
                     <label className="form-label">Số điện thoại</label>
                     <input
-                      type="text"
+                      type="number"
                       value={formData.mobile}
                       placeholder="Nhập số điện thoại"
                       onChange={(e) => setFormData({ ...formData, mobile: e.target.value })}
@@ -155,56 +156,58 @@ const FormModal = ({ modal, closeModal, onSubmit, formData, setFormData, modalTy
                   </ul>
                 </div>
               </Col>
-              <Col md="6">
-                <div className="form-group">
-                  <label className="form-label">Trạng thái</label>
-                  <br />
-                  <ul className="custom-control-group">
-                    <li>
-                      <div
-                        style={{ height: 40 }}
-                        className="custom-control custom-control-sm custom-radio custom-control-pro checked"
-                      >
-                        <input
-                          type="radio"
-                          className="custom-control-input"
-                          name="btnRadioControla"
-                          id="btnRadioControl1w"
-                          defaultChecked={formData.active === "Active" || modalType === "add"}
-                          value={"Active"}
-                          onClick={(e) => {
-                            setFormData({ ...formData, active: e.target.value });
-                          }}
-                        />
-                        <label className="custom-control-label" htmlFor="btnRadioControl1w">
-                          Hoạt động
-                        </label>
-                      </div>
-                    </li>
-                    <li>
-                      <div
-                        style={{ height: 40 }}
-                        className="custom-control custom-control-sm custom-radio custom-control-pro"
-                      >
-                        <input
-                          type="radio"
-                          className="custom-control-input"
-                          name="btnRadioControla"
-                          id="btnRadioControl5a"
-                          defaultChecked={formData.active === "InActive"}
-                          value={"InActive"}
-                          onClick={(e) => {
-                            setFormData({ ...formData, active: e.target.value });
-                          }}
-                        />
-                        <label className="custom-control-label" htmlFor="btnRadioControl5a">
-                          Không hoạt động
-                        </label>
-                      </div>
-                    </li>
-                  </ul>
-                </div>
-              </Col>
+              {modalType == "edit" && (
+                <Col md="6">
+                  <div className="form-group">
+                    <label className="form-label">Trạng thái</label>
+                    <br />
+                    <ul className="custom-control-group">
+                      <li>
+                        <div
+                          style={{ height: 40 }}
+                          className="custom-control custom-control-sm custom-radio custom-control-pro checked"
+                        >
+                          <input
+                            type="radio"
+                            className="custom-control-input"
+                            name="btnRadioControla"
+                            id="btnRadioControl1w"
+                            defaultChecked={formData.active === "Active" || modalType === "add"}
+                            value={"Active"}
+                            onClick={(e) => {
+                              setFormData({ ...formData, active: e.target.value });
+                            }}
+                          />
+                          <label className="custom-control-label" htmlFor="btnRadioControl1w">
+                            Hoạt động
+                          </label>
+                        </div>
+                      </li>
+                      <li>
+                        <div
+                          style={{ height: 40 }}
+                          className="custom-control custom-control-sm custom-radio custom-control-pro"
+                        >
+                          <input
+                            type="radio"
+                            className="custom-control-input"
+                            name="btnRadioControla"
+                            id="btnRadioControl5a"
+                            defaultChecked={formData.active === "InActive"}
+                            value={"InActive"}
+                            onClick={(e) => {
+                              setFormData({ ...formData, active: e.target.value });
+                            }}
+                          />
+                          <label className="custom-control-label" htmlFor="btnRadioControl5a">
+                            Không hoạt động
+                          </label>
+                        </div>
+                      </li>
+                    </ul>
+                  </div>
+                </Col>
+              )}
               <Col size="12">
                 <div className="form-group">
                   <label className="form-label">Ghi chú</label>

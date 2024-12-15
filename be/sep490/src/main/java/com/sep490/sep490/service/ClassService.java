@@ -299,8 +299,13 @@ public class ClassService implements BaseService<Classes, Integer> {
     public Object search(Object object) {
         log.info("search Class: ");
         var request = (SearchClassRequest) object;
-        request.validateInput();
+        SearchClassResponse response = new SearchClassResponse();
         User user = commonService.getCurrentUser();
+        if(!user.getRole().getId().equals(Constants.Role.ADMIN) && (request.getSettingId() == null || request.getSubjectId() == null)){
+            return response;
+        }
+
+        request.validateInput();
         Pageable pageable;
         if (request.getOrderBy().equals("DESC")) {
             pageable = PageRequest.of(request.getPageIndex() - 1
@@ -319,7 +324,6 @@ public class ClassService implements BaseService<Classes, Integer> {
                 user.getId(),
 //                user.getRole().getId(),
                 pageable);
-        SearchClassResponse response = new SearchClassResponse();
         List<ClassesDTO> classesDTOS = new ArrayList<>();
         for (Classes c : classes.getContent()) {
             ClassesDTO classesDTO = ConvertUtils.convert(c, ClassesDTO.class);

@@ -117,14 +117,14 @@ public class DashboardService {
                     BigDecimal num = (BigDecimal) av[0];
                     String name = (String)av[1];
                     Integer iter = (Integer) av[2];
-                    AvgRequirements existing = avgRequirementsMap.get("Iter " + iter);
+                    AvgRequirements existing = avgRequirementsMap.get("GĐ " + iter);
                     if(existing == null){
                         existing = new AvgRequirements();
                         existing.setComplexityAverages(new HashMap<>());
-                        existing.setIteration("Iter " + iter);
+                        existing.setIteration("GĐ " + iter);
                     }
                     existing.getComplexityAverages().put(name, num);
-                    avgRequirementsMap.put("Iter " + iter, existing);
+                    avgRequirementsMap.put("GĐ " + iter, existing);
                 }
                 response.setAvgRequirementsList(avgRequirementsMap.values().stream().toList());
             }
@@ -135,7 +135,7 @@ public class DashboardService {
                 for (Object[] result : avgGradeByMile) {
                     Integer iter = (Integer)result[0];
                     Double grade = (Double)result[1];
-                    avgGradeList.add(new GradeDistribution("Iter " + iter, grade));
+                    avgGradeList.add(new GradeDistribution("GĐ " + iter, grade));
                 }
                 response.setAvgGradeList(avgGradeList);
             }
@@ -149,7 +149,7 @@ public class DashboardService {
                     String email = (String) result[2];
                     Integer iter = (Integer) result[3];
                     String classCode = (String) result[4];
-                    topLOCGradeList.add(new TopLOCGrade(loc, numberOfReqs, email, "Iter " + iter, classCode));
+                    topLOCGradeList.add(new TopLOCGrade(loc, numberOfReqs, email, "GĐ " + iter, classCode));
                 }
                 response.setTopLOCGradeList(topLOCGradeList);
             }
