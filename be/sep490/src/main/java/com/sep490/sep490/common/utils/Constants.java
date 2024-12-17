@@ -43,19 +43,19 @@ public class Constants {
     }
 
     public static class Mail {
-        public static final String FROM_ADDRESS = "trungab2305@gmail.com";
-        public static final String SENDER_NAME = "SWP Evaluation System";
-        public static final String PASSWORD_SUBJECT = "Send your password";
-        public static final String CODE_SUBJECT = "Send your code";
-        public static final String ACTIVE_ACCOUNT = "Send email to active account";
-        public static final String DEAR = "Dear [[name]],<br>";
-        public static final String MAIN_CONTENT_LOGIN = "Please click the link below to login to system:<br>";
-        public static final String MAIN_CONTENT_CODE = "Your code here:<br>";
-        public static final String MAIN_ACTIVE_ACCOUNT = "You must be active account at here:<br>";
+        public static final String FROM_ADDRESS = "noreply@gmail.com";
+        public static final String SENDER_NAME = "Hệ thống đánh giá";
+        public static final String PASSWORD_SUBJECT = "Gửi mật khẩu của bạn";
+        public static final String CODE_SUBJECT = "Gửi mã của bạn";
+        public static final String ACTIVE_ACCOUNT = "Gửi email kích hoạt tài khoản";
+        public static final String DEAR = "Xin chào [[name]],<br>";
+        public static final String MAIN_CONTENT_LOGIN = "Vui lòng nhấn vào đường link bên dưới để đăng nhập vào hệ thống:<br>";
+        public static final String MAIN_CONTENT_CODE = "Mã của bạn là:<br>";
+        public static final String MAIN_ACTIVE_ACCOUNT = "Bạn cần kích hoạt tài khoản tại đây:<br>";
         public static final String CODE = "<p style=\"font-weight: bold;\">[[code]]</p>";
         public static final String PASSWORD = "<p style=\"font-weight: bold;\">[[password]]</p>";
-        public static final String THANK_YOU = "Thank you,<br>";
-        public static final String COMPANY = "SWP Evaluation System";
+        public static final String THANK_YOU = "Trân trọng,<br>";
+        public static final String COMPANY = "Hệ thống đánh giá";
     }
 
     public static class Link {

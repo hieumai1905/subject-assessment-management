@@ -58,8 +58,8 @@ spring:
   mail:
     host: smtp.gmail.com
     port: 587
-    username: chunmail2305@gmail.com
-    password: eknkduhdllojbrfr
+    username: hieumai1905it@gmail.com
+    password: jwrl kkhm zahm nplc
     properties:
       mail:
         smtp:
@@ -72,7 +72,7 @@ spring:
       repositories:
         enabled: true
   datasource:
-    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5433/postgres}
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5433/core}
     username: ${SPRING_DATASOURCE_USERNAME:postgres}
     password: ${SPRING_DATASOURCE_PASSWORD:123456}
     driver-class-name: org.postgresql.Driver

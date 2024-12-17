@@ -122,7 +122,12 @@ const MyClassPage = () => {
   }, [isFetching.semester]);
   useEffect(() => {
     const fetchClasses = async () => {
-      if (isFetching.subject || isFetching.semester) return false;
+      if(!filterForm?.semester?.value || !filterForm?.subject?.value){
+        console.log('aa');
+        setData([]);
+        setIsFetching({ ...isFetching, class: false });
+        return;
+      }
       try {
         setIsFetching({ ...isFetching, class: true });
         const response = await authApi.post("/class/search", {
@@ -151,7 +156,7 @@ const MyClassPage = () => {
       }
     };
     fetchClasses();
-  }, [filterForm.subject, filterForm.semester]);
+  }, [filterForm.subject, filterForm.semester, isFetching?.subject]);
 
   return (
     <>

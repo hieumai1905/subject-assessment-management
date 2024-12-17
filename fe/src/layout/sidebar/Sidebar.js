@@ -37,7 +37,7 @@ const Sidebar = ({ fixed, className, ...props }) => {
   return (
     <>
       <div className={classes}>
-        <div className="nk-sidebar-element nk-sidebar-head">
+        <div className="nk-sidebar-element nk-sidebar-head p-0 ps-1">
           <div className="nk-menu-trigger">
             <Toggle
               className="nk-nav-toggle nk-quick-nav-icon d-xl-none me-n2"

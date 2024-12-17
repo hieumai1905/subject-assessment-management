@@ -150,6 +150,17 @@ public class UserService implements BaseService<User, Integer> {
         return ConvertUtils.convert(foundUserByEmail, UserDTO.class);
     }
 
+    public void resetPasswordByAdmin(String email) throws MessagingException, UnsupportedEncodingException {
+        var foundUserByEmail = userRepository.findFirstByEmail(email);
+        if (foundUserByEmail == null) {
+            throw new RecordNotFoundException("Email");
+        }
+        String password = GenerateString.randomPassword();
+        foundUserByEmail.setPassword(passwordEncoder.encode(password));
+        userRepository.save(foundUserByEmail);
+        sendEmailPass(foundUserByEmail.getEmail(), password);
+    }
+
     public User activeAccount(String email){
         var foundUserByEmail = userRepository.findFirstByEmail(email);
         if (foundUserByEmail == null) {
@@ -185,7 +196,7 @@ public class UserService implements BaseService<User, Integer> {
         saveUser.setPassword(passwordEncoder.encode(rawPassword));
         saveUser.setCode(userRole.getId().equals(Constants.Role.STUDENT) ? generateCode() : "");
         userRepository.save(saveUser);
-//        sendEmailPass(saveUser.getEmail(), rawPassword);
+        sendEmailPass(saveUser.getEmail(), rawPassword);
         return ConvertUtils.convert(saveUser, UserDTO.class);
     }
 
@@ -374,7 +385,7 @@ public class UserService implements BaseService<User, Integer> {
 
     public LoginResponse loginByUsernamePass(LoginRequest request) {
         log.info("Request to login");
-        User foundUser = userRepository.findByUsername(request.getUsername());
+        User foundUser = userRepository.findFirstByEmail(request.getUsername());
         if (foundUser == null){
             throw new UnauthorizedException("Tài khoản hoặc mật khẩu không chính xác");
         }
@@ -521,7 +532,7 @@ public class UserService implements BaseService<User, Integer> {
         if (foundUser != null) {
             return sendEmailContent(foundUser, password);
         }
-        throw new RecordNotFoundException("User");
+        throw new RecordNotFoundException("Người dùng");
     }
 
     public User getCurrentUserLogin() {

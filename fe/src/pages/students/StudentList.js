@@ -27,6 +27,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { addFirstAndDeleteLast, findItemValue, upDownArrow } from "../../utils/Utils";
 import { statusList } from "../../data/ConstantData";
+import Swal from "sweetalert2";
 
 export const StudentList = () => {
   const [sm, updateSm] = useState(false);
@@ -170,11 +171,9 @@ export const StudentList = () => {
       formData.append("id", editId);
       formData.append("fullname", fullname);
       formData.append("email", email);
-      if(mobile)
-        formData.append("mobile", mobile);
+      if (mobile) formData.append("mobile", mobile);
       formData.append("gender", gender);
-      if(note)
-        formData.append("note", note);
+      if (note) formData.append("note", note);
       formData.append("active", active === "Active");
 
       // Thêm file avatar nếu có
@@ -238,7 +237,7 @@ export const StudentList = () => {
           active: item.active ? "Active" : "InActive",
           note: item.note,
           avatar_url: item.avatar_url,
-          mobile: item.mobile
+          mobile: item.mobile,
         });
         setModal({ edit: true }, { add: false });
         setEditedId(id);
@@ -246,32 +245,42 @@ export const StudentList = () => {
     });
   };
 
-  // function to delete selected item
-  const onDeleteClick = async (id) => {
-    try {
-      const response = await authApi.delete("/setting/delete/" + id);
-      console.log("delete: ", response.data);
-      if (response.data.statusCode === 200) {
-        toast.success("Delete setting successfully!", {
-          position: toast.POSITION.TOP_CENTER,
-        });
-        let newData = [...data];
-        let index = newData.findIndex((item) => item.id === id);
-        if (index !== -1) {
-          newData.splice(index, 1);
-          setData(newData);
+  const resetPass = async (email) => {
+    Swal.fire({
+      title: "Bạn có chắc chắn?",
+      text: `Bạn có chắc chắn muốn cấp lại mật khẩu cho ${email}?`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Xác nhận",
+      cancelButtonText: "Hủy",
+      showLoaderOnConfirm: true, // Hiển thị loading trên nút xác nhận
+      allowOutsideClick: () => !Swal.isLoading(), // Ngăn tắt modal khi loading
+      preConfirm: async () => {
+        try {
+          const response = await authApi.post("/user/reset-password-by-admin?email=" + email);
+          if (response.data.statusCode === 200) {
+            toast.success("Cập nhật lại mật khẩu thành công", {
+              position: toast.POSITION.TOP_CENTER,
+            });
+            return true; // Đóng modal nếu thành công
+          } else {
+            toast.error(`${response.data.data}`, {
+              position: toast.POSITION.TOP_CENTER,
+            });
+            Swal.showValidationMessage(`Lỗi: ${response.data.data}`); // Hiển thị lỗi trong modal
+            return false; // Giữ modal mở nếu có lỗi
+          }
+        } catch (error) {
+          console.error("Error reset password:", error);
+          Swal.showValidationMessage(`Xảy ra lỗi trong quá trình xử lý: ${error.message}`);
+          return false; // Giữ modal mở nếu call API thất bại
         }
-      } else {
-        toast.error(`${response.data.data}`, {
-          position: toast.POSITION.TOP_CENTER,
-        });
+      },
+    }).then((result) => {
+      if (result.isConfirmed) {
+        console.log("Mật khẩu đã được cập nhật thành công.");
       }
-    } catch (error) {
-      console.error("Error delete setting:", error);
-      toast.error("Error delete setting!", {
-        position: toast.POSITION.TOP_CENTER,
-      });
-    }
+    });
   };
 
   const handleFilter = () => setFilterForm(search);
@@ -471,22 +480,22 @@ export const StudentList = () => {
                                         <span>Chỉnh sửa</span>
                                       </DropdownItem>
                                     </li>
-                                    {/* <li onClick={() => {
-                                // eslint-disable-next-line no-restricted-globals
-                                if(confirm('Bạn có chắc chắn muốn xóa cài đặt này?') === true)
-                                  onDeleteClick(item.id);
-                              }}>
-                                <DropdownItem
-                                  tag="a"
-                                  href="#delete"
-                                  onClick={(ev) => {
-                                    ev.preventDefault();
-                                  }}
-                                >
-                                  <Icon name="trash"></Icon>
-                                  <span>Xóa</span>
-                                </DropdownItem>
-                              </li> */}
+                                    <li
+                                      onClick={() => {
+                                        resetPass(item.email);
+                                      }}
+                                    >
+                                      <DropdownItem
+                                        tag="a"
+                                        href="#reset"
+                                        onClick={(ev) => {
+                                          ev.preventDefault();
+                                        }}
+                                      >
+                                        <Icon name="reload"></Icon>
+                                        <span>Cấp lại mật khẩu</span>
+                                      </DropdownItem>
+                                    </li>
                                   </ul>
                                 </DropdownMenu>
                               </UncontrolledDropdown>
