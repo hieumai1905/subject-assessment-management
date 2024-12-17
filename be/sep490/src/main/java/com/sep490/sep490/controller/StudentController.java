@@ -38,6 +38,13 @@ public class StudentController {
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN')")
+    @PostMapping("/reset-password-by-admin")
+    public HttpResponse<?> resetPasswordByAdmin(@RequestParam String email) throws MessagingException, UnsupportedEncodingException {
+        userService.resetPasswordByAdmin(email);
+        return HttpResponse.ok();
+    }
+
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
     @PutMapping("/update-by-admin/{id}")
     public HttpResponse<?> updateByAdmin(@PathVariable("id") Integer id,
                                   @RequestBody UpdateUserByAdminRequest request) {

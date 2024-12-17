@@ -25,7 +25,7 @@ public class Subject extends BaseEntity {
     private String subjectName;
     @Column(name = "description", length = Constants.DefaultValueEntity.DESCRIPTION_LENGTH)
     private String description;
-    @Column(name = "is-council")
+    @Column(name = "is_council")
     private Boolean isCouncil;
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)

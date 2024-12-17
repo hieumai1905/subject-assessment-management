@@ -31,6 +31,13 @@ public class UserController {
         return HttpResponse.ok(userService.createByAdmin(request));
     }
 
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    @PostMapping("/reset-password-by-admin")
+    public HttpResponse<?> resetPasswordByAdmin(@RequestParam String email) throws MessagingException, UnsupportedEncodingException {
+        userService.resetPasswordByAdmin(email);
+        return HttpResponse.ok();
+    }
+
     @PutMapping("/update/{id}")
     public HttpResponse<?> update(@PathVariable("id") Integer id, @ModelAttribute UserDTO request,
                                   @RequestPart(value = "file", required = false) MultipartFile file) {

@@ -3,7 +3,6 @@ values  (true, null, null, null, null, null, 1, 'admin', 'ADMIN', 'Role', null),
         (true, null, null, null, null, null, 1, 'manager', 'MANAGER', 'Role', null),
         (true, null, null, null, null, null, 1, 'teacher', 'TEACHER', 'Role', null),
         (true, null, null, null, null, null, 1, 'student', 'STUDENT', 'Role', null),
-        (true, null, null, null, null, null, 1, 'email domain', 'fpt.edu.vn', 'Email', null),
+        (true, null, null, null, null, null, 1, 'email domain', 'utc.edu.vn', 'Email', null),
         (true, null, null, null, null, null, 1, 'email domain', 'gmail.com', 'Email', null),
-        (true, null, null, null, null, null, 1, 'semester', 'SUMMER 24', 'Semester', null),
-        (true, null, null, null, null, null, 1, 'email domain', 'fe.edu.vn', 'Email', null);
+        (true, null, null, null, null, null, 1, 'semester', 'Học kỳ 1 2024', 'Semester', null);
