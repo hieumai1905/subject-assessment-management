@@ -51,19 +51,19 @@ const User = () => {
               {(() => {
                 switch (role) {
                   case "ADMIN":
-                    return "Administrator";
+                    return "Quản trị viên";
                   case "TEACHER":
-                    return "Teacher";
+                    return "Giảng viên";
                   case "STUDENT":
-                    return "Student";
+                    return "Sinh viên";
                   case "MANAGER":
-                    return "Manager";
+                    return "Quản lý bộ môn";
                   default:
-                    return "Unknown Role";
+                    return "";
                 }
               })()}
             </div>
-            <div className="user-name dropdown-indicator">{user.username}</div>
+            <div className="user-name dropdown-indicator">{user?.email}</div>
           </div>
         </div>
       </DropdownToggle>
