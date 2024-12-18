@@ -443,19 +443,19 @@ public class UserService implements BaseService<User, Integer> {
         log.info("Change pass user with id: " + id);
         var currentUser = getCurrentUser();
         if (!(Objects.equals(currentUser.getId(), id))) {
-            throw new UnauthorizedException("Permission denied!");
+            throw new UnauthorizedException("Bạn không có quyền thay đổi mật khẩu của người khác");
         }
         if (request.getNewPass().length() < 8){
-            throw new ConflictException("Length of password must be >= 8 characters!");
+            throw new ConflictException("Độ dài mật khẩu phải >= 8 ký tự");
         }
         if (!request.getNewPass().equals(request.getConfirmPass())){
-            throw new ConflictException("Confirm password doesn't match");
+            throw new ConflictException("Mật khẩu xác nhận không giống với mật khẩu mới");
         }
         // Handle logic
         var foundUser = userRepository.findById(id).orElseThrow(
-                () -> new RecordNotFoundException("User"));
+                () -> new RecordNotFoundException("Người dùng"));
         if (!passwordEncoder.matches(request.getOldPass(), foundUser.getPassword())) {
-            throw new UnauthorizedException("Old password is incorrect!");
+            throw new UnauthorizedException("Mật khẩu hiện tại không đúng");
         }
         foundUser.setPassword(passwordEncoder.encode(request.getNewPass()));
         userRepository.save(foundUser);
