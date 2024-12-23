@@ -75,6 +75,7 @@ export const StudentInClass = ({ classes, users, setUsers }) => {
             classId: classes.id,
             roleId: 4,
           });
+          console.log('res', response.data.data);
           if (response.data.statusCode === 200) {
             setUsers(response.data.data.classUserSuccessDTOS);
           }
@@ -209,6 +210,8 @@ export const StudentInClass = ({ classes, users, setUsers }) => {
   };
 
   const onDeleteClick = async (id) => {
+    console.log('ss', id);
+    
     Swal.fire({
       title: "Bạn có chắc chắn không?",
       text: "Nếu bạn xóa sinh viên này, tất cả thông tin liên quan như đánh giá, theo dõi sẽ bị xóa!",
@@ -283,6 +286,7 @@ export const StudentInClass = ({ classes, users, setUsers }) => {
         roleId: 4,
         keyWord: keyword || searchKeyword,
       });
+      console.log('res', response.data.data);
       if (response.data.statusCode === 200) {
         setUsers(response.data.data.classUserSuccessDTOS);
       }

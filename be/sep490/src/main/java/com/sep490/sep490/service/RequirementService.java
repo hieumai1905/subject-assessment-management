@@ -230,13 +230,13 @@ public class RequirementService{
             return null;
         Setting complexity = (Setting)settingRepository.findSettingBySettingTypeAndSettingId("complexity", complexityId);
         if(complexity == null)
-            throw new RecordNotFoundException("Độ phức tạp");
+            throw new RecordNotFoundException("Độ khó");
         return complexity;
     }
 
     private Milestone checkExistMilestone(Integer milestoneId) {
         return milestoneRepository.findById(milestoneId).orElseThrow(
-                () -> new RecordNotFoundException("Cột mốc")
+                () -> new RecordNotFoundException("Giai đoạn")
         );
     }
 
@@ -272,9 +272,9 @@ public class RequirementService{
         if (foundTeamByLeaderId == null){
             throw new ConflictException("Chỉ có nhóm trưởng được nộp bài");
         }
-        Milestone milestone = milestoneRepository.findById(request.getMilestoneId()).orElseThrow(() -> new RecordNotFoundException("Cột mốc"));
+        Milestone milestone = milestoneRepository.findById(request.getMilestoneId()).orElseThrow(() -> new RecordNotFoundException("Giai đoạn"));
         if (!milestone.getActive() && !milestone.getEvaluationType().equals(Constants.TypeAssignments.GRAND_FINAL)){
-            throw new ConflictException("Cột mốc " + milestone.getTitle() + " đang bị khóa");
+            throw new ConflictException("Giai đoạn " + milestone.getTitle() + " đang bị khóa");
         }
         String submitFile = "";
         if(file != null) {
@@ -499,7 +499,7 @@ public class RequirementService{
         List<Requirement> requirements = new ArrayList<>();
         for (RequirementDTO reqDTO : request.getRequirementDTOs()) {
             reqDTO.validateInput(true);
-            ValidateUtils.checkNullOrEmpty(reqDTO.getMilestoneId(), "Cột mốc");
+            ValidateUtils.checkNullOrEmpty(reqDTO.getMilestoneId(), "Giai đoạn");
             Milestone milestone = checkExistMilestone(reqDTO.getMilestoneId());
             Requirement existedByTitle = requirementRepository
                     .checkExistedByTitleInMilestone(milestone.getId(), reqDTO.getReqTitle().toLowerCase());
@@ -561,7 +561,7 @@ public class RequirementService{
         }
         User user = commonService.getCurrentUser();
         getCurrentTeamId(request, user);
-        Milestone milestone = milestoneRepository.findById(request.getMilestoneId()).orElseThrow(() -> new RecordNotFoundException("Cột mốc"));
+        Milestone milestone = milestoneRepository.findById(request.getMilestoneId()).orElseThrow(() -> new RecordNotFoundException("Giai đoạn"));
 //        if(milestone.getTypeEvaluator().equals(Constants.TypeAssignments.GRAND_FINAL)){
 //            milestone = milestone.getClasses().getMilestones().stream()
 //                    .filter(item -> item.getTypeEvaluator().equals(Constants.TypeAssignments.FINAL))

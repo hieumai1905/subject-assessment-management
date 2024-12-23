@@ -181,7 +181,7 @@ const FormModal = ({
               )}
               <Col md="6">
                 <div className="form-group">
-                  <label className="form-label">Độ Phức Tạp</label>
+                  <label className="form-label">Độ khó</label>
                   <RSelect
                     options={complexities}
                     value={formData.complexity}

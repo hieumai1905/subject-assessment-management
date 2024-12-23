@@ -252,7 +252,7 @@ const MyClassPage = () => {
                           <a
                             href={`/milestone-list?seId=${filterForm?.semester?.value}&sId=${filterForm?.subject?.value}&cId=${item.id}`}
                           >
-                            Đi tới mốc lớp học <Icon name="arrow-long-right"></Icon>
+                            Đi tới giai đoạn lớp học <Icon name="arrow-long-right"></Icon>
                           </a>
                         </div>
                       </ProjectCard>

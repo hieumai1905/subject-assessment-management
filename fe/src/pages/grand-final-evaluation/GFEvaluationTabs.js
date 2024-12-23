@@ -696,7 +696,7 @@ export default function GFEvaluationTabs() {
                     toggle("2");
                   }}
                 >
-                  Theo cột mốc
+                  Theo giai đoạn
                 </NavLink>
               </NavItem>
               <NavItem>

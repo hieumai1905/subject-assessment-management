@@ -17,6 +17,6 @@ public class UpdateCouncilTeamStatus {
         ValidateUtils.checkNullOrEmpty(studentIds, "Sinh viên");
         ValidateUtils.checkNullOrEmpty(status, "Trạng thái");
         ValidateUtils.checkNullOrEmpty(councilTeamId, "Hội đồng chấm");
-        ValidateUtils.checkNullOrEmpty(milestoneId, "Cột mốc");
+        ValidateUtils.checkNullOrEmpty(milestoneId, "Giai đoạn");
     }
 }

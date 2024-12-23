@@ -426,9 +426,9 @@ export const generateTemplate = async (sampleData, complexities, qualities, eval
       opt3Values.push(weight);
     });
   }
-  let headers = ["ID", "Tiêu đề", "Nhóm", "Sinh viên", "Độ phức tạp", "Mức độ hoàn thiện", "LOC", "Nhận xét"];
+  let headers = ["ID", "Tiêu đề", "Nhóm", "Sinh viên", "Độ khó", "Mức độ hoàn thiện", "LOC", "Nhận xét"];
   if (evaluationType === "Final") {
-    headers.push(...["Cập nhật độ phức tạp", "Cập nhật mức độ hoàn thiện", "Cập nhật LOC", "Cập nhật nhận xét"]);
+    headers.push(...["Cập nhật độ khó", "Cập nhật mức độ hoàn thiện", "Cập nhật LOC", "Cập nhật nhận xét"]);
   }
   ws.addRow(headers);
 

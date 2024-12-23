@@ -162,7 +162,7 @@ const ViewStudentWorkEval = ({ modal, setModal, complexities, qualities, evaluat
                           <div className="ms-2 mb-2" style={{ fontSize: "0.95rem", color: "#555" }}>
                             <div style={{ display: "flex", alignItems: "center", marginBottom: "5px" }}>
                               <Icon name="check-circle" style={{ marginRight: "6px", color: "#5cb85c" }} />
-                              <span style={{ fontWeight: "600", color: "#333" }}>Độ phức tạp:</span>{" "}
+                              <span style={{ fontWeight: "600", color: "#333" }}>Độ khó:</span>{" "}
                               <span style={{ marginLeft: "4px", color: "#000" }}>
                                 {complexities.find((c) => c.id === item?.requirementEval?.complexityId)?.name}
                               </span>
@@ -199,7 +199,7 @@ const ViewStudentWorkEval = ({ modal, setModal, complexities, qualities, evaluat
                           >
                             <Icon name="refresh-cw" style={{ marginRight: "6px", color: "#5bc0de" }} />
                             <div style={{ display: "flex", alignItems: "center", marginBottom: "5px" }}>
-                              <span style={{ fontWeight: "600", color: "#333" }}>Độ phức tạp:</span>{" "}
+                              <span style={{ fontWeight: "600", color: "#333" }}>Độ khó:</span>{" "}
                               <span style={{ marginLeft: "4px", color: "#000" }}>
                                 {complexities.find((c) => c.id === item?.updateRequirementEval?.complexityId)?.name}
                               </span>

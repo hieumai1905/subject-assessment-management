@@ -297,7 +297,7 @@ export default function RequirementsInClass() {
       }
     } catch (error) {
       console.error("Error fetching data:", error);
-      toast.error("Xảy ra lỗi khi tìm kiếm cột mốc", { position: toast.POSITION.TOP_CENTER });
+      toast.error("Xảy ra lỗi khi tìm kiếm giai đoạn", { position: toast.POSITION.TOP_CENTER });
     } finally {
       setIsFetching((prev) => ({ ...prev, milestone: false }));
     }
@@ -813,7 +813,7 @@ export default function RequirementsInClass() {
                               </Col>
                               <Col md={6}>
                                 <div className="form-group">
-                                  <label className="overline-title overline-title-alt">Mốc</label>
+                                  <label className="overline-title overline-title-alt">Giai đoạn</label>
                                   {isFetching?.milestone ? (
                                     <div>
                                       <Spinner />
@@ -825,7 +825,7 @@ export default function RequirementsInClass() {
                                       onChange={(e) => {
                                         setFilterForm({ ...filterForm, milestone: e });
                                       }}
-                                      placeholder="Chọn mốc"
+                                      placeholder="Chọn giai đoạn"
                                     />
                                   )}
                                 </div>
@@ -976,10 +976,10 @@ export default function RequirementsInClass() {
                     <span className="sub-text">Tiêu đề</span>
                   </DataTableRow>
                   <DataTableRow>
-                    <span className="sub-text">Độ phức tạp</span>
+                    <span className="sub-text">Độ khó</span>
                   </DataTableRow>
                   <DataTableRow>
-                    <span className="sub-text">Mốc</span>
+                    <span className="sub-text">Giai đoạn</span>
                   </DataTableRow>
                   <DataTableRow>
                     <span className="sub-text">Nhóm</span>

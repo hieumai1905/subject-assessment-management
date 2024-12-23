@@ -47,7 +47,7 @@ const menu = [
         roles: ["ADMIN", "MANAGER"],
       },
       {
-        text: "Danh sách cột mốc",
+        text: "Danh sách giai đoạn",
         link: "/milestone-list",
         roles: ["ADMIN", "MANAGER", "TEACHER", "STUDENT"],
       },

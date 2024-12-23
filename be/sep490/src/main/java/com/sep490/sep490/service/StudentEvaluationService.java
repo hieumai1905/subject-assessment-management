@@ -83,7 +83,7 @@ public class StudentEvaluationService{
         Milestone milestone = milestones.stream()
                 .filter(item -> item.getId().equals(request.getMilestoneId()))
                 .findFirst()
-                .orElseThrow(() -> new RecordNotFoundException("Cột mốc"));
+                .orElseThrow(() -> new RecordNotFoundException("Giai đoạn"));
         Team team = classes.getTeams().stream().filter(item -> item.getId().equals(request.getTeamId()))
                 .findFirst().orElseThrow(() -> new RecordNotFoundException("Nhóm"));
         addTeamEval(team, milestone, results, null, null);
@@ -404,7 +404,7 @@ public class StudentEvaluationService{
 
     private Milestone checkExistMilestone(Integer milestoneId) {
         return milestoneRepository.findById(milestoneId)
-                .orElseThrow(() -> new RecordNotFoundException("Cột mốc"));
+                .orElseThrow(() -> new RecordNotFoundException("Giai đoạn"));
     }
 
     public Object searchByClass(Integer classId) {
@@ -631,7 +631,7 @@ public class StudentEvaluationService{
                 .filter(item -> item.getEvaluationType().equals(Constants.TypeAssignments.GRAND_FINAL))
                 .findFirst().orElse(null);
         if(milestone == null)
-            return "Lớp học này không có cột mốc đánh giá hội đồng";
+            return "Lớp học này không có giai đoạn đánh giá hội đồng";
         addTeamEval(team, milestone, results, currentUser.getId(), councilTeam.getId());
         List<StudentEvaluation> studentEvaluations = milestone.getStudentEvaluations();
         HashMap<String, EvaluationResultDTO> gradeCommentMap = new HashMap<>();
@@ -731,7 +731,7 @@ public class StudentEvaluationService{
                 .filter(item -> item.getEvaluationType().equals(Constants.TypeAssignments.GRAND_FINAL))
                 .findFirst().orElse(null);
         if(milestone == null){
-            return "Lớp này không có cột mốc đánh giá hội đồng";
+            return "Lớp này không có giai đoạn đánh giá hội đồng";
         }
         HashMap<Integer, MilestoneCriteria> criteriaHashMap = new HashMap<>();
         List<StudentEvaluation> studentEvaluations = new ArrayList<>();
@@ -850,7 +850,7 @@ public class StudentEvaluationService{
         CouncilTeam councilTeam = councilTeamRepository.findById(request.getCouncilTeamId()).orElseThrow(() -> new RecordNotFoundException("Hội đồng chấm"));
         councilTeam.setStatus(request.getStatus());
         List<StudentEvaluation> studentEvaluations = new ArrayList<>();
-        Milestone milestone = milestoneRepository.findById(request.getMilestoneId()).orElseThrow(() -> new RecordNotFoundException("Cột mốc"));
+        Milestone milestone = milestoneRepository.findById(request.getMilestoneId()).orElseThrow(() -> new RecordNotFoundException("Giai đoạn"));
         List<MilestoneCriteria> milestoneCriteria = milestone.getMilestoneCriteriaList();
         for (Integer studentId : request.getStudentIds()) {
             List<StudentEvaluation> studentEvals = studentEvaluationRepository.findByStudentIdAndCouncilTeamWithoutEvaluator(

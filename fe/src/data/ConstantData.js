@@ -34,7 +34,7 @@ export const subjectSettingData = [
 export const settingTypeData = [
   {
     value: "Complexity",
-    label: "Độ phức tạp",
+    label: "Độ khó",
   },
   {
     value: "Quality",

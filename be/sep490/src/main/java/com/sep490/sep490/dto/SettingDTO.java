@@ -29,7 +29,7 @@ public class SettingDTO {
         if(settingType.equals(Constants.SettingType.QUALITY) || settingType.equals(Constants.SettingType.COMPLEXITY)
                         || settingType.equals(Constants.SettingType.ROUND)){
             ValidateUtils.checkNullOrEmpty(subjectId, "Môn học");
-            String message = "Giá trị độ phức tạp";
+            String message = "Giá trị độ khó";
             if(settingType.equals(Constants.SettingType.QUALITY)){
                 message = "Giá trị mức độ hoàn thiện";
             } else if(settingType.equals(Constants.SettingType.ROUND)){

@@ -174,7 +174,7 @@ const ViewStudentWorkGrandFinal = ({ modal, setModal, complexities, qualities, e
                               </div>
                               <div style={{ display: "flex", alignItems: "center", marginBottom: "8px" }}>
                                 <Icon name="check-circle" style={{ marginRight: "8px", color: "#0056B3" }} />
-                                <span style={{ fontWeight: "600", color: "#333" }}>Độ phức tạp:</span>{" "}
+                                <span style={{ fontWeight: "600", color: "#333" }}>Độ khó:</span>{" "}
                                 <span style={{ marginLeft: "6px", color: "#000" }}>{evaluator.complexityName}</span>
                               </div>
                               <div style={{ display: "flex", alignItems: "center", marginBottom: "8px" }}>

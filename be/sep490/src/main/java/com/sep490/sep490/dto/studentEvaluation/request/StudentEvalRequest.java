@@ -17,7 +17,7 @@ public class StudentEvalRequest {
 
     public void validateInput(boolean isGrandFinalEval){
         if(!isGrandFinalEval)
-            ValidateUtils.checkNullOrEmpty(milestoneId, "Cột mốc");
+            ValidateUtils.checkNullOrEmpty(milestoneId, "Giai đoạn");
         if((email == null || email.isBlank()) && teamId == null)
             throw new ApiInputException("Email hoặc nhóm là bắt buộc");
         if(evalGrade != null && (evalGrade < 0 || evalGrade > 10))

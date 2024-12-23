@@ -86,7 +86,7 @@ public class TeamService implements BaseService<Milestone, Integer>{
 
     private Milestone checkExistMilestone(Integer milestoneId) {
         return milestoneRepository.findById(milestoneId).orElseThrow(
-                () -> new RecordNotFoundException("Cột mốc")
+                () -> new RecordNotFoundException("Giai đoạn")
         );
     }
 
@@ -219,7 +219,7 @@ public class TeamService implements BaseService<Milestone, Integer>{
     public Object getTeamsProgressionByMilestone(Integer milestoneId) {
         log.info("Get teams progression by milestone: " + milestoneId);
         var milestone = milestoneRepository.findById(milestoneId).orElseThrow(
-                () -> new RecordNotFoundException("Cột mốc")
+                () -> new RecordNotFoundException("Giai đoạn")
         );
         List<ProgressOfTeam> progressOfTeams = new ArrayList<>();
         if(milestone.getClasses().getTeams() != null){

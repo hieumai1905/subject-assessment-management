@@ -13,7 +13,7 @@ public class MoveRequirementRequest {
     private List<Integer> requirementIds;
     private List<Integer> teamIds;
     public void validateInput(){
-        ValidateUtils.checkNullOrEmpty(milestoneId, "Cột mốc");
+        ValidateUtils.checkNullOrEmpty(milestoneId, "Giai đoạn");
         ValidateUtils.checkNullOrEmpty(requirementIds, "Yêu cầu");
         for (Integer reqId : requirementIds) {
             ValidateUtils.checkNullOrEmpty(reqId, "Yêu cầu");

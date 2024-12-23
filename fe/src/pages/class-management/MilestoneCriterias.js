@@ -302,7 +302,7 @@ export default function MilestoneCriterias({ classes }) {
         }
       } catch (error) {
         console.error("Error fetching data:", error);
-        toast.error("Xảy ra lỗi khi tìm kiếm cột mốc", {
+        toast.error("Xảy ra lỗi khi tìm kiếm giai đoạn", {
           position: toast.POSITION.TOP_CENTER,
         });
       } finally {
@@ -356,7 +356,7 @@ export default function MilestoneCriterias({ classes }) {
           <div className="col-md-6">
             <BlockHeadContent>
               <div className="w-50">
-                <span className="form-label">Cột mốc</span>
+                <span className="form-label">Giai đoạn</span>
                 <RSelect
                   options={milestones}
                   value={milestone}
