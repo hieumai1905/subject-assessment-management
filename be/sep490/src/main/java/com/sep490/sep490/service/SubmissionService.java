@@ -96,7 +96,7 @@ public class SubmissionService{
         }
         for (Submission submission : submissions.getContent()) {
             var milestone = milestoneRepository.findById(submission.getMilestoneId()).orElseThrow(
-                    () -> new RecordNotFoundException("Cột mốc")
+                    () -> new RecordNotFoundException("Giai đoạn")
             );
             var team = teamRepository.findById(submission.getTeamId()).orElseThrow(
                     () -> new RecordNotFoundException("Nhóm")
@@ -123,7 +123,7 @@ public class SubmissionService{
     }
 
     private List<Team> getLastTeams(Integer milestoneId) {
-        Milestone milestone = milestoneRepository.findById(milestoneId).orElseThrow(() -> new RecordNotFoundException("Cột mốc"));
+        Milestone milestone = milestoneRepository.findById(milestoneId).orElseThrow(() -> new RecordNotFoundException("Giai đoạn"));
         if(milestone != null){
             return milestone.getClasses().getTeams();
         }

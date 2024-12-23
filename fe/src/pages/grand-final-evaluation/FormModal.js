@@ -209,20 +209,20 @@ const FormModal = ({
           <Form className="row gy-3" onSubmit={handleSubmit(onSubmit)}>
             <Col md="4">
               <div className="form-group">
-                <label className="form-label">Độ phức tạp</label>
+                <label className="form-label">Độ khó</label>
                 {!canEdit ? (
                   <input
                     type="text"
                     disabled
                     value={selectedComplexity?.label}
-                    placeholder="độ phức tạp"
+                    placeholder="độ khó"
                     className="form-control"
                   />
                 ) : (
                   <RSelect
                     options={complexityOptions}
                     value={selectedComplexity}
-                    placeholder="độ phức tạp"
+                    placeholder="độ khó"
                     onChange={(e) => {
                       setSelectedComplexity(e);
                       if (e && selectedQuality) {

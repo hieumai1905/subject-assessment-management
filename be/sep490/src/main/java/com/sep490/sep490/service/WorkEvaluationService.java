@@ -79,7 +79,7 @@ public class WorkEvaluationService {
         SearchWorkEvalResponse response = new SearchWorkEvalResponse();
         Classes classes = classesRepository.findById(request.getClassId()).orElseThrow(() -> new RecordNotFoundException("Lớp học"));
         Milestone milestone = milestoneRepository.findById(request.getMilestoneId())
-                .orElseThrow(() -> new RecordNotFoundException("Cột mốc"));
+                .orElseThrow(() -> new RecordNotFoundException("Giai đoạn"));
         boolean isFinalEval = milestone.getEvaluationType().equals(Constants.TypeAssignments.FINAL);
 
         List<SettingDTO> complexities = new ArrayList<>();
@@ -320,7 +320,7 @@ public class WorkEvaluationService {
     }
 
     private Milestone checkExistMilestone(Integer milestoneId) {
-        return milestoneRepository.findById(milestoneId).orElseThrow(() -> new RecordNotFoundException("Cột mốc"));
+        return milestoneRepository.findById(milestoneId).orElseThrow(() -> new RecordNotFoundException("Giai đoạn"));
     }
 
     private void saveStudentEvaluation(Float loc, Float grade, Milestone milestone, MilestoneCriteria criteria,
@@ -559,7 +559,7 @@ public class WorkEvaluationService {
                 .filter(item -> item.getEvaluationType().equals(Constants.TypeAssignments.GRAND_FINAL))
                 .findFirst().orElse(null);
         if(milestone == null){
-            return "Lớp học này không có cột mốc đánh giá hội đồng";
+            return "Lớp học này không có giai đoạn đánh giá hội đồng";
         }
         if(currentUser.getRole().getId().equals(Constants.Role.STUDENT)){
             return getWorkEvalForStudentInGrandFinal(milestone, currentUser, request.getTeamId(), councilTeam);
@@ -763,7 +763,7 @@ public class WorkEvaluationService {
                 .filter(item -> item.getEvaluationType().equals(Constants.TypeAssignments.GRAND_FINAL))
                 .findFirst().orElse(null);
         if(milestone == null){
-            return "Lớp học này không có cột mốc đánh giá hội đồng";
+            return "Lớp học này không có giai đoạn đánh giá hội đồng";
         }
         MilestoneCriteria criteria = milestone.getMilestoneCriteriaList().stream()
                 .filter(MilestoneCriteria::getLocEvaluation)

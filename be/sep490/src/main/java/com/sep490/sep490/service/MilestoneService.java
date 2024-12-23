@@ -271,9 +271,9 @@ public class MilestoneService implements BaseService<Milestone, Integer>{
     }
 
     public Object changeMilestoneStatus(Integer id, Boolean active){
-        ValidateUtils.checkNullOrEmpty(id, "Cột mốc");
+        ValidateUtils.checkNullOrEmpty(id, "Giai đoạn");
         Milestone foundMilestone = milestoneRepository.findById(id).orElseThrow(
-                () -> new RecordNotFoundException("Cột mốc"));
+                () -> new RecordNotFoundException("Giai đoạn"));
         for (Milestone milestone : foundMilestone.getClasses().getMilestones()){
             if(active && milestone.getActive()){
                 throw new ConflictException("Vui lòng đóng " +  milestone.getTitle() + " trước khi mở " + foundMilestone.getTitle());

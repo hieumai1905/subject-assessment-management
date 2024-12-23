@@ -474,6 +474,7 @@ public class ClassService implements BaseService<Classes, Integer> {
             response.setEmail(classUser.getUser().getEmail());
             response.setFullname(classUser.getUser().getFullname());
             response.setId(classUser.getUser().getId());
+            response.setUserId(classUser.getUser().getId());
         }
         if(classUser.getClasses() != null){
             response.setClassCode(classUser.getClasses().getClassCode());

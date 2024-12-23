@@ -88,7 +88,7 @@ export default function ImportEvalModal({ modal, setModal, evaluations, setEvalu
     formData.forEach((item) => {
       let id = isNumber(item["ID"], "int");
       if (id) {
-        let complexityId = findComplexityByName(item["Độ phức tạp"]);
+        let complexityId = findComplexityByName(item["Độ khó"]);
         let qualityId = findQualityByName(item["Mức độ hoàn thiện"]);
         let comment = item["Nhận xét"];
         let loc = isNumber(item["LOC"], "float");
@@ -100,7 +100,7 @@ export default function ImportEvalModal({ modal, setModal, evaluations, setEvalu
           comment: comment,
           grade: loc,
         };
-        complexityId = findComplexityByName(item["Cập nhật độ phức tạp"]);
+        complexityId = findComplexityByName(item["Cập nhật độ khó"]);
         qualityId = findQualityByName(item["Cập nhật mức độ hoàn thiện"]);
         comment = item["Cập nhật nhận xét"];
         loc = isNumber(item["Cập nhật LOC"], "float");

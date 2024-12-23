@@ -181,7 +181,7 @@ const SubmitDetail = (
           });
         }
       } catch {
-        toast.error("Xảy ra lỗi khi tìm kiếm cột mốc", {
+        toast.error("Xảy ra lỗi khi tìm kiếm giai đoạn", {
           position: toast.POSITION.TOP_CENTER,
         });
       } finally {

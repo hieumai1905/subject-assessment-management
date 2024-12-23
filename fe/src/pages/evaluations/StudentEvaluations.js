@@ -763,7 +763,7 @@ export default function StudentEvaluations({
   return (
     <>
       <ToastContainer />
-      <Head title="Đánh giá theo cột mốc" />
+      <Head title="Đánh giá theo giai đoạn" />
       {loadings || isCustome?.row || isCustome?.column ? (
         <div className="d-flex justify-content-center">
           <Spinner style={{ width: "3rem", height: "3rem" }} />

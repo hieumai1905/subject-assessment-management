@@ -252,7 +252,7 @@ const TopLOCGradeTable = ({ data }) => {
           <span>Lớp học</span>
         </DataTableRow>
         <DataTableRow>
-          <span>Cột mốc</span>
+          <span>Giai đoạn</span>
         </DataTableRow>
         <DataTableRow>
           <span>Số yêu cầu</span>

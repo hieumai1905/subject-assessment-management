@@ -79,7 +79,7 @@ export default function ImportRequirementsForm({
       if(jsonData)
         setFormData({ ...formData, data: jsonData.map(item => ({
             reqTitle: item[`Tiêu đề`],
-            complexity: item[`Độ phức tạp`],
+            complexity: item[`Độ khó`],
             note: item[`Ghi chú`]
           })) 
         });
@@ -104,7 +104,7 @@ export default function ImportRequirementsForm({
         const workbook = new ExcelJS.Workbook();
         const worksheet = workbook.addWorksheet("Sheet 1");
 
-        worksheet.addRow(["Tiêu đề", "Độ phức tạp", "Ghi chú"]);
+        worksheet.addRow(["Tiêu đề", "Độ khó", "Ghi chú"]);
         // Style header row
         worksheet.getRow(1).fill = {
           type: "pattern",
@@ -233,7 +233,7 @@ export default function ImportRequirementsForm({
         </a>
         <div className="p-2">
           <h5 className="title">Nhập Yêu Cầu</h5>
-          <p className="text-danger">Nếu bạn nhập một bộ yêu cầu mới, bộ yêu cầu chưa được đánh giá trong cột mốc này sẽ bị xóa.</p>
+          <p className="text-danger">Nếu bạn nhập một bộ yêu cầu mới, bộ yêu cầu chưa được đánh giá trong giai đoạn này sẽ bị xóa.</p>
           <div className="mt-4">
             <Row className="m-2 p-2">
               <Col sm="12" className="mb-2 text-end">

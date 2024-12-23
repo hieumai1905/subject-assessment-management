@@ -279,7 +279,7 @@ export default function RequirementEvaluations({
           headerName: "Tiêu đề",
           width: 200,
         },
-        { field: `milestoneTitle`, headerName: "Cột mốc", width: 150 },
+        { field: `milestoneTitle`, headerName: "Giai đoạn", width: 150 },
         { field: `teamTeamName`, headerName: "Nhóm", width: 100 },
         {
           field: `studentFullname`,

@@ -386,13 +386,13 @@ const MilestoneList = () => {
 
   return (
     <>
-      <Head title="Danh sách cột mốc" />
+      <Head title="Danh sách giai đoạn" />
       <Content>
         <BlockHead size="sm">
           <BlockBetween>
             <BlockHeadContent>
-              <BlockTitle page> Danh sách cột mốc</BlockTitle>
-              <BlockDes className="text-soft">Bạn có tổng cộng {totalElements} cột mốc</BlockDes>
+              <BlockTitle page> Danh sách giai đoạn</BlockTitle>
+              <BlockDes className="text-soft">Bạn có tổng cộng {totalElements} giai đoạn</BlockDes>
             </BlockHeadContent>
             <BlockHeadContent></BlockHeadContent>
           </BlockBetween>

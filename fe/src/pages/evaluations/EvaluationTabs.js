@@ -305,7 +305,7 @@ export default function EvaluationTabs() {
       }
     } catch (error) {
       console.error("Error fetching data:", error);
-      toast.error("Xảy ra lỗi khi tìm kiếm cột mốc", {
+      toast.error("Xảy ra lỗi khi tìm kiếm giai đoạn", {
         position: toast.POSITION.TOP_CENTER,
       });
     } finally {
@@ -433,7 +433,7 @@ export default function EvaluationTabs() {
       }
     } catch (error) {
       console.error("Error fetching data:", error);
-      toast.error("Xảy ra lỗi khi tìm kiếm đánh giá theo cột mốc", { position: toast.POSITION.TOP_CENTER });
+      toast.error("Xảy ra lỗi khi tìm kiếm đánh giá theo giai đoạn", { position: toast.POSITION.TOP_CENTER });
     } finally {
       setIsFetching({ ...isFetching, allMileEval: false });
       setIsFirst(false);
@@ -604,7 +604,7 @@ export default function EvaluationTabs() {
                               </Col>
                               <Col md={6}>
                                 <div className="form-group">
-                                  <label className="overline-title overline-title-alt">Mốc</label>
+                                  <label className="overline-title overline-title-alt">Giai đoạn</label>
                                   {isFetching?.milestone ? (
                                     <div>
                                       <Spinner />
@@ -616,7 +616,7 @@ export default function EvaluationTabs() {
                                       onChange={(e) => {
                                         setFilterForm({ ...filterForm, milestone: e });
                                       }}
-                                      placeholder="Chọn mốc"
+                                      placeholder="Chọn giai đoạn"
                                     />
                                   )}
                                 </div>
@@ -771,7 +771,7 @@ export default function EvaluationTabs() {
                     toggle("2");
                   }}
                 >
-                  Theo cột mốc
+                  Theo giai đoạn
                 </NavLink>
               </NavItem>
               <NavItem>

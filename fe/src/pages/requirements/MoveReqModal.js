@@ -227,7 +227,7 @@ export default function MoveReqModal({
               </Col>
               <Col md="12">
                 <div className="form-group mt-4">
-                  <label className="form-label">Cột mốc*</label>
+                  <label className="form-label">Giai đoạn*</label>
                   <RSelect
                     {...register("milestone")}
                     options={milestones}

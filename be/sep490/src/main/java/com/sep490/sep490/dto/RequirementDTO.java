@@ -37,7 +37,7 @@ public class RequirementDTO{
             for (Integer teamId : teamIds) {
                 ValidateUtils.checkNullOrEmpty(teamId, "Nhóm");
             }
-            ValidateUtils.checkNullOrEmpty(milestoneId, "Cột mốc");
+            ValidateUtils.checkNullOrEmpty(milestoneId, "Giai đoạn");
         }
     }
 }

@@ -230,7 +230,7 @@ export default function ImportTeamsForm({
               <Row className="m-2 p-2">
                 <Col sm="12">
                   <div className="form-group">
-                    <label className="form-label">Sao chép từ cột mốc</label>
+                    <label className="form-label">Sao chép từ giai đoạn</label>
                     <RSelect
                       options={milestones}
                       value={cloneMilestone}

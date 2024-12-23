@@ -13,7 +13,7 @@ public class AddRequirementList {
     private List<Integer> teamIds;
 
     public void validateInput(){
-        ValidateUtils.checkNullOrEmpty(milestoneId, "Cột mốc");
+        ValidateUtils.checkNullOrEmpty(milestoneId, "Giai đoạn");
         ValidateUtils.checkNullOrEmpty(teamIds, "Nhóm");
         for (Integer teamId : teamIds) {
             ValidateUtils.checkNullOrEmpty(teamId, "Nhóm");

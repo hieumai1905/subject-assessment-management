@@ -176,7 +176,7 @@ export const ViewStudentEval = ({ data, classId, loadings }) => {
         <table style={tableStyle}>
           <thead>
             <tr>
-              <th style={headerCellStyle}>Cột mốc</th>
+              <th style={headerCellStyle}>Giai đoạn</th>
               <th style={headerCellStyle}>Tiêu chí</th>
               <th style={headerCellStyle}>Điểm</th>
               <th style={headerCellStyle}>Nhận xét</th>

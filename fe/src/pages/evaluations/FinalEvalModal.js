@@ -259,7 +259,7 @@ const FinalEvalModal = ({
             </Col>
             <Col md="4">
               <div>
-                <strong>Độ phức tạp lần 1:</strong> {lastEval?.complexity}
+                <strong>Độ khó lần 1:</strong> {lastEval?.complexity}
               </div>
             </Col>
             <Col md="4">
@@ -334,7 +334,7 @@ const FinalEvalModal = ({
             <Col md="4">
               <div className="form-group">
                 <label htmlFor="complexity" className="form-label">
-                  Độ phức tạp
+                  Độ khó
                 </label>
                 {!canEdit ? (
                   <input
@@ -342,7 +342,7 @@ const FinalEvalModal = ({
                     id="complexity"
                     disabled
                     value={selectedComplexity?.label}
-                    placeholder="chọn độ phức tạp"
+                    placeholder="chọn độ khó"
                     className="form-control"
                   />
                 ) : (
@@ -350,7 +350,7 @@ const FinalEvalModal = ({
                     id="complexity"
                     options={complexityOptions}
                     value={selectedComplexity}
-                    placeholder="chọn độ phức tạp"
+                    placeholder="chọn độ khó"
                     onChange={(e) => {
                       setSelectedComplexity(e);
                       if (e && selectedQuality) {
